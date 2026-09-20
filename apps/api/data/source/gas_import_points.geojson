@@ -1,0 +1,95 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gas-import-sidirokastro",
+        "name": "Sidirokastro Entry Point",
+        "operator": "DESFA",
+        "asset_class": "gas_import_point",
+        "import_type": "Border Entry",
+        "connected_system": "Bulgaria interconnection",
+        "status": "Active",
+        "source": "DESFA public entry-point documentation",
+        "design_capacity_nm3h": null
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [23.3865, 41.2354]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gas-import-kipi",
+        "name": "Kipi Entry Point",
+        "operator": "DESFA",
+        "asset_class": "gas_import_point",
+        "import_type": "Border Entry",
+        "connected_system": "Turkey interconnection",
+        "status": "Active",
+        "source": "DESFA public entry-point documentation",
+        "design_capacity_nm3h": null
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [26.284, 40.992]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gas-import-nea-mesimvria",
+        "name": "Nea Mesimvria Entry Point",
+        "operator": "DESFA",
+        "asset_class": "gas_import_point",
+        "import_type": "Pipeline Entry",
+        "connected_system": "TAP interconnection",
+        "status": "Active",
+        "source": "DESFA public entry-point documentation",
+        "design_capacity_nm3h": null
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [22.761, 40.629]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gas-import-agia-triada",
+        "name": "Agia Triada Entry Point",
+        "operator": "DESFA",
+        "asset_class": "gas_import_point",
+        "import_type": "LNG Entry",
+        "connected_system": "Revithoussa LNG terminal",
+        "status": "Active",
+        "source": "DESFA public LNG and entry-point documentation",
+        "design_capacity_nm3h": null
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [23.365, 37.965]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gas-import-amfitriti",
+        "name": "Amfitriti Entry Point",
+        "operator": "DESFA / GASTRADE",
+        "asset_class": "gas_import_point",
+        "import_type": "FSRU Entry",
+        "connected_system": "Alexandroupolis FSRU interconnection",
+        "status": "Active",
+        "source": "DESFA public Amfitriti documentation",
+        "design_capacity_nm3h": 865000
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [25.912, 40.861]
+      }
+    }
+  ]
+}

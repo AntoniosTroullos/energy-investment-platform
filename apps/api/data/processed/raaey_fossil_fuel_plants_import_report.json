@@ -1,0 +1,11 @@
+{
+  "source_zip": "C:\\Users\\megas\\Downloads\\gis-raaey-wms-rae_status-v_sdi_r_orykta_all-hn5879de.zip",
+  "official_source_name": "RAAEY fossil fuel power stations registry",
+  "official_features_loaded": 0,
+  "output_features_written": 0,
+  "source_was_empty": true,
+  "notes": [
+    "Official RAAEY fossil-fuel export currently returned no records, so the importer wrote an honest empty supplemental source layer.",
+    "Existing fossil-fuel coverage in the app therefore still comes from the previously loaded generator sources, such as OpenStreetMap."
+  ]
+}

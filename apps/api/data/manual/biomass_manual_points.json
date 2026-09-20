@@ -1,0 +1,242 @@
+[
+  {
+    "id": "manual-biomass-point-001",
+    "license_id": null,
+    "name": null,
+    "x_egsa87": 217071.441,
+    "y_egsa87": 4383038.133,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied point for a biomass/biogas station with a production license. Matching to a specific RAAEY record is still required before geometry can be attached safely."
+  },
+  {
+    "id": "manual-biomass-point-002",
+    "license_id": "Γ-05200",
+    "name": "ΛΑΚΚΑ",
+    "x_egsa87": 300255.56,
+    "y_egsa87": 4384705.266,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied EGSA87 point matched to the staged RAAEY biomass record for ΑΔ-02864 / Γ-05200 (ΛΗΘΑΙΟΣ ΕΝΕΡΓΕΙΑΚΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΙΑ, ΛΑΚΚΑ). A later user-supplied point for the same site was within about 21 m, so this existing manual evidence entry was kept and upgraded instead of creating a duplicate. Status remains unchanged until stronger operating evidence is added."
+  },
+  {
+    "id": "manual-biomass-point-003",
+    "license_id": null,
+    "name": null,
+    "x_egsa87": 300084.676,
+    "y_egsa87": 4386740.097,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied EGSA87 point for a biomass/biogas station with a production license. Matching to a specific RAAEY record is still required before geometry can be attached safely."
+  },
+  {
+    "id": "manual-biomass-point-004",
+    "license_id": "Γ-03750",
+    "name": "ΒΑΜΠΟΥΛΟΥ",
+    "x_egsa87": 299112.232,
+    "y_egsa87": 4377817.876,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied EGSA87 point matched to the staged RAAEY biomass record for ΑΔ-01506 / Γ-03750 (ΒΙΟΕΝΕΡΓΕΙΑΚΗ ΘΕΣΣΑΛΙΑΣ ΑΕ, ΒΑΜΠΟΥΛΟΥ). A later user-supplied point for the same site was within about 32 m, so this existing manual evidence entry was kept and upgraded instead of creating a duplicate. Status remains unchanged until stronger operating evidence is added."
+  },
+  {
+    "id": "manual-biomass-point-005",
+    "license_id": null,
+    "name": null,
+    "x_egsa87": 303522.996,
+    "y_egsa87": 4377263.805,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied EGSA87 point for a biomass/biogas station. Matching to a specific official record is still required before geometry can be attached safely."
+  },
+  {
+    "id": "manual-biomass-point-006",
+    "license_id": "Γ-05156",
+    "name": "ΤΣΑΙΡΙ - ΠΟΛΥΓΩΝΙΚΟ",
+    "x_egsa87": 362064.278,
+    "y_egsa87": 4356591.918,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied EGSA87 point matched to RAAEY biomass record Γ-05156 / ΑΔ-02661 (ΦΘΙΑ ΕΝΕΡΓΕΙΑΚΗ ΑΕ, ΤΣΑΙΡΙ - ΠΟΛΥΓΩΝΙΚΟ). Status remains unchanged until stronger operating evidence is added."
+  },
+  {
+    "id": "manual-biomass-point-007",
+    "license_id": "Γ-03970",
+    "name": "ΒΑΜΒΑΚΟΥ",
+    "x_egsa87": 361915.005,
+    "y_egsa87": 4356424.297,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied EGSA87 point matched to RAAEY biomass record Γ-03970 / ΑΔ-01704 (ΕΠΙΛΕΚΤΟΣ ΒΙΟΑΕΡΙΟ ΦΑΡΣΑΛΩΝ ΑΕ, ΒΑΜΒΑΚΟΥ). Status remains unchanged until stronger operating evidence is added."
+  },
+  {
+    "id": "manual-biomass-point-008",
+    "license_id": "Γ-06239",
+    "name": "ΛΑΤΟΜΕΙΟ ΕΓΝΑΤΙΑΣ",
+    "x_egsa87": 216593.415,
+    "y_egsa87": 4383052.414,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied EGSA87 point matched to the staged RAAEY biomass record for ΑΔ-03665 / Γ-06239 (ΑΕΙΦΟΡΙΚΗ ΗΠΕΙΡΟΥ ΜΑΕΕΣ, ΛΑΤΟΜΕΙΟ ΕΓΝΑΤΙΑΣ). Status remains unchanged until stronger operating evidence is added."
+  },
+  {
+    "id": "manual-biomass-point-009",
+    "license_id": "Γ-014103",
+    "name": "ΒΑΛΤΟΣ ΒΙΓΛΑΣ",
+    "x_egsa87": 228127.094,
+    "y_egsa87": 4334875.45,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied EGSA87 point matched to the staged RAAEY biomass record for ΑΔ-010241 / Γ-014103 (ΑΠΟΣΤΟΛΙΔΗΣ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ ΚΑΙ Δ.Τ. GOLDEN SOLAR ENERGY AE H AGROPLAN AE, ΒΑΛΤΟΣ ΒΙΓΛΑΣ). Status remains unchanged until stronger operating evidence is added."
+  },
+  {
+    "id": "manual-biomass-point-010",
+    "license_id": "Γ-05261",
+    "name": "ΓΚΑΡΚΟΥΛΑ",
+    "x_egsa87": 227473.144,
+    "y_egsa87": 4343224.254,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied EGSA87 point matched to the staged RAAEY biomass record for ΑΔ-02900 / Γ-05261 (ΦΑΡΜΑ ΧΗΤΑΣ Α.Ε, ΓΚΑΡΚΟΥΛΑ). Status remains unchanged until stronger operating evidence is added."
+  },
+  {
+    "id": "manual-biomass-point-011",
+    "license_id": "Γ-012323",
+    "name": "ΦΛΩΡΟΣ Ο.Δ. ΑΓΡΟΚΤΗΜΑΤΟΣ ΠΟΛΥΒΡΥΣΟΥ",
+    "x_egsa87": 216347.316,
+    "y_egsa87": 4335645.825,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied EGSA87 point matched to the staged RAAEY biomass record for ΑΔ-08710 (ΒΙΟΑΕΡΙΟ ΠΡΕΒΕΖΑΣ ΕΝΑ ΙΚΕ, ΦΛΩΡΟΣ Ο.Δ. ΑΓΡΟΚΤΗΜΑΤΟΣ ΠΟΛΥΒΡΥΣΟΥ). Status remains unchanged until stronger operating evidence is added."
+  },
+  {
+    "id": "manual-biomass-point-012",
+    "license_id": "Α-00189",
+    "name": "Κ.Ε.Λ. ΨΥΤΤΑΛΕΙΑΣ",
+    "x_egsa87": 463934.781,
+    "y_egsa87": 4199280.158,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied EGSA87 point matched to the staged RAAEY biomass record for ΑΔ-00069 / Α-00189 (ΕΥΔΑΠ ΑΕ, Κ.Ε.Λ. ΨΥΤΤΑΛΕΙΑΣ). User-provided installed and maximum capacity values differ from the current staged RAAEY extraction, so the point is recorded as location evidence only and capacities are not overwritten."
+  },
+  {
+    "id": "manual-biomass-point-013",
+    "license_id": "00062",
+    "name": "ΣΚΑΛΙΣΤΗΡΙ",
+    "x_egsa87": 469664.907,
+    "y_egsa87": 4213270.04,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied EGSA87 point matched to the staged RAAEY biomass record for ΑΔ-00324 / 00062 (ΒΙΟΑΕΡΙΟ - ΕΝΕΡΓΕΙΑ ΑΝΩ ΛΙΟΣΙΑ ΑΕ, ΣΚΑΛΙΣΤΗΡΙ). This match is intentionally tied to the 10.661 MW record, not the separate 14.916 MW ΣΚΑΛΙΣΤΗΡΙ record."
+  },
+  {
+    "id": "manual-biomass-point-014",
+    "license_id": "00063",
+    "name": "ΣΚΑΛΙΣΤΗΡΙ",
+    "x_egsa87": 469570.018,
+    "y_egsa87": 4213210.003,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied EGSA87 point matched to the staged RAAEY biomass record for ΑΔ-00081 / 00063 (ΒΙΟΑΕΡΙΟ - ΕΝΕΡΓΕΙΑ ΑΝΩ ΛΙΟΣΙΑ ΑΕ, ΣΚΑΛΙΣΤΗΡΙ). This match is intentionally tied to the 14.916 MW record, not the separate 10.661 MW ΣΚΑΛΙΣΤΗΡΙ record."
+  },
+  {
+    "id": "manual-biomass-point-015",
+    "license_id": "Γ-00809",
+    "name": "ΧΥΤΑ ΒΟΛΟΥ ΣΤΗ ΘΕΣΗ ΚΑΚΚΑΒΟΣ Δ.Δ. ΔΙΜΗΝΙΟΥ",
+    "x_egsa87": 402036.675,
+    "y_egsa87": 4360362.907,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied EGSA87 point matched to the staged RAAEY record for ΑΔ-00805 / Γ-00809 (ΒΙΟΕΝΕΡΓΕΙΑ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ ΑΞΙΟΠΟΙΗΣΗΣ ΕΝΕΡΓΕΙΑΚΩΝ ΠΟΡΩΝ ΑΕ, ΧΥΤΑ ΒΟΛΟΥ ΣΤΗ ΘΕΣΗ ΚΑΚΚΑΒΟΣ Δ.Δ. ΔΙΜΗΝΙΟΥ). The staged technology remains landfill_gas because the project is tied to a landfill site."
+  },
+  {
+    "id": "manual-biomass-point-016",
+    "license_id": "Γ-04354",
+    "name": "ΒΙ.ΠΕ. ΒΟΛΟΥ",
+    "x_egsa87": 396875.387,
+    "y_egsa87": 4361279.269,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied EGSA87 point matched to the staged RAAEY biomass record for ΑΔ-02217 / Γ-04354 (VIOPAR ENERGY A.E. / ΒΙΟΠΑΡ ΕΝΕΡΓΕΙΑ Α.Ε., ΒΙ.ΠΕ. ΒΟΛΟΥ). This bind is intentionally tied to the 4.99 MW VIOPAR record and not to other separate ΒΙ.ΠΕ. ΒΟΛΟΥ biomass records in the same area."
+  },
+  {
+    "id": "manual-biomass-point-017",
+    "license_id": "Γ-05388",
+    "name": "ΠΑΛΙΑΜΠΕΛΑ",
+    "x_egsa87": 372885.025,
+    "y_egsa87": 4381736.73,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied EGSA87 point matched to the staged RAAEY biomass record for ΑΔ-03062 / Γ-05388 (ΜΕΣΟΠΟΤΑΜΙΑ ΕΝΕΡΓΕΙΑΚΗ Α.Ε., ΠΑΛΙΑΜΠΕΛΑ). Status remains unchanged until stronger operating evidence is added."
+  },
+  {
+    "id": "manual-biomass-point-018",
+    "license_id": "00008",
+    "name": "Β.Ι.Π. ΘΕΣΣΑΛΟΝΙΚΗΣ ΣΙΝΔΟΥ",
+    "x_egsa87": 396414.999,
+    "y_egsa87": 4505410.003,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied EGSA87 point matched to the staged RAAEY biomass record for ΑΔ-00278 / 00008 (ΕΥΑΘ ΑΕ, Β.Ι.Π. ΘΕΣΣΑΛΟΝΙΚΗΣ ΣΙΝΔΟΥ). Status remains unchanged until stronger operating evidence is added."
+  },
+  {
+    "id": "manual-biomass-point-019",
+    "license_id": "Γ-06120",
+    "name": "ΑΓΡΟΤΕΜΑΧΙΑ ΑΡ. 114Β ΚΑΙ 120",
+    "x_egsa87": 398810.068,
+    "y_egsa87": 4511130.071,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied EGSA87 point matched to the staged RAAEY biomass record for ΑΔ-03635 / Γ-06120 (Heygaz Πεντάλοφος ΜΟΝΟΠΡΟΣΩΠΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ, ΑΓΡΟΤΕΜΑΧΙΑ ΑΡ. 114Β ΚΑΙ 120). Status remains unchanged until stronger operating evidence is added."
+  },
+  {
+    "id": "manual-biomass-point-020",
+    "license_id": "Γ-06184",
+    "name": "ΚΛΕΦΤΙΚΑ - ΕΡΥΘΡΑ ΚΑΜΕΛΗ (ΧΥΤΑ ΜΑΥΡΟΡΑΧΗΣ)",
+    "x_egsa87": 422099.999,
+    "y_egsa87": 4522150.003,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied EGSA87 point matched to the staged RAAEY biomass record for ΑΔ-03650 / Γ-06184 (ΗΛΕΚΤΩΡ ΑΕ - ΑΝΩΝΥΜΟΣ ΕΤΑΙΡΕΙΑ ΕΝΕΡΓΕΙΑΚΩΝ & ΠΕΡΙΒΑΛΛΟΝΤΙΚΩΝ ΕΦΑΡΜΟΓΩΝ, ΚΛΕΦΤΙΚΑ - ΕΡΥΘΡΑ ΚΑΜΕΛΗ (ΧΥΤΑ ΜΑΥΡΟΡΑΧΗΣ)). The staged technology remains landfill_gas because the project is explicitly tied to a landfill site. Status remains unchanged until stronger operating evidence is added."
+  },
+  {
+    "id": "manual-biomass-point-021",
+    "license_id": "Γ-06183",
+    "name": "ΑΓΡΟΤΕΜΑΧΙΑ ΥΠ' ΑΡ. 352 & 353 / ΑΓΡΟΚΤΗΜΑ ΝΙΓΡΙΤΑΣ-ΑΝΑΔΑΣΜΟΣ 2007-2008",
+    "x_egsa87": 458500.282,
+    "y_egsa87": 4530800.562,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied EGSA87 point matched to the staged RAAEY biomass record for ΑΔ-03648 / Γ-06183 (ΜΗΤΣΙΟΛΙΔΗΣ - ΜΗΤΣΟΠΟΥΛΟΣ - ΜΠΟΖΑΤΖΙΔΗΣ - ΤΖΙΑΚΑΣ Α.Ε. / ΒΙΟΕΝΕΡΓΕΙΑ ΝΙΓΡΙΤΑΣ Α.Ε., ΑΓΡΟΤΕΜΑΧΙΑ ΥΠ' ΑΡ. 352 & 353 / ΑΓΡΟΚΤΗΜΑ ΝΙΓΡΙΤΑΣ-ΑΝΑΔΑΣΜΟΣ 2007-2008). Status remains unchanged until stronger operating evidence is added."
+  },
+  {
+    "id": "manual-biomass-point-022",
+    "license_id": "Γ-06002",
+    "name": "ΟΤ6Α ΟΔΟΣ 5 ΒΙΠΕ ΣΕΡΡΩΝ",
+    "x_egsa87": 454900.305,
+    "y_egsa87": 4550299.694,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied EGSA87 point matched to the staged RAAEY biomass record for ΑΔ-03569 / Γ-06002 (MIL OIL HELLAS ΑΝΩΝΥΜΗ ΕΤΑΙΡΙΑ ΑΕΙΦΟΡΕΣ ΜΟΡΦΕΣ ΕΝΕΡΓΕΙΑΣ, ΟΤ6Α ΟΔΟΣ 5 ΒΙΠΕ ΣΕΡΡΩΝ). Status remains unchanged until stronger operating evidence is added."
+  },
+  {
+    "id": "manual-biomass-point-023",
+    "license_id": "Γ-012362",
+    "name": "ΡΙΖΙΑ ΑΓΡ.2120-2121-2122-2123 ΑΓΡΟΚΤΗΜΑΤΟΣ ΑΓΙΟΥ ΑΘΑΝΑΣΙΟΥ ΔΡΑΜΑΣ",
+    "x_egsa87": 520404.986,
+    "y_egsa87": 4541940.0,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied EGSA87 point matched to the staged RAAEY biomass record for ΑΔ-08547 / Γ-012362 (HELIOTOP ΗΛΙΟΤΟΠ ΑΝΩΝΥΜΟΣ ΕΤΑΙΡΙΑ ΠΑΡΑΓΩΓΗΣ ΕΝΕΡΓΕΙΑΣ ΚΑΙ Δ.Τ. HELIOTOP AE, ΡΙΖΙΑ ΑΓΡ.2120-2121-2122-2123 ΑΓΡΟΚΤΗΜΑΤΟΣ ΑΓΙΟΥ ΑΘΑΝΑΣΙΟΥ ΔΡΑΜΑΣ). Status remains unchanged until stronger operating evidence is added."
+  },
+  {
+    "id": "manual-biomass-point-024",
+    "license_id": "Γ-016780",
+    "name": "ΠΕΚΡΕΒΕΝΙΚΟΣ - ΑΓΡΟΤΕΜΑΧΙΑ 8-9)",
+    "x_egsa87": 298651.376,
+    "y_egsa87": 4475401.308,
+    "coordinate_system": "EGSA87",
+    "evidence_type": "manual_geolocation",
+    "notes": "User-supplied EGSA87 point matched to the staged RAAEY biomass record for ΑΔ-011862 / Γ-016780 (ΛΕΥΚΟΠΟΥΛΟΣ ΕΥΑΓΓΕΛΟΣ ΘΕΟΦΡΑΣΤΟΥ ΝΙΚΟΛΑΟΣ ΑΝΩΝΥΜΟΣ ΕΤΑΙΡΕΙΑ, ΠΕΚΡΕΒΕΝΙΚΟΣ - ΑΓΡΟΤΕΜΑΧΙΑ 8-9)). This bind is intentionally tied to the active ΑΔ-011862 record and not to the separate revoked ΠΕΚΡΕΒΕΝΙΚΟΣ entry."
+  }
+]

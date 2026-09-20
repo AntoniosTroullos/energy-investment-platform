@@ -1,0 +1,11 @@
+{
+  "status": "manual_template_required",
+  "notes": [
+    "DAPEEP files were found, but automated ELAPE biomass extraction was not completed in this phase.",
+    "Use the manual totals template to capture biomass/biogas aggregate validation."
+  ],
+  "files": [
+    "34_ANNUAL_2025_min_DELTIO_ELAPE-1.pdf"
+  ],
+  "manual_template": "C:\\Users\\megas\\dev\\energy-investment-platform\\apps\\api\\data\\manual\\dapeep_biomass_totals_template.csv"
+}

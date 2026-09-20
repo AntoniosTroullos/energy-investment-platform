@@ -1,0 +1,1895 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-001",
+        "name": "Solar PV Candidate 001",
+        "technology": "Solar PV",
+        "solar_score": 90,
+        "wind_score": 48,
+        "distance_to_substation_km": 8.2,
+        "distance_to_line_km": 4.8,
+        "excluded": false,
+        "land_excluded": false,
+        "natura_2000_overlap_fraction": 0.0761,
+        "connection_cost_level": "Medium",
+        "status": "Screened Candidate",
+        "investment_score": 64
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              21.0,
+              37.6
+            ],
+            [
+              21.45,
+              37.6
+            ],
+            [
+              21.45,
+              38.05
+            ],
+            [
+              21.0,
+              38.05
+            ],
+            [
+              21.0,
+              37.6
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-002",
+        "name": "Solar PV Candidate 002",
+        "technology": "Solar PV",
+        "solar_score": 90,
+        "wind_score": 48,
+        "distance_to_substation_km": 22.6,
+        "distance_to_line_km": 21.6,
+        "excluded": true,
+        "land_excluded": true,
+        "natura_2000_overlap_fraction": 0.2473,
+        "connection_cost_level": "High",
+        "status": "Constraint Review",
+        "investment_score": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              21.0,
+              38.05
+            ],
+            [
+              21.45,
+              38.05
+            ],
+            [
+              21.45,
+              38.5
+            ],
+            [
+              21.0,
+              38.5
+            ],
+            [
+              21.0,
+              38.05
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-003",
+        "name": "Solar PV Candidate 003",
+        "technology": "Solar PV",
+        "solar_score": 76,
+        "wind_score": 68,
+        "distance_to_substation_km": 8.7,
+        "distance_to_line_km": 1.6,
+        "excluded": false,
+        "land_excluded": false,
+        "natura_2000_overlap_fraction": 0.0434,
+        "connection_cost_level": "Low",
+        "status": "Screened Candidate",
+        "investment_score": 60
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              21.0,
+              38.5
+            ],
+            [
+              21.45,
+              38.5
+            ],
+            [
+              21.45,
+              38.95
+            ],
+            [
+              21.0,
+              38.95
+            ],
+            [
+              21.0,
+              38.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-004",
+        "name": "Onshore Wind Candidate 004",
+        "technology": "Onshore Wind",
+        "solar_score": 62,
+        "wind_score": 88,
+        "distance_to_substation_km": 14.1,
+        "distance_to_line_km": 6.0,
+        "excluded": true,
+        "land_excluded": true,
+        "natura_2000_overlap_fraction": 0.2954,
+        "connection_cost_level": "Medium",
+        "status": "Constraint Review",
+        "investment_score": 19
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              21.0,
+              38.95
+            ],
+            [
+              21.45,
+              38.95
+            ],
+            [
+              21.45,
+              39.4
+            ],
+            [
+              21.0,
+              39.4
+            ],
+            [
+              21.0,
+              38.95
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-005",
+        "name": "Onshore Wind Candidate 005",
+        "technology": "Onshore Wind",
+        "solar_score": 62,
+        "wind_score": 88,
+        "distance_to_substation_km": 20.9,
+        "distance_to_line_km": 17.0,
+        "excluded": true,
+        "land_excluded": true,
+        "natura_2000_overlap_fraction": 0.5856,
+        "connection_cost_level": "High",
+        "status": "Constraint Review",
+        "investment_score": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              21.0,
+              39.4
+            ],
+            [
+              21.45,
+              39.4
+            ],
+            [
+              21.45,
+              39.85
+            ],
+            [
+              21.0,
+              39.85
+            ],
+            [
+              21.0,
+              39.4
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-006",
+        "name": "Solar PV Candidate 006",
+        "technology": "Solar PV",
+        "solar_score": 60,
+        "wind_score": 60,
+        "distance_to_substation_km": 19.1,
+        "distance_to_line_km": 19.1,
+        "excluded": true,
+        "land_excluded": true,
+        "natura_2000_overlap_fraction": 0.1648,
+        "connection_cost_level": "High",
+        "status": "Constraint Review",
+        "investment_score": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              21.0,
+              39.85
+            ],
+            [
+              21.45,
+              39.85
+            ],
+            [
+              21.45,
+              40.3
+            ],
+            [
+              21.0,
+              40.3
+            ],
+            [
+              21.0,
+              39.85
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-007",
+        "name": "Solar PV Candidate 007",
+        "technology": "Solar PV",
+        "solar_score": 90,
+        "wind_score": 48,
+        "distance_to_substation_km": 20.1,
+        "distance_to_line_km": 5.5,
+        "excluded": true,
+        "land_excluded": true,
+        "natura_2000_overlap_fraction": 0.1988,
+        "connection_cost_level": "High",
+        "status": "Constraint Review",
+        "investment_score": 4
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              21.45,
+              37.6
+            ],
+            [
+              21.9,
+              37.6
+            ],
+            [
+              21.9,
+              38.05
+            ],
+            [
+              21.45,
+              38.05
+            ],
+            [
+              21.45,
+              37.6
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-008",
+        "name": "Solar PV Candidate 008",
+        "technology": "Solar PV",
+        "solar_score": 90,
+        "wind_score": 48,
+        "distance_to_substation_km": 6.9,
+        "distance_to_line_km": 7.0,
+        "excluded": false,
+        "land_excluded": false,
+        "natura_2000_overlap_fraction": 0.1119,
+        "connection_cost_level": "Medium",
+        "status": "Screened Candidate",
+        "investment_score": 64
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              21.45,
+              38.05
+            ],
+            [
+              21.9,
+              38.05
+            ],
+            [
+              21.9,
+              38.5
+            ],
+            [
+              21.45,
+              38.5
+            ],
+            [
+              21.45,
+              38.05
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-009",
+        "name": "Solar PV Candidate 009",
+        "technology": "Solar PV",
+        "solar_score": 76,
+        "wind_score": 68,
+        "distance_to_substation_km": 18.2,
+        "distance_to_line_km": 15.8,
+        "excluded": true,
+        "land_excluded": true,
+        "natura_2000_overlap_fraction": 0.1658,
+        "connection_cost_level": "High",
+        "status": "Constraint Review",
+        "investment_score": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              21.45,
+              38.5
+            ],
+            [
+              21.9,
+              38.5
+            ],
+            [
+              21.9,
+              38.95
+            ],
+            [
+              21.45,
+              38.95
+            ],
+            [
+              21.45,
+              38.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-010",
+        "name": "Onshore Wind Candidate 010",
+        "technology": "Onshore Wind",
+        "solar_score": 62,
+        "wind_score": 88,
+        "distance_to_substation_km": 20.6,
+        "distance_to_line_km": 20.5,
+        "excluded": true,
+        "land_excluded": true,
+        "natura_2000_overlap_fraction": 0.2231,
+        "connection_cost_level": "High",
+        "status": "Constraint Review",
+        "investment_score": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              21.45,
+              38.95
+            ],
+            [
+              21.9,
+              38.95
+            ],
+            [
+              21.9,
+              39.4
+            ],
+            [
+              21.45,
+              39.4
+            ],
+            [
+              21.45,
+              38.95
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-011",
+        "name": "Onshore Wind Candidate 011",
+        "technology": "Onshore Wind",
+        "solar_score": 62,
+        "wind_score": 88,
+        "distance_to_substation_km": 10.9,
+        "distance_to_line_km": 2.2,
+        "excluded": true,
+        "land_excluded": true,
+        "natura_2000_overlap_fraction": 0.5548,
+        "connection_cost_level": "Medium",
+        "status": "Constraint Review",
+        "investment_score": 26
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              21.45,
+              39.4
+            ],
+            [
+              21.9,
+              39.4
+            ],
+            [
+              21.9,
+              39.85
+            ],
+            [
+              21.45,
+              39.85
+            ],
+            [
+              21.45,
+              39.4
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-012",
+        "name": "Solar PV Candidate 012",
+        "technology": "Solar PV",
+        "solar_score": 60,
+        "wind_score": 60,
+        "distance_to_substation_km": 19.1,
+        "distance_to_line_km": 0.2,
+        "excluded": false,
+        "land_excluded": false,
+        "natura_2000_overlap_fraction": 0.0963,
+        "connection_cost_level": "Medium",
+        "status": "Screened Candidate",
+        "investment_score": 25
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              21.45,
+              39.85
+            ],
+            [
+              21.9,
+              39.85
+            ],
+            [
+              21.9,
+              40.3
+            ],
+            [
+              21.45,
+              40.3
+            ],
+            [
+              21.45,
+              39.85
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-013",
+        "name": "Solar PV Candidate 013",
+        "technology": "Solar PV",
+        "solar_score": 90,
+        "wind_score": 48,
+        "distance_to_substation_km": 22.7,
+        "distance_to_line_km": 12.6,
+        "excluded": true,
+        "land_excluded": true,
+        "natura_2000_overlap_fraction": 0.2674,
+        "connection_cost_level": "High",
+        "status": "Constraint Review",
+        "investment_score": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              21.9,
+              37.6
+            ],
+            [
+              22.35,
+              37.6
+            ],
+            [
+              22.35,
+              38.05
+            ],
+            [
+              21.9,
+              38.05
+            ],
+            [
+              21.9,
+              37.6
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-014",
+        "name": "Solar PV Candidate 014",
+        "technology": "Solar PV",
+        "solar_score": 90,
+        "wind_score": 48,
+        "distance_to_substation_km": 4.8,
+        "distance_to_line_km": 4.8,
+        "excluded": true,
+        "land_excluded": true,
+        "natura_2000_overlap_fraction": 0.1742,
+        "connection_cost_level": "Low",
+        "status": "Constraint Review",
+        "investment_score": 41
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              21.9,
+              38.05
+            ],
+            [
+              22.35,
+              38.05
+            ],
+            [
+              22.35,
+              38.5
+            ],
+            [
+              21.9,
+              38.5
+            ],
+            [
+              21.9,
+              38.05
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-015",
+        "name": "Solar PV Candidate 015",
+        "technology": "Solar PV",
+        "solar_score": 76,
+        "wind_score": 68,
+        "distance_to_substation_km": 21.7,
+        "distance_to_line_km": 21.1,
+        "excluded": true,
+        "land_excluded": true,
+        "natura_2000_overlap_fraction": 0.3369,
+        "connection_cost_level": "High",
+        "status": "Constraint Review",
+        "investment_score": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              21.9,
+              38.5
+            ],
+            [
+              22.35,
+              38.5
+            ],
+            [
+              22.35,
+              38.95
+            ],
+            [
+              21.9,
+              38.95
+            ],
+            [
+              21.9,
+              38.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-016",
+        "name": "Onshore Wind Candidate 016",
+        "technology": "Onshore Wind",
+        "solar_score": 62,
+        "wind_score": 88,
+        "distance_to_substation_km": 3.1,
+        "distance_to_line_km": 1.6,
+        "excluded": false,
+        "land_excluded": false,
+        "natura_2000_overlap_fraction": 0.0131,
+        "connection_cost_level": "Low",
+        "status": "Screened Candidate",
+        "investment_score": 79
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              21.9,
+              38.95
+            ],
+            [
+              22.35,
+              38.95
+            ],
+            [
+              22.35,
+              39.4
+            ],
+            [
+              21.9,
+              39.4
+            ],
+            [
+              21.9,
+              38.95
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-017",
+        "name": "Onshore Wind Candidate 017",
+        "technology": "Onshore Wind",
+        "solar_score": 62,
+        "wind_score": 88,
+        "distance_to_substation_km": 13.8,
+        "distance_to_line_km": 3.2,
+        "excluded": true,
+        "land_excluded": true,
+        "natura_2000_overlap_fraction": 0.2925,
+        "connection_cost_level": "Medium",
+        "status": "Constraint Review",
+        "investment_score": 22
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              21.9,
+              39.4
+            ],
+            [
+              22.35,
+              39.4
+            ],
+            [
+              22.35,
+              39.85
+            ],
+            [
+              21.9,
+              39.85
+            ],
+            [
+              21.9,
+              39.4
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-018",
+        "name": "Solar PV Candidate 018",
+        "technology": "Solar PV",
+        "solar_score": 60,
+        "wind_score": 60,
+        "distance_to_substation_km": 17.7,
+        "distance_to_line_km": 2.8,
+        "excluded": true,
+        "land_excluded": true,
+        "natura_2000_overlap_fraction": 0.1571,
+        "connection_cost_level": "Medium",
+        "status": "Constraint Review",
+        "investment_score": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              21.9,
+              39.85
+            ],
+            [
+              22.35,
+              39.85
+            ],
+            [
+              22.35,
+              40.3
+            ],
+            [
+              21.9,
+              40.3
+            ],
+            [
+              21.9,
+              39.85
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-019",
+        "name": "Solar PV Candidate 019",
+        "technology": "Solar PV",
+        "solar_score": 90,
+        "wind_score": 48,
+        "distance_to_substation_km": 22.2,
+        "distance_to_line_km": 10.9,
+        "excluded": true,
+        "land_excluded": true,
+        "natura_2000_overlap_fraction": 0.2283,
+        "connection_cost_level": "High",
+        "status": "Constraint Review",
+        "investment_score": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              22.35,
+              37.6
+            ],
+            [
+              22.8,
+              37.6
+            ],
+            [
+              22.8,
+              38.05
+            ],
+            [
+              22.35,
+              38.05
+            ],
+            [
+              22.35,
+              37.6
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-020",
+        "name": "Solar PV Candidate 020",
+        "technology": "Solar PV",
+        "solar_score": 90,
+        "wind_score": 48,
+        "distance_to_substation_km": 4.4,
+        "distance_to_line_km": 4.4,
+        "excluded": false,
+        "land_excluded": false,
+        "natura_2000_overlap_fraction": 0.0694,
+        "connection_cost_level": "Low",
+        "status": "Screened Candidate",
+        "investment_score": 77
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              22.35,
+              38.05
+            ],
+            [
+              22.8,
+              38.05
+            ],
+            [
+              22.8,
+              38.5
+            ],
+            [
+              22.35,
+              38.5
+            ],
+            [
+              22.35,
+              38.05
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-021",
+        "name": "Solar PV Candidate 021",
+        "technology": "Solar PV",
+        "solar_score": 76,
+        "wind_score": 68,
+        "distance_to_substation_km": 8.7,
+        "distance_to_line_km": 3.5,
+        "excluded": true,
+        "land_excluded": true,
+        "natura_2000_overlap_fraction": 0.4024,
+        "connection_cost_level": "Medium",
+        "status": "Constraint Review",
+        "investment_score": 16
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              22.35,
+              38.5
+            ],
+            [
+              22.8,
+              38.5
+            ],
+            [
+              22.8,
+              38.95
+            ],
+            [
+              22.35,
+              38.95
+            ],
+            [
+              22.35,
+              38.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-022",
+        "name": "Onshore Wind Candidate 022",
+        "technology": "Onshore Wind",
+        "solar_score": 62,
+        "wind_score": 88,
+        "distance_to_substation_km": 12.7,
+        "distance_to_line_km": 8.1,
+        "excluded": true,
+        "land_excluded": true,
+        "natura_2000_overlap_fraction": 0.261,
+        "connection_cost_level": "Medium",
+        "status": "Constraint Review",
+        "investment_score": 19
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              22.35,
+              38.95
+            ],
+            [
+              22.8,
+              38.95
+            ],
+            [
+              22.8,
+              39.4
+            ],
+            [
+              22.35,
+              39.4
+            ],
+            [
+              22.35,
+              38.95
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-023",
+        "name": "Onshore Wind Candidate 023",
+        "technology": "Onshore Wind",
+        "solar_score": 62,
+        "wind_score": 88,
+        "distance_to_substation_km": 10.9,
+        "distance_to_line_km": 6.2,
+        "excluded": true,
+        "land_excluded": true,
+        "natura_2000_overlap_fraction": 0.4735,
+        "connection_cost_level": "Medium",
+        "status": "Constraint Review",
+        "investment_score": 23
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              22.35,
+              39.4
+            ],
+            [
+              22.8,
+              39.4
+            ],
+            [
+              22.8,
+              39.85
+            ],
+            [
+              22.35,
+              39.85
+            ],
+            [
+              22.35,
+              39.4
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-024",
+        "name": "Solar PV Candidate 024",
+        "technology": "Solar PV",
+        "solar_score": 60,
+        "wind_score": 60,
+        "distance_to_substation_km": 5.4,
+        "distance_to_line_km": 3.6,
+        "excluded": true,
+        "land_excluded": true,
+        "natura_2000_overlap_fraction": 0.2283,
+        "connection_cost_level": "Low",
+        "status": "Constraint Review",
+        "investment_score": 12
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              22.35,
+              39.85
+            ],
+            [
+              22.8,
+              39.85
+            ],
+            [
+              22.8,
+              40.3
+            ],
+            [
+              22.35,
+              40.3
+            ],
+            [
+              22.35,
+              39.85
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-025",
+        "name": "Solar PV Candidate 025",
+        "technology": "Solar PV",
+        "solar_score": 90,
+        "wind_score": 48,
+        "distance_to_substation_km": 10.9,
+        "distance_to_line_km": 7.4,
+        "excluded": false,
+        "land_excluded": false,
+        "natura_2000_overlap_fraction": 0.0376,
+        "connection_cost_level": "Medium",
+        "status": "Screened Candidate",
+        "investment_score": 59
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              22.8,
+              37.6
+            ],
+            [
+              23.25,
+              37.6
+            ],
+            [
+              23.25,
+              38.05
+            ],
+            [
+              22.8,
+              38.05
+            ],
+            [
+              22.8,
+              37.6
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-026",
+        "name": "Solar PV Candidate 026",
+        "technology": "Solar PV",
+        "solar_score": 90,
+        "wind_score": 48,
+        "distance_to_substation_km": 7.7,
+        "distance_to_line_km": 7.5,
+        "excluded": false,
+        "land_excluded": false,
+        "natura_2000_overlap_fraction": 0.0168,
+        "connection_cost_level": "Medium",
+        "status": "Screened Candidate",
+        "investment_score": 63
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              22.8,
+              38.05
+            ],
+            [
+              23.25,
+              38.05
+            ],
+            [
+              23.25,
+              38.5
+            ],
+            [
+              22.8,
+              38.5
+            ],
+            [
+              22.8,
+              38.05
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-027",
+        "name": "Solar PV Candidate 027",
+        "technology": "Solar PV",
+        "solar_score": 76,
+        "wind_score": 68,
+        "distance_to_substation_km": 7.7,
+        "distance_to_line_km": 0.7,
+        "excluded": false,
+        "land_excluded": false,
+        "natura_2000_overlap_fraction": 0.0046,
+        "connection_cost_level": "Low",
+        "status": "Screened Candidate",
+        "investment_score": 62
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              22.8,
+              38.5
+            ],
+            [
+              23.25,
+              38.5
+            ],
+            [
+              23.25,
+              38.95
+            ],
+            [
+              22.8,
+              38.95
+            ],
+            [
+              22.8,
+              38.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-028",
+        "name": "Onshore Wind Candidate 028",
+        "technology": "Onshore Wind",
+        "solar_score": 62,
+        "wind_score": 88,
+        "distance_to_substation_km": 15.8,
+        "distance_to_line_km": 15.9,
+        "excluded": false,
+        "land_excluded": false,
+        "natura_2000_overlap_fraction": 0.0708,
+        "connection_cost_level": "High",
+        "status": "Screened Candidate",
+        "investment_score": 34
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              22.8,
+              38.95
+            ],
+            [
+              23.25,
+              38.95
+            ],
+            [
+              23.25,
+              39.4
+            ],
+            [
+              22.8,
+              39.4
+            ],
+            [
+              22.8,
+              38.95
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-029",
+        "name": "Onshore Wind Candidate 029",
+        "technology": "Onshore Wind",
+        "solar_score": 62,
+        "wind_score": 88,
+        "distance_to_substation_km": 28.5,
+        "distance_to_line_km": 26.4,
+        "excluded": true,
+        "land_excluded": true,
+        "natura_2000_overlap_fraction": 0.3183,
+        "connection_cost_level": "High",
+        "status": "Constraint Review",
+        "investment_score": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              22.8,
+              39.4
+            ],
+            [
+              23.25,
+              39.4
+            ],
+            [
+              23.25,
+              39.85
+            ],
+            [
+              22.8,
+              39.85
+            ],
+            [
+              22.8,
+              39.4
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-030",
+        "name": "Solar PV Candidate 030",
+        "technology": "Solar PV",
+        "solar_score": 60,
+        "wind_score": 60,
+        "distance_to_substation_km": 25.3,
+        "distance_to_line_km": 28.2,
+        "excluded": false,
+        "land_excluded": false,
+        "natura_2000_overlap_fraction": 0.0,
+        "connection_cost_level": "High",
+        "status": "Screened Candidate",
+        "investment_score": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              22.8,
+              39.85
+            ],
+            [
+              23.25,
+              39.85
+            ],
+            [
+              23.25,
+              40.3
+            ],
+            [
+              22.8,
+              40.3
+            ],
+            [
+              22.8,
+              39.85
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-031",
+        "name": "Solar PV Candidate 031",
+        "technology": "Solar PV",
+        "solar_score": 90,
+        "wind_score": 48,
+        "distance_to_substation_km": 9.7,
+        "distance_to_line_km": 18.8,
+        "excluded": false,
+        "land_excluded": false,
+        "natura_2000_overlap_fraction": 0.0,
+        "connection_cost_level": "High",
+        "status": "Screened Candidate",
+        "investment_score": 41
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              23.25,
+              37.6
+            ],
+            [
+              23.7,
+              37.6
+            ],
+            [
+              23.7,
+              38.05
+            ],
+            [
+              23.25,
+              38.05
+            ],
+            [
+              23.25,
+              37.6
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-032",
+        "name": "Solar PV Candidate 032",
+        "technology": "Solar PV",
+        "solar_score": 90,
+        "wind_score": 48,
+        "distance_to_substation_km": 8.1,
+        "distance_to_line_km": 2.4,
+        "excluded": false,
+        "land_excluded": false,
+        "natura_2000_overlap_fraction": 0.0671,
+        "connection_cost_level": "Low",
+        "status": "Screened Candidate",
+        "investment_score": 74
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              23.25,
+              38.05
+            ],
+            [
+              23.7,
+              38.05
+            ],
+            [
+              23.7,
+              38.5
+            ],
+            [
+              23.25,
+              38.5
+            ],
+            [
+              23.25,
+              38.05
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-033",
+        "name": "Solar PV Candidate 033",
+        "technology": "Solar PV",
+        "solar_score": 76,
+        "wind_score": 68,
+        "distance_to_substation_km": 12.0,
+        "distance_to_line_km": 1.2,
+        "excluded": false,
+        "land_excluded": false,
+        "natura_2000_overlap_fraction": 0.0671,
+        "connection_cost_level": "Medium",
+        "status": "Screened Candidate",
+        "investment_score": 49
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              23.25,
+              38.5
+            ],
+            [
+              23.7,
+              38.5
+            ],
+            [
+              23.7,
+              38.95
+            ],
+            [
+              23.25,
+              38.95
+            ],
+            [
+              23.25,
+              38.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-034",
+        "name": "Onshore Wind Candidate 034",
+        "technology": "Onshore Wind",
+        "solar_score": 62,
+        "wind_score": 88,
+        "distance_to_substation_km": 2.8,
+        "distance_to_line_km": 19.2,
+        "excluded": false,
+        "land_excluded": false,
+        "natura_2000_overlap_fraction": 0.0066,
+        "connection_cost_level": "Medium",
+        "status": "Screened Candidate",
+        "investment_score": 57
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              23.25,
+              38.95
+            ],
+            [
+              23.7,
+              38.95
+            ],
+            [
+              23.7,
+              39.4
+            ],
+            [
+              23.25,
+              39.4
+            ],
+            [
+              23.25,
+              38.95
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-035",
+        "name": "Onshore Wind Candidate 035",
+        "technology": "Onshore Wind",
+        "solar_score": 62,
+        "wind_score": 88,
+        "distance_to_substation_km": 48.7,
+        "distance_to_line_km": 45.8,
+        "excluded": false,
+        "land_excluded": false,
+        "natura_2000_overlap_fraction": 0.0,
+        "connection_cost_level": "High",
+        "status": "Screened Candidate",
+        "investment_score": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              23.25,
+              39.4
+            ],
+            [
+              23.7,
+              39.4
+            ],
+            [
+              23.7,
+              39.85
+            ],
+            [
+              23.25,
+              39.85
+            ],
+            [
+              23.25,
+              39.4
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-036",
+        "name": "Solar PV Candidate 036",
+        "technology": "Solar PV",
+        "solar_score": 60,
+        "wind_score": 60,
+        "distance_to_substation_km": 6.2,
+        "distance_to_line_km": 5.5,
+        "excluded": false,
+        "land_excluded": false,
+        "natura_2000_overlap_fraction": 0.0149,
+        "connection_cost_level": "Low",
+        "status": "Screened Candidate",
+        "investment_score": 44
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              23.25,
+              39.85
+            ],
+            [
+              23.7,
+              39.85
+            ],
+            [
+              23.7,
+              40.3
+            ],
+            [
+              23.25,
+              40.3
+            ],
+            [
+              23.25,
+              39.85
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-037",
+        "name": "Solar PV Candidate 037",
+        "technology": "Solar PV",
+        "solar_score": 90,
+        "wind_score": 48,
+        "distance_to_substation_km": 6.6,
+        "distance_to_line_km": 1.8,
+        "excluded": false,
+        "land_excluded": false,
+        "natura_2000_overlap_fraction": 0.097,
+        "connection_cost_level": "Low",
+        "status": "Screened Candidate",
+        "investment_score": 77
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              23.7,
+              37.6
+            ],
+            [
+              24.15,
+              37.6
+            ],
+            [
+              24.15,
+              38.05
+            ],
+            [
+              23.7,
+              38.05
+            ],
+            [
+              23.7,
+              37.6
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-038",
+        "name": "Solar PV Candidate 038",
+        "technology": "Solar PV",
+        "solar_score": 90,
+        "wind_score": 48,
+        "distance_to_substation_km": 6.0,
+        "distance_to_line_km": 5.0,
+        "excluded": false,
+        "land_excluded": false,
+        "natura_2000_overlap_fraction": 0.0698,
+        "connection_cost_level": "Low",
+        "status": "Screened Candidate",
+        "investment_score": 75
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              23.7,
+              38.05
+            ],
+            [
+              24.15,
+              38.05
+            ],
+            [
+              24.15,
+              38.5
+            ],
+            [
+              23.7,
+              38.5
+            ],
+            [
+              23.7,
+              38.05
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-039",
+        "name": "Solar PV Candidate 039",
+        "technology": "Solar PV",
+        "solar_score": 76,
+        "wind_score": 68,
+        "distance_to_substation_km": 31.3,
+        "distance_to_line_km": 28.7,
+        "excluded": true,
+        "land_excluded": true,
+        "natura_2000_overlap_fraction": 0.166,
+        "connection_cost_level": "High",
+        "status": "Constraint Review",
+        "investment_score": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              23.7,
+              38.5
+            ],
+            [
+              24.15,
+              38.5
+            ],
+            [
+              24.15,
+              38.95
+            ],
+            [
+              23.7,
+              38.95
+            ],
+            [
+              23.7,
+              38.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-040",
+        "name": "Onshore Wind Candidate 040",
+        "technology": "Onshore Wind",
+        "solar_score": 62,
+        "wind_score": 88,
+        "distance_to_substation_km": 35.8,
+        "distance_to_line_km": 57.9,
+        "excluded": true,
+        "land_excluded": true,
+        "natura_2000_overlap_fraction": 0.7416,
+        "connection_cost_level": "High",
+        "status": "Constraint Review",
+        "investment_score": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              23.7,
+              38.95
+            ],
+            [
+              24.15,
+              38.95
+            ],
+            [
+              24.15,
+              39.4
+            ],
+            [
+              23.7,
+              39.4
+            ],
+            [
+              23.7,
+              38.95
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-041",
+        "name": "Onshore Wind Candidate 041",
+        "technology": "Onshore Wind",
+        "solar_score": 62,
+        "wind_score": 88,
+        "distance_to_substation_km": 60.7,
+        "distance_to_line_km": 65.7,
+        "excluded": false,
+        "land_excluded": false,
+        "natura_2000_overlap_fraction": 0.1388,
+        "connection_cost_level": "High",
+        "status": "Screened Candidate",
+        "investment_score": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              23.7,
+              39.4
+            ],
+            [
+              24.15,
+              39.4
+            ],
+            [
+              24.15,
+              39.85
+            ],
+            [
+              23.7,
+              39.85
+            ],
+            [
+              23.7,
+              39.4
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cand-042",
+        "name": "Solar PV Candidate 042",
+        "technology": "Solar PV",
+        "solar_score": 60,
+        "wind_score": 60,
+        "distance_to_substation_km": 25.5,
+        "distance_to_line_km": 25.5,
+        "excluded": true,
+        "land_excluded": true,
+        "natura_2000_overlap_fraction": 0.184,
+        "connection_cost_level": "High",
+        "status": "Constraint Review",
+        "investment_score": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              23.7,
+              39.85
+            ],
+            [
+              24.15,
+              39.85
+            ],
+            [
+              24.15,
+              40.3
+            ],
+            [
+              23.7,
+              40.3
+            ],
+            [
+              23.7,
+              39.85
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

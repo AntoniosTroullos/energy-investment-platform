@@ -1,0 +1,17 @@
+{
+  "installation_source_file": "C:\\Users\\megas\\Downloads\\v_sdi_r_storage12.csv",
+  "operation_source_file": "C:\\Users\\megas\\Downloads\\v_sdi_r_storage13.csv",
+  "installation_rows_read": 18,
+  "operation_rows_read": 0,
+  "candidate_features_built": 18,
+  "kept_features": 18,
+  "skipped_due_to_duplicates": 0,
+  "technology_breakdown": {
+    "Storage": 18
+  },
+  "status_breakdown": {
+    "Under Construction": 18
+  },
+  "empty_operation_source": true,
+  "top_duplicate_matches": []
+}

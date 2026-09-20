@@ -1,0 +1,16 @@
+{
+  "source_zip": "C:\\Users\\megas\\Downloads\\gis-raaey-wms-rae_status-v_sdi_r_aiolika1237_count_ag-fy5j57_9.zip",
+  "official_source_name": "Greek government wind registry",
+  "official_features_loaded": 1954,
+  "status_breakdown": {
+    "Announced": 119,
+    "Operating": 438,
+    "Planned": 1269,
+    "Under Construction": 128
+  },
+  "technology_breakdown": {
+    "onshore_wind": 1954
+  },
+  "count_missing_capacity": 135,
+  "count_missing_geometry": 0
+}

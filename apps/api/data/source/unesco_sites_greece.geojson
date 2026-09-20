@@ -1,0 +1,33 @@
+{
+  "type": "FeatureCollection",
+  "properties": {
+    "source": "Hand-curated from UNESCO's published World Heritage List (whc.unesco.org/en/statesparties/gr), a small enough real list (19 sites) to enumerate directly rather than fetch programmatically -- no Overpass/OSM tag reliably marks UNESCO status in Greece.",
+    "caveat": "Each feature is a single representative point (site centroid or principal monument location), NOT the official UNESCO protected-area/buffer-zone polygon -- those boundary geodata are not published in any open source found. Multi-location inscriptions (e.g. Mycenae/Tiryns, Daphni/Hosios Loukas/Nea Moni, Pythagoreion/Heraion) are split into one point per physical location, sharing the same unesco_id. Treat spatial_constraints.py's use of these as a labeled point-buffer proxy, not an exact legal boundary.",
+    "built": "2026-08-19"
+  },
+  "features": [
+    {"type": "Feature", "properties": {"unesco_id": "gr-01", "name": "Acropolis, Athens", "category": "cultural", "year_inscribed": 1987}, "geometry": {"type": "Point", "coordinates": [23.7257, 37.9715]}},
+    {"type": "Feature", "properties": {"unesco_id": "gr-02", "name": "Archaeological Site of Delphi", "category": "cultural", "year_inscribed": 1987}, "geometry": {"type": "Point", "coordinates": [22.5010, 38.4824]}},
+    {"type": "Feature", "properties": {"unesco_id": "gr-03", "name": "Temple of Apollo Epicurius at Bassae", "category": "cultural", "year_inscribed": 1986}, "geometry": {"type": "Point", "coordinates": [21.9008, 37.4222]}},
+    {"type": "Feature", "properties": {"unesco_id": "gr-04", "name": "Mount Athos", "category": "mixed", "year_inscribed": 1988}, "geometry": {"type": "Point", "coordinates": [24.3250, 40.1719]}},
+    {"type": "Feature", "properties": {"unesco_id": "gr-05", "name": "Meteora", "category": "mixed", "year_inscribed": 1988}, "geometry": {"type": "Point", "coordinates": [21.6306, 39.7217]}},
+    {"type": "Feature", "properties": {"unesco_id": "gr-06", "name": "Paleochristian and Byzantine Monuments of Thessaloniki", "category": "cultural", "year_inscribed": 1988}, "geometry": {"type": "Point", "coordinates": [22.9444, 40.6401]}},
+    {"type": "Feature", "properties": {"unesco_id": "gr-07", "name": "Archaeological Site of Epidaurus", "category": "cultural", "year_inscribed": 1988}, "geometry": {"type": "Point", "coordinates": [23.0784, 37.5959]}},
+    {"type": "Feature", "properties": {"unesco_id": "gr-08", "name": "Medieval City of Rhodes", "category": "cultural", "year_inscribed": 1988}, "geometry": {"type": "Point", "coordinates": [28.2225, 36.4408]}},
+    {"type": "Feature", "properties": {"unesco_id": "gr-09", "name": "Archaeological Site of Mystras", "category": "cultural", "year_inscribed": 1989}, "geometry": {"type": "Point", "coordinates": [22.3667, 37.0667]}},
+    {"type": "Feature", "properties": {"unesco_id": "gr-10", "name": "Archaeological Site of Olympia", "category": "cultural", "year_inscribed": 1989}, "geometry": {"type": "Point", "coordinates": [21.6300, 37.6382]}},
+    {"type": "Feature", "properties": {"unesco_id": "gr-11", "name": "Delos", "category": "cultural", "year_inscribed": 1990}, "geometry": {"type": "Point", "coordinates": [25.2686, 37.3964]}},
+    {"type": "Feature", "properties": {"unesco_id": "gr-12", "name": "Monastery of Daphni", "category": "cultural", "year_inscribed": 1990, "inscription_group": "Daphni, Hosios Loukas and Nea Moni of Chios"}, "geometry": {"type": "Point", "coordinates": [23.5911, 38.0072]}},
+    {"type": "Feature", "properties": {"unesco_id": "gr-12", "name": "Hosios Loukas Monastery", "category": "cultural", "year_inscribed": 1990, "inscription_group": "Daphni, Hosios Loukas and Nea Moni of Chios"}, "geometry": {"type": "Point", "coordinates": [22.9822, 38.4231]}},
+    {"type": "Feature", "properties": {"unesco_id": "gr-12", "name": "Nea Moni of Chios", "category": "cultural", "year_inscribed": 1990, "inscription_group": "Daphni, Hosios Loukas and Nea Moni of Chios"}, "geometry": {"type": "Point", "coordinates": [26.0333, 38.3667]}},
+    {"type": "Feature", "properties": {"unesco_id": "gr-13", "name": "Pythagoreion", "category": "cultural", "year_inscribed": 1992, "inscription_group": "Pythagoreion and Heraion of Samos"}, "geometry": {"type": "Point", "coordinates": [26.9333, 37.6833]}},
+    {"type": "Feature", "properties": {"unesco_id": "gr-13", "name": "Heraion of Samos", "category": "cultural", "year_inscribed": 1992, "inscription_group": "Pythagoreion and Heraion of Samos"}, "geometry": {"type": "Point", "coordinates": [26.8814, 37.6961]}},
+    {"type": "Feature", "properties": {"unesco_id": "gr-14", "name": "Archaeological Site of Vergina", "category": "cultural", "year_inscribed": 1996}, "geometry": {"type": "Point", "coordinates": [22.3183, 40.4794]}},
+    {"type": "Feature", "properties": {"unesco_id": "gr-15", "name": "Mycenae", "category": "cultural", "year_inscribed": 1999, "inscription_group": "Archaeological Sites of Mycenae and Tiryns"}, "geometry": {"type": "Point", "coordinates": [22.7565, 37.7307]}},
+    {"type": "Feature", "properties": {"unesco_id": "gr-15", "name": "Tiryns", "category": "cultural", "year_inscribed": 1999, "inscription_group": "Archaeological Sites of Mycenae and Tiryns"}, "geometry": {"type": "Point", "coordinates": [22.8005, 37.5998]}},
+    {"type": "Feature", "properties": {"unesco_id": "gr-16", "name": "Historic Centre (Chora) of Patmos with Monastery of Saint-John and Cave of the Apocalypse", "category": "cultural", "year_inscribed": 1999}, "geometry": {"type": "Point", "coordinates": [26.5500, 37.3000]}},
+    {"type": "Feature", "properties": {"unesco_id": "gr-17", "name": "Old Town of Corfu", "category": "cultural", "year_inscribed": 2007}, "geometry": {"type": "Point", "coordinates": [19.9217, 39.6243]}},
+    {"type": "Feature", "properties": {"unesco_id": "gr-18", "name": "Archaeological Site of Philippi", "category": "cultural", "year_inscribed": 2016}, "geometry": {"type": "Point", "coordinates": [24.2864, 41.0122]}},
+    {"type": "Feature", "properties": {"unesco_id": "gr-19", "name": "Zagori Cultural Landscape", "category": "cultural", "year_inscribed": 2023}, "geometry": {"type": "Point", "coordinates": [20.7500, 39.8000]}}
+  ]
+}

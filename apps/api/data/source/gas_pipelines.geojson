@@ -1,0 +1,187 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gas-pipeline-main-trunk",
+        "name": "NNGTS Main Trunk",
+        "operator": "DESFA",
+        "asset_class": "gas_pipeline",
+        "pipeline_role": "Main Transmission Backbone",
+        "substance": "Natural Gas",
+        "status": "Active",
+        "diameter_in": "30-36",
+        "source": "DESFA public NNGTS description and main pipeline references"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [23.3865, 41.2354],
+          [23.551, 41.088],
+          [23.012, 40.731],
+          [22.761, 40.629],
+          [22.417, 39.639],
+          [22.434, 38.9],
+          [23.735, 38.303],
+          [23.54, 38.02]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gas-pipeline-kipi-branch",
+        "name": "Kipi Interconnection Branch",
+        "operator": "DESFA",
+        "asset_class": "gas_pipeline",
+        "pipeline_role": "Border Import Branch",
+        "substance": "Natural Gas",
+        "status": "Active",
+        "diameter_in": "30",
+        "source": "DESFA public Kipi branch description"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [26.284, 40.992],
+          [25.874, 40.849],
+          [25.404, 41.119],
+          [24.288, 41.122],
+          [23.551, 41.088]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gas-pipeline-nea-mesimvria-connector",
+        "name": "Nea Mesimvria TAP Connector",
+        "operator": "DESFA",
+        "asset_class": "gas_pipeline",
+        "pipeline_role": "Pipeline Entry Connector",
+        "substance": "Natural Gas",
+        "status": "Active",
+        "diameter_in": "30",
+        "source": "DESFA public Nea Mesimvria entry-point documentation"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [22.88, 40.69],
+          [22.761, 40.629],
+          [23.012, 40.731]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gas-pipeline-amfitriti-branch",
+        "name": "Amfitriti FSRU Branch",
+        "operator": "DESFA / GASTRADE",
+        "asset_class": "gas_pipeline",
+        "pipeline_role": "FSRU Import Branch",
+        "substance": "Natural Gas",
+        "status": "Active",
+        "diameter_in": "30",
+        "source": "DESFA public Amfitriti interconnection documentation"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [25.912, 40.861],
+          [25.874, 40.849],
+          [25.404, 41.119]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gas-pipeline-agia-triada-branch",
+        "name": "Agia Triada LNG Branch",
+        "operator": "DESFA",
+        "asset_class": "gas_pipeline",
+        "pipeline_role": "LNG Import Branch",
+        "substance": "Natural Gas",
+        "status": "Active",
+        "diameter_in": "24",
+        "source": "DESFA public Revithoussa and Agia Triada entry-point documentation"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [23.365, 37.965],
+          [23.432, 38.025],
+          [23.54, 38.02]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gas-pipeline-peloponnese-branch",
+        "name": "Peloponnese Gas Branch",
+        "operator": "DESFA",
+        "asset_class": "gas_pipeline",
+        "pipeline_role": "Regional Branch",
+        "substance": "Natural Gas",
+        "status": "Active",
+        "diameter_in": "24-30",
+        "source": "DESFA public Peloponnese branch description"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [23.54, 38.02],
+          [22.999, 37.939],
+          [22.739, 37.513],
+          [22.142, 37.401]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gas-pipeline-volos-branch",
+        "name": "Volos Branch",
+        "operator": "DESFA",
+        "asset_class": "gas_pipeline",
+        "pipeline_role": "Regional Branch",
+        "substance": "Natural Gas",
+        "status": "Active",
+        "diameter_in": "10",
+        "source": "DESFA public Central Greece branch description"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [22.417, 39.639],
+          [22.95, 39.361]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gas-pipeline-trikala-branch",
+        "name": "Trikala Branch",
+        "operator": "DESFA",
+        "asset_class": "gas_pipeline",
+        "pipeline_role": "Regional Branch",
+        "substance": "Natural Gas",
+        "status": "Active",
+        "diameter_in": "10",
+        "source": "DESFA public Central Greece branch description"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [22.417, 39.639],
+          [21.767, 39.556]
+        ]
+      }
+    }
+  ]
+}

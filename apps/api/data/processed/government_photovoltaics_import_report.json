@@ -1,0 +1,729 @@
+{
+  "source_file": "C:\\Users\\megas\\Downloads\\V_SDI_R_PHOTOVOLTAICS_ALL.csv",
+  "total_rows_read": 4951,
+  "kept_features": 877,
+  "skipped_due_to_status": 2660,
+  "skipped_due_to_duplicates": 1414,
+  "kept_status_breakdown": {
+    "ΑΔΕΙΑ ΕΓΚΑΤΑΣΤΑΣΗΣ": 56,
+    "ΑΔΕΙΑ ΛΕΙΤΟΥΡΓΙΑΣ": 140,
+    "ΑΔΕΙΑ ΠΑΡΑΓΩΓΗΣ": 322,
+    "ΑΔΕΙΕΣ ΑΠΑΛΛΑΣΣΟΜΕΝΕΣ": 89,
+    "ΑΙΤΗΣΗ ΣΕ ΑΞΙΟΛΟΓΗΣΗ": 13,
+    "ΔΙΑΒΙΒΑΣΗ ΣΤΟ ΔΕΔΔΗΕ": 257
+  },
+  "skipped_status_breakdown": {
+    "ΑΝΑΚΛΗΣΗ ΑΙΤΗΣΗΣ": 310,
+    "ΑΠΟΡΡΙΠΤΙΚΗ ΑΠΟΦΑΣΗ": 678,
+    "ΑΠΟΦΑΣΗ ΑΝΑΚΛΗΣΗΣ ΑΔΕΙΑΣ": 158,
+    "ΑΡΝΗΤΙΚΕΣ ΓΝΩΜΟΔΟΤΗΣΕΙΣ, ΑΠΟΦΑΣΕΙΣ": 56,
+    "ΑΥΤΟΔΙΚΑΙΗ ΠΑΥΣΗ": 889,
+    "ΑΥΤΟΔΙΚΑΙΗ ΠΑΥΣΗ-ΕΠΙΣΤΡΟΦΗ ΕΓΓΥΗΤΙΚΗΣ ΑΠΟ ΔΙΑΧΕΙΡΙΣΤΗ": 1,
+    "ΑΥΤΟΔΙΚΑΙΗ ΠΑΥΣΗ-ΜΗ ΤΗΡΗΣΗ ΟΡΟΣΗΜΩΝ": 126,
+    "ΑΥΤΟΔΙΚΑΙΗ ΠΑΥΣΗ-ΡΑΕ ΑΝΕΚΚΛ. ΔΗΛ.": 201,
+    "ΕΛΛΙΠΗΣ-ΜΗ ΕΠΙΚΑΙΡΟΠΟΙΗΣΗ ΒΑΣΕΙ ΑΠΟΦ.ΡΑΕ 288/2014": 237,
+    "ΜΗ ΕΓΚΡΙΣΗ ΕΛΕΓΧΟΥ ΝΟΜΙΜΟΤΗΤΑΣ ΥΠΕΚΑ (ΠΑΡ. 2, ΑΡ. 2, Ν.3851/2010)": 4
+  },
+  "top_duplicate_matches": [
+    {
+      "government_id": "gov-pv-23617",
+      "government_name": "AVLAKI II SOLAR FARM ΜΟΝΟΠΡΟΣΩΠΗ ΑΕ - ΞΗΡΟΠΗΓΑΔΟ - ΜΠΙΣΜΠΙΛΟΥΛΑ",
+      "matched_existing_id": "gem-solar-G100000807033",
+      "matched_existing_name": "Bisbiloula solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-18530",
+      "government_name": "ΣΥΜΗ ΕΝΕΡΓΕΙΑΚΗ ΜΟΝΟΠΡΟΣΩΠΗ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ - ΚΑΛΑΜΙΑ",
+      "matched_existing_id": "gem-solar-G100001068064",
+      "matched_existing_name": "Larisa Kalamia V solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-15097",
+      "government_name": "ΕΝΕΡΓΕΙΑΚΗ ΜΑΓΝΗΣΙΑΣ ΜΟΝΟΠΡΟΣΩΠΗ Ι.Κ.Ε. - ΚΑΚΚΑΒΟΣ Ι",
+      "matched_existing_id": "gem-solar-G100001066902",
+      "matched_existing_name": "Kakkavos solar project - Phase 1",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-24210",
+      "government_name": "IRIDA 5 ΜΙΚΕ - ΤΕΧΝΗΤΗ ΛΙΜΝΗ ΚΡΕΜΑΣΤΩΝ II Α",
+      "matched_existing_id": "gem-solar-G100001070118",
+      "matched_existing_name": "Techniti Limni Kremaston (Irida) Floating solar project - Phase 2A",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-17718",
+      "government_name": "ΚΑΡΑΤΖΗ ΒΙΟΜΗΧΑΝΙΚΕΣ ΚΑΙ ΞΕΝΟΔΟΧΕΙΑΚΕΣ ΕΠΙΧΕΙΡΗΣΕΙΣ ΑΝΩΝΥΜΟΣ ΕΤΑΙΡΕΙΑ - ΑΓΡ. 377",
+      "matched_existing_id": "gem-solar-G100001067988",
+      "matched_existing_name": "Larisa Agr. 377 solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-18543",
+      "government_name": "ΞΕΝΙΑ ΑΝΑΠΛΑΣΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ - ΒΑΛΤΟΙ 6",
+      "matched_existing_id": "gem-solar-G100001067597",
+      "matched_existing_name": "Kilkis Valtoi solar project - Phase 6",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-17364",
+      "government_name": "GREEN POWER KILKIS ΜΟΝΟΠΡΟΣΩΠΗ\nΙ.Κ.Ε. - ΞΗΡΟΧΩΡΙ 23",
+      "matched_existing_id": "gem-solar-G100001069835",
+      "matched_existing_name": "Xirochori (Green Power) solar project - Phase 23",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-11801",
+      "government_name": "SOLAR CONCEPT ΕΝΑ (1) ΜΟΝΟΠΡΟΣΩΠΗ - ΑΛΕΠΟΤΡΥΠΑ",
+      "matched_existing_id": "gem-solar-G100001065965",
+      "matched_existing_name": "Alepotrypa Thisvis solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-13505",
+      "government_name": "ΒΙΟΚΑΡΠΕΤ Α.Ε. ΒΙΟΜΗΧΑΝΙΚΕΣ ΚΑΙ ΕΜΠΟΡΙΚΕΣ ΕΠΙΧΕΙΡΗΣΕΙΣ  Δ.Τ. ΒΙΟΚΑΡΠΕΤ Α.Ε - ΓΚΕΡΕΝΙΑ",
+      "matched_existing_id": "gem-solar-G100001005566",
+      "matched_existing_name": "Gerenia solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-14928",
+      "government_name": "ΑΕΛΙΑRED ΕΝΕΡΓΕΙΑΚΗ ΑΙΤΩΛΙΑΣ ΜΟΝΟΠΡΟΣΩΠΗ\nΑ.Β.Ε.Ε. - ΚΩΝΩΠΙΝΑ 2",
+      "matched_existing_id": "gem-solar-G100001005596",
+      "matched_existing_name": "Konopina solar farm - Phase 2",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-17719",
+      "government_name": "ΚΑΡΑΤΖΗ ΑΝΑΝΕΩΣΙΜΕΣ ΘΕΣΣΑΛΙΑ 1 Μ.Α.Ε. - ΑΓΡ. 230",
+      "matched_existing_id": "gem-solar-G100001067978",
+      "matched_existing_name": "Larisa Agr. 230 solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-13084",
+      "government_name": "ΑΝΤΩΝΙΟΥ ΣΤΥΛΙΑΝΟΣ ΚΑΙ ΣΙΑ ΟΕ ΑΛΦΑ ΕΝΕΡΓΕΙΑΚΗ - ΛΟΥΤΣΙΚΟ",
+      "matched_existing_id": "gem-solar-G100000825581",
+      "matched_existing_name": "Loutsiko solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-13950",
+      "government_name": "ΗΛΙΟΕΝΕΡΓΕΙΑ ΚΟΣΣΟΥ Α.Ε. - ΚΟΣΣΟΣ",
+      "matched_existing_id": "gem-solar-G100000825532",
+      "matched_existing_name": "Kossos (HelioEnergy Kossos) solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-13739",
+      "government_name": "ΚΕΝΤΡΟ ΠΟΛΙΤΙΣΜΟΥ ΙΔΡΥΜΑ ΣΤΑΥΡΟΣ ΝΙΑΡΧΟΣ Α.Ε. - Ο.Τ. 345, ΟΔΟΙ ΕΥΡΙΠΙΔΟΥ, ΠΕΙΣΙΣΤΡΑΤΟΥΣ, ΣΑΧΤΟΥΡΗ & Λ. ΠΟΣΕΙΔΩΝΟΣ & ΣΥΓΓΡΟΥ (ΑΥΤΟΠΑΡΑΓΩΓΟΣ)",
+      "matched_existing_id": "gem-solar-G100000825487",
+      "matched_existing_name": "Kallitheas solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-21606",
+      "government_name": "IRIDA 2 ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ - ΤΣΟΥΚΑ",
+      "matched_existing_id": "gem-solar-G100001069691",
+      "matched_existing_name": "Tsouka (Irida) solar project - Phase 1",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-12449",
+      "government_name": "Φ/Β ΠΥΡΓΟΥΔΙΟΥ ΕΝΕΡΓ. ΣΧΕΔ. Ε.Ε. ΚΟΝΤΟΡΟΥΠΗΣ.. - ΠΥΡΓΟΥΔΙ",
+      "matched_existing_id": "gem-solar-G100001005679",
+      "matched_existing_name": "Pyrgoudi solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-12521",
+      "government_name": "ENEL GREEN POWER HELLAS A.E. - Ι. Μ. ΑΓ. ΑΘΑΝΑΣΙΟΥ",
+      "matched_existing_id": "gem-solar-G100000825368",
+      "matched_existing_name": "Ayios Athanasiou (Enel) solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-14930",
+      "government_name": "ΑΕΛΙΑRED ΕΝΕΡΓΕΙΑΚΗ ΑΙΤΩΛΙΑΣ ΜΟΝΟΠΡΟΣΩΠΗ\nΑ.Β.Ε.Ε. - ΑΓΙΟΣ ΝΙΚΟΛΑΟΣ 1",
+      "matched_existing_id": "gem-solar-G100001005499",
+      "matched_existing_name": "Ayios Nikolaos (Medeon) solar farm - Phase 1",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-12075",
+      "government_name": "NEW NE SOLAR DEVELOPMENTS FIVE 5 ΜΟΝΟΠΡΟΣΩΠΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ - ΑΓΙΟΣ ΙΩΑΝΝΗΣ ΟΙΚ. ΥΠΑΤΟΥ",
+      "matched_existing_id": "gem-solar-G100000825374",
+      "matched_existing_name": "Ayios Ioannis Ypatou solar farm - Phase 1",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-12414",
+      "government_name": "ΕΝΕΞΟΝ ΕΛΛΑΣ Α.Ε. - ΑΓΡΟΤ. 269Α",
+      "matched_existing_id": "gem-solar-G100001068011",
+      "matched_existing_name": "Larisa Agrot. 269A solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-11724",
+      "government_name": "ΛΥΚΟΓΙΩΡΓΟΣ-ΤΑΤΣΗΣ -ΖΑΒΙΤΣΑΝΟΣ ΗΛΙΟΕΝΕΡΓΕΙΑΚΗ  ΕΤΑΙΡΕΙΑ ΠΕΡΙΟΡΙΣΜΕΝΗΣ ΕΥΘΥΝΗΣ (Δ.Τ.L.T.Z.ΗΛΙΟΕΝΕΡΓΕΙΑΚΗ Ε.Π.Ε.) - ΛΕΙΒΑΔΑΚΙΑ",
+      "matched_existing_id": "gem-solar-G100000825566",
+      "matched_existing_name": "Leivadakia Anaktorio solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-21952",
+      "government_name": "ΦΕΝΣΟΛ ΜΟΝΟΠΡΟΣΩΠΗ Ι.Κ.Ε. - ΑΜΠΕΛΙΑ",
+      "matched_existing_id": "gem-solar-G100001065741",
+      "matched_existing_name": "Abelia Kato Klines solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-12621",
+      "government_name": "HELLENIC RENEWABLES COMPANY II ΜΟΝΟΠΡΟΣΩΠΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ - ΚΟΥΛΙΑ",
+      "matched_existing_id": "gem-solar-G100001005602",
+      "matched_existing_name": "Koulia (Lankada) solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-22253",
+      "government_name": "CAPITAL ΑΝΑΝΕΩΣΙΜΕΣ ΠΗΓΕΣ ΕΝΕΡΓΕΙΑΣ Α.Ε. - ΠΟΥΡΝΑΡΙ",
+      "matched_existing_id": "gem-solar-G100000825700",
+      "matched_existing_name": "Pournari II solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-14695",
+      "government_name": "ΣΕΡΡΕΣ POWER ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ - ΛΑΚΑ",
+      "matched_existing_id": "gem-solar-G100001069665",
+      "matched_existing_name": "Trikala Laka Mare solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-13274",
+      "government_name": "ΥΠΑΤΟ ΕΝΕΡΓΕΙΑΚΗ ΑΕ - ΓΚΟΥΜΟΥΡΑΔΑ",
+      "matched_existing_id": "gem-solar-G100000825462",
+      "matched_existing_name": "Gkoumourada solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-14144",
+      "government_name": "ALEXIA SUN INVEST ΕΠΕ - ΠΛΑΤΟΣ",
+      "matched_existing_id": "gem-solar-G100001065827",
+      "matched_existing_name": "Aetolia-Acarnania Platos I solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-22256",
+      "government_name": "ΕΝΕΡΓΕΙΑΚΗ ΞΑΝΘΗΣ-Α.Ε. ΠΑΡΑΓΩΓΗΣ ΗΛΕΚΤΡΙΚΗΣ ΕΝΕΡΓΕΙΑΣ - ΓΕΝΙΤΣΕΑΣ",
+      "matched_existing_id": "gem-solar-G100000825453",
+      "matched_existing_name": "Genitseas solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-15104",
+      "government_name": "SPOWER ENERGY PROJECTS ΜΟΝΟΠΡΟΣΩΠΗ Ι Κ Ε - ΚΥΡΙΑΚΕΙΚΑ 8",
+      "matched_existing_id": "gem-solar-G100001067475",
+      "matched_existing_name": "Kilkis Kyriakeika solar project - Phase 8",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-12352",
+      "government_name": "ΔΡΙΜΑΛΑΣ Β. ΘΕΜΙΣΤΟΚΛΗΣ ΜΟΝΟΠΡΟΣΩΠΗ ΕΠΕ - ΝΤΙΜΙΡΙ",
+      "matched_existing_id": "gem-solar-G100000825419",
+      "matched_existing_name": "Dimiri solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-14789",
+      "government_name": "SPOWER KSIROLAKOS ΜΟΝΟΠΡΟΣΩΠΗ Ι Κ Ε - ΕΙΚΟΣΙΠΕΝΤΑΡΙ",
+      "matched_existing_id": "gem-solar-G100001066537",
+      "matched_existing_name": "Eikosipentari solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-14376",
+      "government_name": "SKGR PV15 ΜΟΝΟΠΡΟΣΩΠΗ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ - ΚΤΕΝΑΣ",
+      "matched_existing_id": "gem-solar-G100001067885",
+      "matched_existing_name": "Ktenas solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-12233",
+      "government_name": "ΦΩΤΟΕΝΕΡΓΕΙΑ ΜΑΝΗΣ Ε.Π.Ε. - ΚΑΛΥΒΙΑ",
+      "matched_existing_id": "gem-solar-G100001070009",
+      "matched_existing_name": "Yipedo Kalyvion solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-21011",
+      "government_name": "SOLAR CONCEPT ΕΝΑ (1) ΜΟΝΟΠΡΟΣΩΠΗ - ΒΕΛΑΩΡΑ",
+      "matched_existing_id": "gem-solar-G100001065851",
+      "matched_existing_name": "Aetolia-Acarnania Velaora II solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-24018",
+      "government_name": "ΦΩΤΟΒΟΛΤΑΪΚΟΣ ΣΤΑΘΜΟΣ ΤΑΥΡΗΣ ΜΟΝΟΠΡΟΣΩΠΗ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ - ΤΑΥΡΗ Ι",
+      "matched_existing_id": "gem-solar-G100001066694",
+      "matched_existing_name": "Evros Tavri solar project - Phase 1",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-23940",
+      "government_name": "GR ATHENS 1 ΜΟΝΟΠΡΟΣΩΠΗ Ι Κ Ε - ΠΟΥΡΝΑΡΙ",
+      "matched_existing_id": "gem-solar-G100000825698",
+      "matched_existing_name": "Pournari (Gr Athens 1) solar farm",
+      "reason": "nearby_coordinates_with_name_or_operator_match"
+    },
+    {
+      "government_id": "gov-pv-16807",
+      "government_name": "TRINA SOLAR GREECE I M. IKE - ΑΚΤΣΑΛΟΓΓΟ",
+      "matched_existing_id": "gem-solar-G100001065963",
+      "matched_existing_name": "Aktsalongo solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-24439",
+      "government_name": "CENTAURUS ENERGY SOLUTION 2 ΜΟΝΟΠΡΟΣΩΠΗ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ - ΠΑΛΙΟΕΚΚΛΗΣΙΑ",
+      "matched_existing_id": "gem-solar-G100001066404",
+      "matched_existing_name": "Domokos IV solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-22490",
+      "government_name": "TKMN DEVELOPMENT IKE - ΣΚΟΠΕΥΤΗΡΙΟ",
+      "matched_existing_id": "gem-solar-G100001069331",
+      "matched_existing_name": "Skopevtirio Attica solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-16808",
+      "government_name": "TRINA SOLAR GREECE II ΜΟΝΟΠΡΟΣΩΠΗ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ - ΓΙΝΤΖΕΛΙ ΕΥΞΕΙΝΟΥΠΟΛΗΣ",
+      "matched_existing_id": "gem-solar-G100001066818",
+      "matched_existing_name": "Gintzeli Euxeinoupolis (Trina) solar project - Phase 1",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-14221",
+      "government_name": "ΦΩΤΟΒΟΛΤΑΙΚΟΣ ΗΛΕΚΤΡΙΣΜΟΣ ΑΕ (Δ.Τ. PHOTEL AE) - ΑΓΡΟΚΤΗΜΑ ΠΥΛΩΡΩΝ",
+      "matched_existing_id": "gem-solar-G100000825711",
+      "matched_existing_name": "Pyloron Farm solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-23901",
+      "government_name": "ΦΩΤΟΒΟΛΤΑΪΚΟΣ ΣΤΑΘΜΟΣ ΑΚΡΟΠΟΤΑΜΟΣ ΜΟΝΟΠΡΟΣΩΠΗ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ - ΗΛΙΟΣ ΙΙ",
+      "matched_existing_id": "gem-solar-G100001066863",
+      "matched_existing_name": "Ilios Thessaloniki solar project - Phase 2",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-21625",
+      "government_name": "ΙΠΠΟΘΟΗ ΕΝΕΡΓΕΙΑΚΗ ΜΟΝ. ΑΕ - ΠΗΓΑΔΙ Δ.Δ. ΚΑΤΟΥΝΑΣ",
+      "matched_existing_id": "gem-solar-G100000825681",
+      "matched_existing_name": "Pigadi Katounas solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-14700",
+      "government_name": "THESSALONIKI ENERGY SOLAR ΜΟΝΟΠΡΟΣΩΠΗ Α Ε - ΠΟΛΥΖΕΙΚΑ - ΜΑΥΡΟΛΟΦΟΣ",
+      "matched_existing_id": "gem-solar-G100001069106",
+      "matched_existing_name": "Polyzeika - Mavrolophos solar project - Phase 1",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-17789",
+      "government_name": "ΕΓΝΑΤΙΑ ΓΚΡΟΥΠ ΜΟΝΟΠΡΟΣΩΠΗ\nΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ - ΧΑΡΑ 1",
+      "matched_existing_id": "gem-solar-G100001068039",
+      "matched_existing_name": "Larisa Chara I solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-15214",
+      "government_name": "HELIOPOLIS 7 M.A.E. - ΑΓΡΟΚΤΗΜΑ ΠΛΑΤΑΝΙΑΣ (ΠΛΑΤΑΝΙΑ 5)",
+      "matched_existing_id": "gem-solar-G100001067275",
+      "matched_existing_name": "Kilkis Agroktima Platanias solar project - Phase 5",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-21627",
+      "government_name": "ΙΠΠΟΘΟΗ ΕΝΕΡΓΕΙΑΚΗ ΜΟΝ. ΑΕ - ΠΑΛΙΟΣΤΑΝΗΣ - ΠΟΡΟΣ",
+      "matched_existing_id": "gem-solar-G100000825648",
+      "matched_existing_name": "Paliostanis - Poros solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-14796",
+      "government_name": "EDP ΑΝΑΝΕΩΣΙΜΕΣ ΠΗΓΕΣ ΕΝΕΡΓΕΙΑΣ ΕΛΛΑΣ 2 ΜΟΝΟΠΡΟΣΩΠΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ - ΝΙΚΟΠΟΛΗ",
+      "matched_existing_id": "gem-solar-G100000807161",
+      "matched_existing_name": "Nikopole solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-12511",
+      "government_name": "ΜΑΡΚΟ Π.Β. ΕΝΕΡΓΕΙΑ Ε.Π.Ε. - ΒΙ.ΠΕ. ΚΑΡΔΙΤΣΑΣ",
+      "matched_existing_id": "gem-solar-G100001069752",
+      "matched_existing_name": "Vi.Pe. Karditsas I solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-14004",
+      "government_name": "THERMI SUN AE - ΣΠΗΛΑΙΟ 1",
+      "matched_existing_id": "gem-solar-G100000825740",
+      "matched_existing_name": "Spilaio 1 solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-18073",
+      "government_name": "ΕΚΟΕΡΑ ΑΝΑΝΕΩΣΙΜΕΣ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΙΑ - ΠΕΤΡΟΥΣΑ - ΣΤΑΛΙΣΜΑΤΑ",
+      "matched_existing_id": "gem-solar-G100001005658",
+      "matched_existing_name": "Petrousa Stalismata solar farm - Phase 2",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-18075",
+      "government_name": "ΕΚΟΕΡΑ ΑΝΑΝΕΩΣΙΜΕΣ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΙΑ - ΞΗΡΟΠΟΤΑΜΟΣ -- ΣΤΑΛΙΣΜΑΤΑ",
+      "matched_existing_id": "gem-solar-G100001070121",
+      "matched_existing_name": "Xiropotamos (Dramas) solar farm - Phase Stalismata 2",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-12184",
+      "government_name": "ΜΙΘΡΑΣ ΕΝΕΡΓΕΙΑΚΗ Α.Ε. - Δ.Δ. ΟΙΝΟΗΣ",
+      "matched_existing_id": "gem-solar-G100000825630",
+      "matched_existing_name": "Oinois solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-15219",
+      "government_name": "ΚΑΡΑΤΖΗ ΑΝΑΝΕΩΣΙΜΕΣ ΘΕΣΣΑΛΙΑ 1 ΜΑΕ - ΑΓΡ. 326, 327, 328 ΖΑΠΠΕΙΟΥ",
+      "matched_existing_id": "gem-solar-G100001067985",
+      "matched_existing_name": "Larisa Agr. 326 solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-13224",
+      "government_name": "ΝΕΑ ΗΛΕΚΤΡΑ ΑΝΩΝΥΜΗ ΒΙΟΜΗΧΑΝΙΚΗ ΕΜΠΟΡΙΚΗ ΕΤΑΙΡΕΙΑ ΠΑΡΑΓΩΓΗΣ ΚΑΙ ΕΜΠΟΡΙΑ ΗΛΕΚΤΡΙΚΗΣ ΕΝΕΡΓΕΙΑΣ - ΒΕΛΟΥΔΙ",
+      "matched_existing_id": "gem-solar-G100000825790",
+      "matched_existing_name": "Veloudi solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-14766",
+      "government_name": "SPDGR SPARK 5 ΜΟΝΟΠΡΟΣΩΠΗ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ - ΥΨΩΜΑ 3",
+      "matched_existing_id": "gem-solar-G100001067662",
+      "matched_existing_name": "Kilkis Ypsoma solar project - Phase 3",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-21944",
+      "government_name": "ΚΤΙΣΤΩΡ ΑΝΩΝΥΜΗ ΤΕΧΝΙΚΗ ΕΤΑΙΡΕΙΑ - ΑΕΤΟΡΡΑΧΗ",
+      "matched_existing_id": "gem-solar-G100001065861",
+      "matched_existing_name": "Aetorrachi (Ktistor) solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-14064",
+      "government_name": "ΦΥΛΛΟ ΕΝΕΡΓΕΙΑΚΗ ΑΕ - ΟΡΦΑΝΑ",
+      "matched_existing_id": "gem-solar-G100000825633",
+      "matched_existing_name": "Orfana solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-14120",
+      "government_name": "SPES SOLARIS - SOLAR CONCEPT ΦΩΤΟΒΟΛΤΑΙΚΑ ΠΑΡΚΑ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ - ΔΡΟΣΕΛΗ",
+      "matched_existing_id": "gem-solar-G100000825431",
+      "matched_existing_name": "Droseli solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-23926",
+      "government_name": "PHOTOEAST ΕΝΕΡΓΕΙΑΚΗ ΜΟΝΟΠΡΟΣΩΠΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ - ΧΑΤΖΗ",
+      "matched_existing_id": "gem-solar-G100001066362",
+      "matched_existing_name": "Chatzi Serres solar project - Phase 1",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-12984",
+      "government_name": "ΕΝΕΡΓΕΙΑΚΗ ΠΗΝΕΙΑΣ 2 ΑΝΩΝΥΜΟΣ ΕΤΑΙΡΕΙΑ - ΡΟΚΟΤΣΙΑ - ΤΣΕΛΙΚΕΪΚΑ",
+      "matched_existing_id": "gem-solar-G100000825717",
+      "matched_existing_name": "Rokotsia - Tselikeika solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-13045",
+      "government_name": "AEGEAN TERRA LTD - ΝΤΟΥΡΑ",
+      "matched_existing_id": "gem-solar-G100001069170",
+      "matched_existing_name": "Preveza Ntoura Oropou solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-22148",
+      "government_name": "ΘΕΣΠΡΟΠΛΑΝ_ΜΟΝΟΠΡΟΣΩΠΗ_Ι.Κ.Ε. - ΣΠΑΘΑΡΑΙΟΙ_1",
+      "matched_existing_id": "gem-solar-G100000825737",
+      "matched_existing_name": "Spatharaioi solar farm - Phase 1",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-13783",
+      "government_name": "FOSTA ΑΕ - ΑΣΚΑΜΝΟΥΔΑ",
+      "matched_existing_id": "gem-solar-G100001069304",
+      "matched_existing_name": "Serres Sphelinou Patomata solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-11386",
+      "government_name": "ENEL GREEN POWER HELLAS A.E. - ΠΕΡΘΟΡΙ - ΜΠΟΓΔΑΝΙ - ΟΞΥ",
+      "matched_existing_id": "gem-solar-G100000825662",
+      "matched_existing_name": "Perthori Bogdani Oxy solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-14906",
+      "government_name": "SPDGR ΒΟΙΩΤΙΑ ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ - ΤΟΥΜΠΑΝΟΣ",
+      "matched_existing_id": "gem-solar-G100001068245",
+      "matched_existing_name": "Larisa Toubanos solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-11298",
+      "government_name": "ΑΣΤΡΑΙΟΣ ΕΝΕΡΓΕΙΑΚΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ ΦΩΤΟΒΟΛΤΑΪΚΩΝ ΕΡΓΩΝ (Δ.Δ ΑΣΤΡΑΙΟΣ ΕΝΕΡΓΕΙΑΚΗ Α.Ε) - ΒΙ.ΠΕ. ΚΑΒΑΛΑΣ",
+      "matched_existing_id": "gem-solar-G100000825509",
+      "matched_existing_name": "Kavalas Industrial Area II solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-14712",
+      "government_name": "VERDE ΚΑΤΑΣΚΕΥΑΣΤΙΚΗ ΚΑΙ ΤΕΧΝΙΚΕΣ ΥΠΗΡΕΣΙΕΣ  ΕΠΕ - ΑΝΕΒΑΣΜΑ",
+      "matched_existing_id": "gem-solar-G100001066018",
+      "matched_existing_name": "Anevasma Trikala solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-12751",
+      "government_name": "ΤΖΑΣΠΕΡ ΑΙΟΛΙΚΗ ΕΛΛΑΔΟΣ ΑΕ  - PV 1 ΑΝΩΝΥΜΗ ΕΝΕΡΓΕΙΑΚΗ ΕΤΑΙΡΕΙΑ - ΜΙΚΡΟΛΙΘΟΣ",
+      "matched_existing_id": "gem-solar-G100000825619",
+      "matched_existing_name": "Mikrolithos solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-12104",
+      "government_name": "SOL SUN ΛΙΤΟΧΩΡΟ ΜΟΝΟΠΡΟΣΩΠΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΙΑ ΚΑΤΑΣΚΕΥΗΣ – ΛΕΙΤΟΥΡΓΙΑΣ – ΑΝΑΠΤΥΞΗΣ & ΕΚΜΕΤΑΛΛΕΥΣΗΣ ΑΝΑΝΕΩΣΙΜΩΝ ΠΗΓΩΝ ΕΝΕΡΓΕΙΑΣ\\SOL SUN ΛΙΤΟΧΩΡΟ ΜΟΝΟΠΡΟΣΩΠΗ Α.Ε. - ΜΑΓΓΑΝΙΩΤΙΚΑ",
+      "matched_existing_id": "gem-solar-G100000825593",
+      "matched_existing_name": "Manganiotika solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-12684",
+      "government_name": "ΗΛΕΚΤΡΙΣΜΟΣ Α.Ε. - ΒΙ.ΠΕ. ΑΛΕΞΑΝΔΡΟΥΠΟΛΗΣ",
+      "matched_existing_id": "gem-solar-G100000825336",
+      "matched_existing_name": "Alexandroupolis Industrial Area solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-13483",
+      "government_name": "Χ. ΡΟΚΑΣ ΑΝΩΝΥΜΗ ΒΙΟΜΗΧΑΝΙΚΗ ΕΜΠΟΡΙΚΗ ΕΤΑΙΡΕΙΑ - ΒΙ.ΠΕ ΜΕΛΙΓΑΛΑ  (ΜΕΛΙΓΑΛΑΣ ΙΙ)",
+      "matched_existing_id": "gem-solar-G100000825612",
+      "matched_existing_name": "Meligalas Industrial Area (Rokas) solar farm - Phase 1",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-24218",
+      "government_name": "ΓΟΥΙΝΤ ΖΗΜΠΕΝ ΒΟΙΩΤΙΑ ΕΝΕΡΓΕΙΑΚΗ ΑΕ - ΔΡΟΜΟΣ ΒΥΛΛΙΩΤΙΚΟΣ",
+      "matched_existing_id": "gem-solar-G100000825581",
+      "matched_existing_name": "Loutsiko solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-12637",
+      "government_name": "ΖΑΡΖΑΒΑΤΣΑΚΗΣ ΣΤΑΥΡΙΔΗΣ Α.Ε. ΕΝΕΡΓΕΙΑΚΗ Α.Ε. - ΕΚΤΟΣ ΣΧΕΔΙΟΥ Δ.Δ. ΕΞΟΧΗΣ ΔΗΜΟΥ ΤΟΠΕΙΡΟΥ Ν. ΞΑΝΘΗΣ",
+      "matched_existing_id": "gem-solar-G100001005557",
+      "matched_existing_name": "Topeiros solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-11584",
+      "government_name": "ΜΥΡΙΝΗ ΠΑΡΑΓΩΓΗ ΕΝΕΡΓΕΙΑΣ ΕΤΑΙΡΕΙΑ ΠΕΡΙΟΡΙΣΜΕΝΗΣ ΕΥΘΥΝΗΣ - ΒΙΠΕ ΚΑΡΔΙΤΣΑΣ",
+      "matched_existing_id": "gem-solar-G100001069753",
+      "matched_existing_name": "Vi.Pe. Karditsas II solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-12496",
+      "government_name": "ΕΥΚΛΕΙΑ ΑΝΑΠΤΥΞΙΑΚΗ ΑΕ - ΑΡΚΟΥΔΙ-ΚΑΤΩ ΒΟΣΚΙΝΑ",
+      "matched_existing_id": "gem-solar-G100000825357",
+      "matched_existing_name": "Arkoudi-Kato Voskina solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-14489",
+      "government_name": "HELIOPOLIS 3 Α.Ε. - ΓΟΛΙΝΕΣ 2",
+      "matched_existing_id": "gem-solar-G100000806956",
+      "matched_existing_name": "Golines (ABO Wind) solar farm - Phase 2",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-13320",
+      "government_name": "ΥΨΙΠΕΔΟ Α.Ε. - ΠΑΠΑΓΙΑΝΝΗ",
+      "matched_existing_id": "gem-solar-G100001067852",
+      "matched_existing_name": "Kozani Papagianni I solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-13855",
+      "government_name": "EPURON ΧΡΗΜΑΤΟΔΟΤΙΚΑ ΠΡΟΓΡΑΜΜΑΤΑ  ΑΕ  & ΣΙΑ ΕΕ 10 - ΑΓΡΟΤΕΜΑΧΙΑ",
+      "matched_existing_id": "gem-solar-G100001067279",
+      "matched_existing_name": "Kilkis Agrotemachia solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-13548",
+      "government_name": "ΞΥΛΑΔΕΣ ΕΝΕΡΓΕΙΑΚΗ ΕΕ - ΚΑΨΑΛΕΣ",
+      "matched_existing_id": "gem-solar-G100000825496",
+      "matched_existing_name": "Kapsales solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-24222",
+      "government_name": "ΕΥΡΥΝΟΜΗ SOLAR A.E. - ΠΑΛΙΟΧΩΡΙ",
+      "matched_existing_id": "gem-solar-G100000807840",
+      "matched_existing_name": "Paliochori solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-13079",
+      "government_name": "ΜΠΕΘ ΕΠΕΝΔΥΤΙΚΗ & ΕΜΠΟΡΙΚΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ - Ηλιόλουστο (59Α)",
+      "matched_existing_id": "gem-solar-G100000825473",
+      "matched_existing_name": "Iliolousto (59A Aims) solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-17720",
+      "government_name": "ΚΑΡΑΤΖΗ ΒΙΟΜΗΧΑΝΙΚΕΣ ΚΑΙ ΞΕΝΟΔΟΧΕΙΑΚΕΣ ΕΠΙΧΕΙΡΗΣΕΙΣ ΑΝΩΝΥΜΟΣ ΕΤΑΙΡΕΙΑ - ΑΓΡ. 401",
+      "matched_existing_id": "gem-solar-G100001067993",
+      "matched_existing_name": "Larisa Agr. 401 solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-22265",
+      "government_name": "IRIDA 2 ΜΙΚΕ - ΚΑΤΕΒΑΣΙΑ 2",
+      "matched_existing_id": "gem-solar-G100001067042",
+      "matched_existing_name": "Katevasia Dervenochorion solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-22266",
+      "government_name": "IRIDA 2 ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ - ΤΣΟΥΚΑ",
+      "matched_existing_id": "gem-solar-G100001069693",
+      "matched_existing_name": "Tsouka (Irida) solar project - Phase 3",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-22262",
+      "government_name": "ΑΙΟΛΙΚΗ ΣΠΙΘΑΡΗ Α.Ε. - ΤΡΕΠΕΖΑ 3",
+      "matched_existing_id": "gem-solar-G100001069634",
+      "matched_existing_name": "Trepeza Thisvis solar project - Phase 3",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-22267",
+      "government_name": "IRIDA 2 MIKE - ΑΓΙΑ ΠΑΡΑΣΚΕΥΗ",
+      "matched_existing_id": "gem-solar-G100001066187",
+      "matched_existing_name": "Ayia Paraskevi Tanagras solar project - Phase 2",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-11778",
+      "government_name": "ΗΠΕΙΡΟΣ P.V. ΔΥΤΙΚΗ ΕΛΛΑΔΑ ΕΝΕΡΓΕΙΑΚΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ - ΜΠΡΙΓΓΕΛΙ",
+      "matched_existing_id": "gem-solar-G100000825388",
+      "matched_existing_name": "Bringeli solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-21595",
+      "government_name": "ΕΝΕΡΓΕΙΑΚΗ ΚΟΙΝΟΤΗΤΑ ΚΑΣΣΑΝΔΡΑΣ ΣΥΝΠΕ - ΜΙΚΡΗ ΒΑΒΔΟΣ",
+      "matched_existing_id": "gem-solar-G100001068544",
+      "matched_existing_name": "Mikri Vavdos solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-17727",
+      "government_name": "ΚΑΡΑΤΖΗ ΒΙΟΜΗΧΑΝΙΚΕΣ ΚΑΙ ΞΕΝΟΔΟΧΕΙΑΚΕΣ ΕΠΙΧΕΙΡΗΣΕΙΣ ΑΝΩΝΥΜΟΣ ΕΤΑΙΡΕΙΑ - ΑΓΡ. 357-60",
+      "matched_existing_id": "gem-solar-G100001067986",
+      "matched_existing_name": "Larisa Agr. 357-60 solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-12455",
+      "government_name": "ΚΑΜΠΟΣ POWER ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ - ΓΚΕΚΟΜΑΝΤΡΙ",
+      "matched_existing_id": "gem-solar-G100001068046",
+      "matched_existing_name": "Larisa Gkekomantri solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-14495",
+      "government_name": "INTRAKAT - ΑΛΑΤΑΡΙΑ 1",
+      "matched_existing_id": "gem-solar-G100000807464",
+      "matched_existing_name": "Alataria solar farm - Phase 1",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-11562",
+      "government_name": "HELLENIC ENERGY A.E - ΓΚΟΡΙΤΣΑ - ΣΟΧΩΡΕΣ - ΣΠΙΘΑΡΙ",
+      "matched_existing_id": "gem-solar-G100000825461",
+      "matched_existing_name": "Gkoritsa - Sochores solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-14877",
+      "government_name": "ΦΩΤΟΝ ΕΝΕΡΓΕΙΑΚΗ Μ. ΙΚΕ - ΓΚΙΟΛΙ",
+      "matched_existing_id": "gem-solar-G100001068612",
+      "matched_existing_name": "Ngioli Domokos I solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-12446",
+      "government_name": "ΗΛΙΑΚΟ ΠΑΡΚΟ ΑΓΡΙΝΙΟΥ ΑΕ - KTHMA ΚΑΝΑΤΑ",
+      "matched_existing_id": "gem-solar-G100000825495",
+      "matched_existing_name": "Kanata Estate solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-13010",
+      "government_name": "ΦΩΤΟΒΟΛΤΑΙΚΑ  ΑΠΟΚΟΥΡΟΥ ΚΑΙ ΣΙΑ Ε.Ε - ΑΡΚΟΥΔΟΡΑΧΗ",
+      "matched_existing_id": "gem-solar-G100001005543",
+      "matched_existing_name": "Arkoudorachi solar project",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-12639",
+      "government_name": "ΛΑΚΩΝ ΕΝΕΡΓΕΙΑΚΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ (δ.τ.  ΛΑΚΩΝ ΕΝΕΡΓΕΙΑΚΗ Α.Ε.) - ΤΣΙΛΙΑ",
+      "matched_existing_id": "gem-solar-G100000825776",
+      "matched_existing_name": "Tsilia solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-12820",
+      "government_name": "ΗΛΙΟΦΙΛΟΣ Α.Ε. - ΚΥΠΕΛΙΣΣΑ",
+      "matched_existing_id": "gem-solar-G100000825559",
+      "matched_existing_name": "Kypelissa solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-13853",
+      "government_name": "ΚΤΙΣΤΩΡ ΕΝΕΡΓΕΙΑ ΑΕ - ΛΑΜΠΡΑΙΝΑ",
+      "matched_existing_id": "gem-solar-G100000825561",
+      "matched_existing_name": "Labrainas solar farm",
+      "reason": "nearby_coordinates_and_capacity"
+    },
+    {
+      "government_id": "gov-pv-14190",
+      "government_name": "ΜΠΑΤΑΡΓΙΑΣ ΣΠ & Κ. ΟΕ - ΕΒΥΘΟΣ",
+      "matched_existing_id": "gem-solar-G100001068302",
+      "matched_existing_name": "Livadi Agion Taxiarchon solar project - Phase 2",
+      "reason": "nearby_coordinates_and_capacity"
+    }
+  ]
+}

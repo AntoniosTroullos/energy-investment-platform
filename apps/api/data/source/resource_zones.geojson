@@ -1,0 +1,68 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "zone-south-solar",
+        "name": "Southern Solar Belt",
+        "solar_score": 90,
+        "wind_score": 48
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [21.0, 37.6],
+            [24.0, 37.6],
+            [24.0, 38.45],
+            [21.0, 38.45],
+            [21.0, 37.6]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "zone-central-balanced",
+        "name": "Central Balanced Resource Zone",
+        "solar_score": 76,
+        "wind_score": 68
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [21.0, 38.45],
+            [24.0, 38.45],
+            [24.0, 39.15],
+            [21.0, 39.15],
+            [21.0, 38.45]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "zone-north-wind",
+        "name": "Northern Wind Belt",
+        "solar_score": 62,
+        "wind_score": 88
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [21.0, 39.15],
+            [24.0, 39.15],
+            [24.0, 40.0],
+            [21.0, 40.0],
+            [21.0, 39.15]
+          ]
+        ]
+      }
+    }
+  ]
+}

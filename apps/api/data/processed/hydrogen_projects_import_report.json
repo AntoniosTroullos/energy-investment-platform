@@ -1,0 +1,26 @@
+{
+  "source_zip": "C:\\Users\\megas\\Downloads\\gis-raaey-wms-rae_status-v_sdi_r_hydrogen_all-azl5cazf.zip",
+  "official_source_name": "RAAEY hydrogen production units registry",
+  "official_features_loaded": 16,
+  "retained_legacy_features": 2,
+  "replaced_legacy_duplicates": [],
+  "skipped_old_official_ids": [
+    "hydrogen-project-raaey-2",
+    "hydrogen-project-raaey-3",
+    "hydrogen-project-raaey-6",
+    "hydrogen-project-raaey-7",
+    "hydrogen-project-raaey-8",
+    "hydrogen-project-raaey-9",
+    "hydrogen-project-raaey-5",
+    "hydrogen-project-raaey-11",
+    "hydrogen-project-raaey-12",
+    "hydrogen-project-raaey-17",
+    "hydrogen-project-raaey-10",
+    "hydrogen-project-raaey-13",
+    "hydrogen-project-raaey-14",
+    "hydrogen-project-raaey-15",
+    "hydrogen-project-raaey-16",
+    "hydrogen-project-raaey-18"
+  ],
+  "total_output_features": 18
+}

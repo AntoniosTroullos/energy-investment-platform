@@ -1,0 +1,170 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "official-pumped-hydro-sfikia",
+        "name": "Sfikia Pumped Storage HPP",
+        "project_name": "Sfikia hydroelectric plant",
+        "other_names": "Sfykia; Sfikias; HPP Sfykia; HPP Sfikias; ΥΗΣ Σφηκιάς",
+        "technology": "pumped storage hydro",
+        "technology_category": "Storage",
+        "carrier": "pumped_hydro",
+        "operator": "Public Power Corporation",
+        "owner": "Public Power Corporation",
+        "status": "operating",
+        "primary_source": "Official Project Sources",
+        "source": "Official Project Sources",
+        "source_refs": [
+          {
+            "source_name": "PPC Hydroelectric Power Plants",
+            "source_url": "https://www.ppcgroup.com/en/ppc-group/business-areas/renewable-energy-sources/hydroelectric-power-plant/",
+            "fields_supported": [
+              "name",
+              "technology",
+              "technology_category",
+              "operator",
+              "status"
+            ],
+            "retrieved_at": "2026-05-23"
+          },
+          {
+            "source_name": "ADMIE Registries",
+            "source_url": "https://www.admie.gr/en/market/participation/registries",
+            "fields_supported": [
+              "official_registry_lookup"
+            ],
+            "retrieved_at": "2026-05-23"
+          }
+        ],
+        "notes": [
+          "capacity_needs_official_confirmation",
+          "official_seed_record"
+        ],
+        "count_in_summary": true,
+        "display_on_map": true,
+        "country": "Greece"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "official-pumped-hydro-thissavros",
+        "name": "Thissavros Pumped Storage HPP",
+        "project_name": "Thissavros hydroelectric plant",
+        "other_names": "Thisavros; Thesavros; HPP Thisavros; ΥΗΣ Θησαυρού",
+        "technology": "pumped storage hydro",
+        "technology_category": "Storage",
+        "carrier": "pumped_hydro",
+        "operator": "Public Power Corporation",
+        "owner": "Public Power Corporation",
+        "status": "operating",
+        "primary_source": "Official Project Sources",
+        "source": "Official Project Sources",
+        "source_refs": [
+          {
+            "source_name": "PPC Hydroelectric Power Plants",
+            "source_url": "https://www.ppcgroup.com/en/ppc-group/business-areas/renewable-energy-sources/hydroelectric-power-plant/",
+            "fields_supported": [
+              "name",
+              "technology",
+              "technology_category",
+              "operator",
+              "status"
+            ],
+            "retrieved_at": "2026-05-23"
+          },
+          {
+            "source_name": "ADMIE Registries",
+            "source_url": "https://www.admie.gr/en/market/participation/registries",
+            "fields_supported": [
+              "official_registry_lookup"
+            ],
+            "retrieved_at": "2026-05-23"
+          }
+        ],
+        "notes": [
+          "capacity_needs_official_confirmation",
+          "official_seed_record"
+        ],
+        "count_in_summary": true,
+        "display_on_map": true,
+        "country": "Greece"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "official-pumped-hydro-amfilochia",
+        "name": "Amfilochia Pumped Storage",
+        "project_name": "Amfilochia Pumped Storage",
+        "other_names": "Hydro Pumped Storage in Amfilochia; Hydro-pumped storage in Greece - Amfilochia; PCI 3.24; TERNA Energy Amfilochia Project",
+        "technology": "pumped storage hydro",
+        "technology_category": "Storage",
+        "carrier": "pumped_hydro",
+        "operator": "TERNA Energy",
+        "owner": "TERNA Energy",
+        "developer": "TERNA Energy",
+        "status": "under_construction",
+        "nominal_capacity_mw": 680,
+        "capacity_mw": 680,
+        "generation_capacity_mw": 680,
+        "pumping_capacity_mw": 730,
+        "annual_generation_gwh": 816,
+        "upper_reservoir": "Agios Georgios, Pyrgos",
+        "lower_reservoir": "Kastraki Lake",
+        "reservoir_system": "Amfilochia Pumped Storage",
+        "reversible_units": 6,
+        "region": "Western Greece",
+        "regional_unit": "Aitoloakarnania",
+        "municipality": "Amfilochia",
+        "primary_source": "Official Project Sources",
+        "source": "Official Project Sources",
+        "source_refs": [
+          {
+            "source_name": "European Commission RRF",
+            "source_url": "https://reforms-investments.ec.europa.eu/projects/pumped-storage-hydro-plant-western-greece-amfilochia_en",
+            "fields_supported": [
+              "generation_capacity_mw",
+              "pumping_capacity_mw",
+              "annual_generation_gwh",
+              "status",
+              "region"
+            ],
+            "retrieved_at": "2026-05-23"
+          },
+          {
+            "source_name": "TERNA Amfilochia Project",
+            "source_url": "https://hps-amfilochia.gr/projects/",
+            "fields_supported": [
+              "upper_reservoir",
+              "lower_reservoir",
+              "reversible_units"
+            ],
+            "retrieved_at": "2026-05-23"
+          },
+          {
+            "source_name": "TERNA Corporate Project Page",
+            "source_url": "https://www.terna-energy.com/acivities/pumped-storage-projects/amfilochia-pumped-storage/",
+            "fields_supported": [
+              "developer",
+              "generation_capacity_mw",
+              "pumping_capacity_mw"
+            ],
+            "retrieved_at": "2026-05-23"
+          }
+        ],
+        "notes": [
+          "official_seed_record"
+        ],
+        "count_in_summary": true,
+        "display_on_map": true,
+        "country": "Greece"
+      },
+      "geometry": null
+    }
+  ]
+}

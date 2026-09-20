@@ -1,0 +1,539 @@
+{
+  "generated_at": "2026-05-31T17:40:43.834749+00:00",
+  "total_raw_files_read": 3,
+  "total_raw_rows_read": 8186,
+  "total_biomass_related_rows_extracted": 180,
+  "count_by_technology": {
+    "biomass": 142,
+    "biogas": 32,
+    "landfill_gas": 4,
+    "chp": 2
+  },
+  "total_licensed_capacity_by_technology_mw": {
+    "biogas": 102.098,
+    "biomass": 12060.159,
+    "chp": 2.134,
+    "landfill_gas": 11.07
+  },
+  "count_missing_capacity": 0,
+  "count_missing_owner": 0,
+  "count_missing_location": 0,
+  "count_ceased_or_revoked": 118,
+  "count_possible_duplicates": 63,
+  "top_20_possible_duplicate_records": [
+    {
+      "asset_ids": [
+        "raaey-biomass-4c5a39de9f58",
+        "raaey-biomass-9427d9cacfd5"
+      ],
+      "name_pair": [
+        "ΣΚΑΛΙΣΤΗΡΙ",
+        "ΣΚΑΛΙΣΤΗΡΙ"
+      ],
+      "owner_pair": [
+        "ΒΙΟΑΕΡΙΟ ΕΝΕΡΓΕΙΑ ΑΝΩ ΛΙΟΣΙΑ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ",
+        "ΒΙΟΑΕΡΙΟ – ΕΝΕΡΓΕΙΑ ΑΝΩ ΛΙΟΣΙΑ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ (δ.τ. ΒΕΑΛ Α.Ε.)"
+      ],
+      "capacity_pair_mw": [
+        14.916,
+        10.661
+      ],
+      "reasons": [
+        "same_normalized_name_municipality",
+        "same_project_regional_unit"
+      ]
+    },
+    {
+      "asset_ids": [
+        "raaey-biomass-1873cad10b17",
+        "raaey-biomass-24a643a336e0"
+      ],
+      "name_pair": [
+        "ΒΑΜΒΑΚΟΥ",
+        "ΒΑΜΒΑΚΟΥ"
+      ],
+      "owner_pair": [
+        "ΕΠΙΛΕΚΤΟΣ ΒΙΟΑΕΡΙΟ ΦΑΡΣΑΛΩΝ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ",
+        "ΕΠΙΛΕΚΤΟΣ ΕΝΕΡΓΕΙΑΚΗ Α.Ε"
+      ],
+      "capacity_pair_mw": [
+        5.252,
+        2.5
+      ],
+      "reasons": [
+        "same_normalized_name_municipality",
+        "same_project_regional_unit"
+      ]
+    },
+    {
+      "asset_ids": [
+        "raaey-biomass-3914dbcfbcc3",
+        "raaey-biomass-e9a830882dfa"
+      ],
+      "name_pair": [
+        "ΒΙ.ΠΕ. ΒΟΛΟΥ",
+        "ΒΙ.ΠΕ. ΒΟΛΟΥ"
+      ],
+      "owner_pair": [
+        "ΒΙΟΠΑΡ ΕΝΕΡΓΕΙΑ Α.Ε.",
+        "ΒΙΟΑΝΑΝΕΩΣΗ ΕΜΠΟΡΙΑ ΚΑΙ ΠΑΡΑΓΩΓΗ ΗΛΕΚΤΡΙΚΗΣ ΕΝΕΡΓΕΙΑΣ ΑΝΩΝΥΜΟΣ ΕΤΑΙΡΕΙΑ (ΥΠΟ ΣΥΣΤΑΣΗ)"
+      ],
+      "capacity_pair_mw": [
+        4.99,
+        4.99
+      ],
+      "reasons": [
+        "same_normalized_name_municipality",
+        "same_project_regional_unit"
+      ]
+    },
+    {
+      "asset_ids": [
+        "raaey-biomass-3914dbcfbcc3",
+        "raaey-biomass-5340857add3b"
+      ],
+      "name_pair": [
+        "ΒΙ.ΠΕ. ΒΟΛΟΥ",
+        "ΒΙ.ΠΕ. ΒΟΛΟΥ"
+      ],
+      "owner_pair": [
+        "ΒΙΟΠΑΡ ΕΝΕΡΓΕΙΑ Α.Ε.",
+        "ΕΛΙΝ ΒΙΟΚΑΥΣΙΜΑ ΑΕ"
+      ],
+      "capacity_pair_mw": [
+        4.99,
+        3.0
+      ],
+      "reasons": [
+        "same_normalized_name_municipality",
+        "same_project_regional_unit"
+      ]
+    },
+    {
+      "asset_ids": [
+        "raaey-biomass-12d32a82f6a8",
+        "raaey-biomass-5922e0b3e0cc"
+      ],
+      "name_pair": [
+        "ΝΤΑΜΑΡΙ",
+        "ΝΤΑΜΑΡΙ"
+      ],
+      "owner_pair": [
+        "APOLLO CAPITAL PROPERTIES ΔΙΑΧΕΙΡΙΣΗ ΑΚΙΝΗΤΗΣ ΠΕΡΙΟΥΣΙΑΣ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ δ.τ. APOLLO CAPITAL PROPERTIES AE",
+        "APOLLO CAPITAL PROPERTIES ΤΕΧΝΙΚΗ ΚΑΤΑΣΚΕΥΣΤΙΚΗ ΕΝΕΡΓΕΙΑΚΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ  (δ.τ. APOLLO CAPITAL PROPERTIES A.E.)"
+      ],
+      "capacity_pair_mw": [
+        5.0,
+        5.0
+      ],
+      "reasons": [
+        "same_normalized_name_municipality",
+        "same_project_regional_unit"
+      ]
+    },
+    {
+      "asset_ids": [
+        "raaey-biomass-12d32a82f6a8",
+        "raaey-biomass-456768716403"
+      ],
+      "name_pair": [
+        "ΝΤΑΜΑΡΙ",
+        "ΚΟΥΡΙΑ"
+      ],
+      "owner_pair": [
+        "APOLLO CAPITAL PROPERTIES ΔΙΑΧΕΙΡΙΣΗ ΑΚΙΝΗΤΗΣ ΠΕΡΙΟΥΣΙΑΣ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ δ.τ. APOLLO CAPITAL PROPERTIES AE",
+        "APOLLO CAPITAL PROPERTIES ΔΙΑΧΕΙΡΙΣΗ ΑΚΙΝΗΤΗΣ ΠΕΡΙΟΥΣΙΑΣ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ δ.τ. APOLLO CAPITAL PROPERTIES AE"
+      ],
+      "capacity_pair_mw": [
+        5.0,
+        5.0
+      ],
+      "reasons": [
+        "same_owner_municipality_capacity"
+      ]
+    },
+    {
+      "asset_ids": [
+        "raaey-biomass-538d5f116a6e",
+        "raaey-biomass-b9f1194a7936"
+      ],
+      "name_pair": [
+        "ΑΣΠΡΟΧΩΜΑΤΑ Τ.Κ. ΝΕΟΧΩΡΙΟΥ",
+        "ΦΥΤΩΡΙΟ"
+      ],
+      "owner_pair": [
+        "ΒΙΟΑΕΡΙΟ ΘΡΑΚΗΣ ΑΕ",
+        "ΒΙΟΑΕΡΙΟ ΘΡΑΚΗΣ ΑΕ"
+      ],
+      "capacity_pair_mw": [
+        2.956,
+        2.956
+      ],
+      "reasons": [
+        "same_owner_municipality_capacity"
+      ]
+    },
+    {
+      "asset_ids": [
+        "raaey-biomass-538d5f116a6e",
+        "raaey-biomass-89ad3b31dbdb"
+      ],
+      "name_pair": [
+        "ΑΣΠΡΟΧΩΜΑΤΑ Τ.Κ. ΝΕΟΧΩΡΙΟΥ",
+        "ΑΣΠΡΟΧΩΜΑ"
+      ],
+      "owner_pair": [
+        "ΒΙΟΑΕΡΙΟ ΘΡΑΚΗΣ ΑΕ",
+        "ΒΙΟΑΕΡΙΟ ΘΡΑΚΗΣ ΑΕ"
+      ],
+      "capacity_pair_mw": [
+        2.956,
+        2.956
+      ],
+      "reasons": [
+        "same_owner_municipality_capacity"
+      ]
+    },
+    {
+      "asset_ids": [
+        "raaey-biomass-89ad3b31dbdb",
+        "raaey-biomass-b9f1194a7936"
+      ],
+      "name_pair": [
+        "ΦΥΤΩΡΙΟ",
+        "ΑΣΠΡΟΧΩΜΑ"
+      ],
+      "owner_pair": [
+        "ΒΙΟΑΕΡΙΟ ΘΡΑΚΗΣ ΑΕ",
+        "ΒΙΟΑΕΡΙΟ ΘΡΑΚΗΣ ΑΕ"
+      ],
+      "capacity_pair_mw": [
+        2.956,
+        2.956
+      ],
+      "reasons": [
+        "same_owner_municipality_capacity"
+      ]
+    },
+    {
+      "asset_ids": [
+        "raaey-biomass-8d14b81ca567",
+        "raaey-biomass-d482bd32ba6d"
+      ],
+      "name_pair": [
+        "Ο.Τ. 16Γ ΤΗΣ ΒΙ.ΠΕ. ΙΩΑΝΝΙΝΩΝ",
+        "Ο.Τ. 16Γ ΤΗΣ ΒΙ.ΠΕ. ΙΩΑΝΝΙΝΩΝ"
+      ],
+      "owner_pair": [
+        "BIOΚOMPOST ENERGY ΜΟΝΟΠΡΟΣΩΠΗ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΙΑ",
+        "BIOΚOMΕΤΗΑΝΕ ΜΟΝΟΠΡΟΣΩΠΗ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΙΑ"
+      ],
+      "capacity_pair_mw": [
+        2.0,
+        2.0
+      ],
+      "reasons": [
+        "same_normalized_name_municipality",
+        "same_project_regional_unit"
+      ]
+    },
+    {
+      "asset_ids": [
+        "raaey-biomass-2ffc02930fe2",
+        "raaey-biomass-e3119504d642"
+      ],
+      "name_pair": [
+        "ΒΑΛΤΟΣ ΒΙΓΛΑΣ",
+        "ΒΑΛΤΟΣ ΒΙΓΛΑΣ"
+      ],
+      "owner_pair": [
+        "ΑΠΟΣΤΟΛΙΔΗΣ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ ΚΑΙ Δ.Τ. GOLDEN SOLAR ENERGY AE H AGROPLAN AE",
+        "ΑΠΟΣΤΟΛΙΔΗΣ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ"
+      ],
+      "capacity_pair_mw": [
+        2.0,
+        1.7
+      ],
+      "reasons": [
+        "same_normalized_name_municipality",
+        "same_project_regional_unit"
+      ]
+    },
+    {
+      "asset_ids": [
+        "raaey-biomass-42990d9aecd0",
+        "raaey-biomass-4bb173cb2dfb"
+      ],
+      "name_pair": [
+        "ΣΤΕΦΑΝΙΑ",
+        "ΣΤΕΦΑΝΙΑ"
+      ],
+      "owner_pair": [
+        "ΛΕΩΜΕΛ ΒΙΟΜΑΖΑ ΛΑΚΩΝΙΑΣ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ",
+        "ΛΠ ΕΝΕΡΤΖΥ  Α.Ε"
+      ],
+      "capacity_pair_mw": [
+        3.5,
+        2.342
+      ],
+      "reasons": [
+        "same_normalized_name_municipality",
+        "same_project_regional_unit"
+      ]
+    },
+    {
+      "asset_ids": [
+        "raaey-biomass-e78a59aecc38",
+        "raaey-biomass-e9272ac0f19a"
+      ],
+      "name_pair": [
+        "ΑΓΡΟΚΤΗΜΑ ΔΙΟΜΗΔΕΙΑΣ",
+        "ΔΙΟΜΗΔΕΙΑ"
+      ],
+      "owner_pair": [
+        "MIL OIL HELLAS ΑΝΩΝΥΜΗ ΕΤΑΙΡΙΑ ΑΕΙΦΟΡΕΣ ΜΟΡΦΕΣ  ΕΝΕΡΓΕΙΑΣ",
+        "MIL OIL HELLAS ΑΝΩΝΥΜΗ ΕΤΑΙΡΙΑ ΑΕΙΦΟΡΕΣ ΜΟΡΦΕΣ  ΕΝΕΡΓΕΙΑΣ"
+      ],
+      "capacity_pair_mw": [
+        3.094,
+        2.999
+      ],
+      "reasons": [
+        "same_owner_municipality_capacity"
+      ]
+    },
+    {
+      "asset_ids": [
+        "raaey-biomass-91f2edf0cf35",
+        "raaey-biomass-c589df209faa"
+      ],
+      "name_pair": [
+        "ΑΓΡ. 832,833,834,838 & 839",
+        "ΑΓΡ. 160"
+      ],
+      "owner_pair": [
+        "ΦΙΛΙΠΠΟΠΟΥΛΟΣ ΕΝΕΡΓΕΙΑΚΗ Α.Τ.Ε",
+        "ΦΙΛΙΠΠΟΠΟΥΛΟΣ ΕΝΕΡΓΕΙΑΚΗ Α.Τ.Ε"
+      ],
+      "capacity_pair_mw": [
+        2.5,
+        2.5
+      ],
+      "reasons": [
+        "same_owner_municipality_capacity"
+      ]
+    },
+    {
+      "asset_ids": [
+        "raaey-biomass-5340857add3b",
+        "raaey-biomass-e9a830882dfa"
+      ],
+      "name_pair": [
+        "ΒΙ.ΠΕ. ΒΟΛΟΥ",
+        "ΒΙ.ΠΕ. ΒΟΛΟΥ"
+      ],
+      "owner_pair": [
+        "ΒΙΟΑΝΑΝΕΩΣΗ ΕΜΠΟΡΙΑ ΚΑΙ ΠΑΡΑΓΩΓΗ ΗΛΕΚΤΡΙΚΗΣ ΕΝΕΡΓΕΙΑΣ ΑΝΩΝΥΜΟΣ ΕΤΑΙΡΕΙΑ (ΥΠΟ ΣΥΣΤΑΣΗ)",
+        "ΕΛΙΝ ΒΙΟΚΑΥΣΙΜΑ ΑΕ"
+      ],
+      "capacity_pair_mw": [
+        4.99,
+        3.0
+      ],
+      "reasons": [
+        "same_normalized_name_municipality",
+        "same_project_regional_unit"
+      ]
+    },
+    {
+      "asset_ids": [
+        "raaey-biomass-8c489a9e5180",
+        "raaey-biomass-e963a4126a51"
+      ],
+      "name_pair": [
+        "Ο.Τ. 28, ΒΙ.ΠΕ ΠΑΤΡΩΝ",
+        "Ο.Τ. 28 ΒΙ.ΠΕ. ΠΑΤΡΩΝ"
+      ],
+      "owner_pair": [
+        "ΠΑΥΛΟΣ Ν. ΠΕΤΤΑΣ ΑΒΕΕ",
+        "ΠΑΥΛΟΣ Ν. ΠΕΤΤΑΣ ΑΒΕΕ"
+      ],
+      "capacity_pair_mw": [
+        3.0,
+        5.0
+      ],
+      "reasons": [
+        "same_normalized_name_municipality",
+        "same_project_regional_unit"
+      ]
+    },
+    {
+      "asset_ids": [
+        "raaey-biomass-03cd11d603ea",
+        "raaey-biomass-eb7cfff87361"
+      ],
+      "name_pair": [
+        "ΑΓΡ. 768 Τ.Δ. ΑΓΡΟΣΥΚΕΑΣ",
+        "ΔΗΜΟΤΙΚΟ"
+      ],
+      "owner_pair": [
+        "L.P ENERGY A.E",
+        "L.P ENERGY A.E"
+      ],
+      "capacity_pair_mw": [
+        2.5,
+        2.5
+      ],
+      "reasons": [
+        "same_owner_municipality_capacity"
+      ]
+    },
+    {
+      "asset_ids": [
+        "raaey-biomass-86d676324388",
+        "raaey-biomass-ca663fb362f1"
+      ],
+      "name_pair": [
+        "ΔΡΥΜΩΝΑΣ",
+        "ΒΑΣΙΛΟΚΑΡΙΑ"
+      ],
+      "owner_pair": [
+        "ΛΠ ΕΝΕΡΤΖΥ  Α.Ε",
+        "ΛΠ ΕΝΕΡΤΖΥ  Α.Ε"
+      ],
+      "capacity_pair_mw": [
+        2.342,
+        2.342
+      ],
+      "reasons": [
+        "same_owner_municipality_capacity"
+      ]
+    },
+    {
+      "asset_ids": [
+        "raaey-biomass-42990d9aecd0",
+        "raaey-biomass-86d676324388"
+      ],
+      "name_pair": [
+        "ΔΡΥΜΩΝΑΣ",
+        "ΣΤΕΦΑΝΙΑ"
+      ],
+      "owner_pair": [
+        "ΛΠ ΕΝΕΡΤΖΥ  Α.Ε",
+        "ΛΠ ΕΝΕΡΤΖΥ  Α.Ε"
+      ],
+      "capacity_pair_mw": [
+        2.342,
+        2.342
+      ],
+      "reasons": [
+        "same_owner_municipality_capacity"
+      ]
+    },
+    {
+      "asset_ids": [
+        "raaey-biomass-2c5a5aca8318",
+        "raaey-biomass-ed277bbcad68"
+      ],
+      "name_pair": [
+        "ΦΟΥΡΝΑ",
+        "ΠΑΛΙΑ ΚΑΡΥΩΤΙΣΣΑ"
+      ],
+      "owner_pair": [
+        "ΕΛΛΗΝΙΚΑ ΠΕΤΡΕΛΑΙΑ ΑΝΑΝΕΩΣΙΜΕΣ ΠΗΓΕΣ ΕΝΕΡΓΕΙΑΣ ΑΕ",
+        "ΕΛΛΗΝΙΚΑ ΠΕΤΡΕΛΑΙΑ ΑΝΑΝΕΩΣΙΜΕΣ ΠΗΓΕΣ ΕΝΕΡΓΕΙΑΣ ΑΕ"
+      ],
+      "capacity_pair_mw": [
+        4.99,
+        4.99
+      ],
+      "reasons": [
+        "same_owner_municipality_capacity"
+      ]
+    }
+  ],
+  "manual_location_evidence": {
+    "file_exists": true,
+    "source_file": "C:\\Users\\megas\\dev\\energy-investment-platform\\apps\\api\\data\\manual\\biomass_manual_points.json",
+    "total_entries": 24,
+    "matched_records": 21,
+    "geometry_applied_count": 21,
+    "ambiguous_entries": [],
+    "unmatched_entries": [
+      {
+        "id": "manual-biomass-point-001",
+        "license_id": null,
+        "name": null,
+        "normalized_name": null,
+        "coordinate_system": "EGSA87",
+        "latitude": 39.5504033,
+        "longitude": 20.7072965,
+        "x_egsa87": 217071.441,
+        "y_egsa87": 4383038.133,
+        "notes": "User-supplied point for a biomass/biogas station with a production license. Matching to a specific RAAEY record is still required before geometry can be attached safely."
+      },
+      {
+        "id": "manual-biomass-point-003",
+        "license_id": null,
+        "name": null,
+        "normalized_name": null,
+        "coordinate_system": "EGSA87",
+        "latitude": 39.6070888,
+        "longitude": 21.6713795,
+        "x_egsa87": 300084.676,
+        "y_egsa87": 4386740.097,
+        "notes": "User-supplied EGSA87 point for a biomass/biogas station with a production license. Matching to a specific RAAEY record is still required before geometry can be attached safely."
+      },
+      {
+        "id": "manual-biomass-point-005",
+        "license_id": null,
+        "name": null,
+        "normalized_name": null,
+        "coordinate_system": "EGSA87",
+        "latitude": 39.5225666,
+        "longitude": 21.7142032,
+        "x_egsa87": 303522.996,
+        "y_egsa87": 4377263.805,
+        "notes": "User-supplied EGSA87 point for a biomass/biogas station. Matching to a specific official record is still required before geometry can be attached safely."
+      }
+    ],
+    "warnings": []
+  },
+  "validation_sources_found": {
+    "deddie": "source_found_but_not_structured_for_asset_validation",
+    "admie": "validation_source_not_available",
+    "dapeep": "manual_template_required"
+  },
+  "warnings": [],
+  "validation_details": {
+    "deddie": {
+      "status": "source_found_but_not_structured_for_asset_validation",
+      "notes": [
+        "DEDDE source files are present, but the current local file layout is aggregate/non-plant-level.",
+        "Regional biomass operating validation was not derived automatically in this phase."
+      ],
+      "files": [
+        "20260331_RESMV_01.xls"
+      ],
+      "comparisons": []
+    },
+    "admie": {
+      "status": "validation_source_not_available",
+      "notes": [
+        "No ADMIE raw files found."
+      ],
+      "matched_records": []
+    },
+    "dapeep": {
+      "status": "manual_template_required",
+      "notes": [
+        "DAPEEP files were found, but automated ELAPE biomass extraction was not completed in this phase.",
+        "Use the manual totals template to capture biomass/biogas aggregate validation."
+      ],
+      "files": [
+        "34_ANNUAL_2025_min_DELTIO_ELAPE-1.pdf"
+      ],
+      "manual_template": "C:\\Users\\megas\\dev\\energy-investment-platform\\apps\\api\\data\\manual\\dapeep_biomass_totals_template.csv"
+    }
+  }
+}

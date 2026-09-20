@@ -1,0 +1,11 @@
+{
+  "status": "source_found_but_not_structured_for_asset_validation",
+  "notes": [
+    "DEDDE source files are present, but the current local file layout is aggregate/non-plant-level.",
+    "Regional biomass operating validation was not derived automatically in this phase."
+  ],
+  "files": [
+    "20260331_RESMV_01.xls"
+  ],
+  "comparisons": []
+}

@@ -1,0 +1,5 @@
+technology,technology_category,count_records,total_nominal_capacity_mw,count_missing_capacity
+biomass,Biomass/Biogas,142,12060.159,0
+biogas,Biomass/Biogas,32,102.098,0
+landfill_gas,Biomass/Biogas,4,11.07,0
+chp,CHP,2,2.134,0

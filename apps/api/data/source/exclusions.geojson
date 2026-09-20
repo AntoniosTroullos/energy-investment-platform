@@ -1,0 +1,45 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "exclusion-volos-coast",
+        "name": "Volos Coastal Constraint",
+        "category": "environmental"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [22.7, 39.02],
+            [23.12, 39.02],
+            [23.12, 39.42],
+            [22.7, 39.42],
+            [22.7, 39.02]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "exclusion-central-park",
+        "name": "Central Protected Area",
+        "category": "protected_land"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [22.05, 38.55],
+            [22.55, 38.55],
+            [22.55, 38.95],
+            [22.05, 38.95],
+            [22.05, 38.55]
+          ]
+        ]
+      }
+    }
+  ]
+}
