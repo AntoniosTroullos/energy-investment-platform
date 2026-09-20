@@ -1,0 +1,152 @@
+timestamp,issue_type,observed_value,previous_value,next_value,source_file,possible_cause,recommended_action,repair_priority
+2022-03-27 04:00:00+0300,duplicate_timestamp,4117.0,4249.0,4147.0,20220327_RealTimeSCADASystemLoad_01.xls,DST/timestamp handling,resolve_duplicate_in_model_ready_only,medium
+2022-03-27 04:00:00+0300,duplicate_timestamp,4078.0,4249.0,4147.0,20220327_RealTimeSCADASystemLoad_01.xls,DST/timestamp handling,resolve_duplicate_in_model_ready_only,medium
+2022-03-27 23:00:00+0300,zero_load;outlier,0.0,5081.0,4580.0,20220327_RealTimeSCADASystemLoad_01.xls,malformed source value,repair_in_model_ready_only,high
+2022-03-28 00:00:00+0300,extreme_jump_or_outlier,4580.0,0.0,4127.0,20220328_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2022-04-24 13:00:00+0300,outlier,919.0,1240.0,803.0,20220424_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2022-04-24 14:00:00+0300,outlier,803.0,919.0,956.0,20220424_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2022-04-24 15:00:00+0300,outlier,956.0,803.0,1361.0,20220424_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2022-10-30 03:00:00+0200,missing_timestamp,,3226.0,3195.0,,DST/timestamp handling,impute_for_model_ready_only,high
+2022-10-31 00:00:00+0200,duplicate_timestamp,3974.0,4209.0,3397.0,20221030_RealTimeSCADASystemLoad_01.xls,duplicate source file/version,resolve_duplicate_in_model_ready_only,medium
+2022-10-31 00:00:00+0200,duplicate_timestamp,3629.0,4209.0,3397.0,20221031_RealTimeSCADASystemLoad_01.xls,duplicate source file/version,resolve_duplicate_in_model_ready_only,medium
+2022-11-01 23:00:00+0200,zero_load;outlier,0.0,4541.0,3928.0,20221101_RealTimeSCADASystemLoad_01.xls,malformed source value,repair_in_model_ready_only,high
+2022-11-02 00:00:00+0200,extreme_jump_or_outlier,3928.0,0.0,3698.0,20221102_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2023-03-25 11:00:00+0200,outlier,792.0,1313.0,716.0,20230325_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2023-03-25 12:00:00+0200,outlier,716.0,792.0,901.0,20230325_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2023-03-25 13:00:00+0200,outlier,901.0,716.0,1018.0,20230325_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2023-03-26 04:00:00+0300,duplicate_timestamp,3317.0,3462.0,3433.0,20230326_RealTimeSCADASystemLoad_01.xls,DST/timestamp handling,resolve_duplicate_in_model_ready_only,medium
+2023-03-26 04:00:00+0300,duplicate_timestamp,3291.0,3462.0,3433.0,20230326_RealTimeSCADASystemLoad_01.xls,DST/timestamp handling,resolve_duplicate_in_model_ready_only,medium
+2023-03-26 11:00:00+0300,outlier,862.0,1099.0,728.0,20230326_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2023-03-26 12:00:00+0300,outlier,728.0,862.0,500.0,20230326_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2023-03-26 13:00:00+0300,outlier,500.0,728.0,655.0,20230326_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2023-03-26 14:00:00+0300,outlier,655.0,500.0,1160.0,20230326_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2023-03-26 23:00:00+0300,zero_load;outlier,0.0,4208.0,3850.0,20230326_RealTimeSCADASystemLoad_01.xls,malformed source value,repair_in_model_ready_only,high
+2023-03-27 00:00:00+0300,extreme_jump_or_outlier,3850.0,0.0,3516.0,20230327_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2023-05-07 15:00:00+0300,outlier,997.0,1067.0,1345.0,20230507_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2023-10-08 14:00:00+0300,outlier,965.0,1013.0,1206.0,20231008_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2023-10-29 03:00:00+0200,missing_timestamp,,3351.0,3348.0,,DST/timestamp handling,impute_for_model_ready_only,high
+2023-10-30 00:00:00+0200,duplicate_timestamp,4131.0,4399.0,3638.0,20231029_RealTimeSCADASystemLoad_01.xls,duplicate source file/version,resolve_duplicate_in_model_ready_only,medium
+2023-10-30 00:00:00+0200,duplicate_timestamp,3838.0,4399.0,3638.0,20231030_RealTimeSCADASystemLoad_01.xls,duplicate source file/version,resolve_duplicate_in_model_ready_only,medium
+2024-03-18 11:00:00+0200,outlier,603.0,1145.0,283.0,20240318_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-03-18 12:00:00+0200,outlier,283.0,603.0,322.0,20240318_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-03-18 13:00:00+0200,outlier,322.0,283.0,431.0,20240318_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-03-18 14:00:00+0200,outlier,431.0,322.0,1057.0,20240318_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-03-30 11:00:00+0200,outlier,926.0,1267.0,894.0,20240330_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-03-30 12:00:00+0200,outlier,894.0,926.0,992.0,20240330_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-03-30 13:00:00+0200,outlier,992.0,894.0,1387.0,20240330_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-03-31 04:00:00+0300,duplicate_timestamp,3409.0,3513.0,3468.0,20240331_RealTimeSCADASystemLoad_01.xls,DST/timestamp handling,resolve_duplicate_in_model_ready_only,medium
+2024-03-31 04:00:00+0300,duplicate_timestamp,3438.0,3513.0,3468.0,20240331_RealTimeSCADASystemLoad_01.xls,DST/timestamp handling,resolve_duplicate_in_model_ready_only,medium
+2024-03-31 23:00:00+0300,zero_load;outlier,0.0,4182.0,3816.0,20240331_RealTimeSCADASystemLoad_01.xls,malformed source value,repair_in_model_ready_only,high
+2024-04-01 00:00:00+0300,extreme_jump_or_outlier,3816.0,0.0,3556.0,20240401_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-04-08 13:00:00+0300,outlier,936.0,1088.0,827.0,20240408_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-04-08 14:00:00+0300,outlier,827.0,936.0,933.0,20240408_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-04-08 15:00:00+0300,outlier,933.0,827.0,1349.0,20240408_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-04-09 14:00:00+0300,outlier,926.0,1008.0,1047.0,20240409_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-05-03 11:00:00+0300,outlier,898.0,1336.0,732.0,20240503_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-05-03 12:00:00+0300,outlier,732.0,898.0,572.0,20240503_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-05-03 13:00:00+0300,outlier,572.0,732.0,455.0,20240503_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-05-03 14:00:00+0300,outlier,455.0,572.0,586.0,20240503_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-05-03 15:00:00+0300,outlier,586.0,455.0,936.0,20240503_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-05-03 16:00:00+0300,outlier,936.0,586.0,1719.0,20240503_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-05-05 12:00:00+0300,outlier,835.0,1167.0,498.0,20240505_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-05-05 13:00:00+0300,outlier,498.0,835.0,171.0,20240505_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-05-05 14:00:00+0300,outlier,171.0,498.0,236.0,20240505_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-05-05 15:00:00+0300,outlier,236.0,171.0,743.0,20240505_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-05-05 16:00:00+0300,outlier,743.0,236.0,1499.0,20240505_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-05-06 10:00:00+0300,outlier,557.0,1177.0,74.0,20240506_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-05-06 11:00:00+0300,outlier,74.0,557.0,-159.0,20240506_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-05-06 12:00:00+0300,negative_load;outlier,-159.0,74.0,-190.0,20240506_RealTimeSCADASystemLoad_01.xls,malformed source value,repair_in_model_ready_only,high
+2024-05-06 13:00:00+0300,negative_load;outlier,-190.0,-159.0,-163.0,20240506_RealTimeSCADASystemLoad_01.xls,malformed source value,repair_in_model_ready_only,high
+2024-05-06 14:00:00+0300,negative_load;outlier,-163.0,-190.0,21.0,20240506_RealTimeSCADASystemLoad_01.xls,malformed source value,repair_in_model_ready_only,high
+2024-05-06 15:00:00+0300,outlier,21.0,-163.0,561.0,20240506_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-05-06 16:00:00+0300,outlier,561.0,21.0,1451.0,20240506_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-05-07 10:00:00+0300,outlier,778.0,1372.0,366.0,20240507_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-05-07 11:00:00+0300,outlier,366.0,778.0,187.0,20240507_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-05-07 12:00:00+0300,outlier,187.0,366.0,166.0,20240507_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-05-07 13:00:00+0300,outlier,166.0,187.0,167.0,20240507_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-05-07 14:00:00+0300,outlier,167.0,166.0,423.0,20240507_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-05-07 15:00:00+0300,outlier,423.0,167.0,1028.0,20240507_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-05-12 11:00:00+0300,outlier,862.0,1225.0,810.0,20240512_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-05-12 12:00:00+0300,outlier,810.0,862.0,1381.0,20240512_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-10-27 03:00:00+0200,missing_timestamp,,3504.0,3459.0,,DST/timestamp handling,impute_for_model_ready_only,high
+2024-10-27 12:00:00+0200,outlier,764.0,1037.0,779.0,20241027_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-10-27 13:00:00+0200,outlier,779.0,764.0,945.0,20241027_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-10-27 14:00:00+0200,outlier,945.0,779.0,1272.0,20241027_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-10-28 00:00:00+0200,duplicate_timestamp,3891.0,4444.0,3669.0,20241028_RealTimeSCADASystemLoad_01.xls,duplicate source file/version,resolve_duplicate_in_model_ready_only,medium
+2024-10-28 00:00:00+0200,duplicate_timestamp,4215.0,4444.0,3669.0,20241027_RealTimeSCADASystemLoad_01.xls,duplicate source file/version,resolve_duplicate_in_model_ready_only,medium
+2024-10-28 10:00:00+0200,outlier,812.0,1449.0,415.0,20241028_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-10-28 11:00:00+0200,outlier,415.0,812.0,409.0,20241028_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-10-28 12:00:00+0200,outlier,409.0,415.0,681.0,20241028_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2024-10-28 13:00:00+0200,outlier,681.0,409.0,1059.0,20241028_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-03-09 10:00:00+0200,outlier,920.0,1422.0,1179.0,20250309_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-03-15 11:00:00+0200,outlier,970.0,1329.0,946.0,20250315_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-03-15 12:00:00+0200,outlier,946.0,970.0,928.0,20250315_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-03-15 13:00:00+0200,outlier,928.0,946.0,971.0,20250315_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-03-15 14:00:00+0200,outlier,971.0,928.0,1466.0,20250315_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-03-30 04:00:00+0300,duplicate_timestamp,3801.0,3869.0,3767.0,20250330_RealTimeSCADASystemLoad_01.xls,DST/timestamp handling,resolve_duplicate_in_model_ready_only,medium
+2025-03-30 04:00:00+0300,duplicate_timestamp,3739.0,3869.0,3767.0,20250330_RealTimeSCADASystemLoad_01.xls,DST/timestamp handling,resolve_duplicate_in_model_ready_only,medium
+2025-03-30 23:00:00+0300,outlier,1.0,4453.0,4052.0,20250330_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-03-31 00:00:00+0300,extreme_jump_or_outlier,4052.0,1.0,3736.0,20250331_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-04-18 10:00:00+0300,outlier,560.0,1473.0,513.0,20250418_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-04-18 11:00:00+0300,outlier,513.0,560.0,678.0,20250418_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-04-18 12:00:00+0300,outlier,678.0,513.0,635.0,20250418_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-04-18 13:00:00+0300,outlier,635.0,678.0,644.0,20250418_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-04-18 14:00:00+0300,outlier,644.0,635.0,803.0,20250418_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-04-18 15:00:00+0300,outlier,803.0,644.0,1120.0,20250418_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-04-19 10:00:00+0300,outlier,861.0,1499.0,1195.0,20250419_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-05-19 12:00:00+0300,outlier,939.0,1174.0,858.0,20250519_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-05-19 13:00:00+0300,outlier,858.0,939.0,863.0,20250519_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-05-19 14:00:00+0300,outlier,863.0,858.0,1020.0,20250519_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-05-26 11:00:00+0300,outlier,854.0,1354.0,673.0,20250526_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-05-26 12:00:00+0300,outlier,673.0,854.0,1062.0,20250526_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-10-20 18:00:00+0300,outlier,8.0,4986.0,7.0,20251020_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-10-20 19:00:00+0300,outlier,7.0,8.0,7.0,20251020_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-10-20 20:00:00+0300,outlier,7.0,7.0,7.0,20251020_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-10-20 21:00:00+0300,outlier,7.0,7.0,6.0,20251020_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-10-20 22:00:00+0300,outlier,6.0,7.0,4.0,20251020_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-10-20 23:00:00+0300,outlier,4.0,6.0,4275.0,20251020_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-10-21 00:00:00+0300,extreme_jump_or_outlier,4275.0,4.0,4013.0,20251021_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2025-10-26 03:00:00+0200,missing_timestamp,,3432.0,3393.0,,DST/timestamp handling,impute_for_model_ready_only,high
+2025-10-27 00:00:00+0200,duplicate_timestamp,3838.0,4435.0,3531.0,20251027_RealTimeSCADASystemLoad_01.xls,duplicate source file/version,resolve_duplicate_in_model_ready_only,medium
+2025-10-27 00:00:00+0200,duplicate_timestamp,4099.0,4435.0,3531.0,20251026_RealTimeSCADASystemLoad_01.xls,duplicate source file/version,resolve_duplicate_in_model_ready_only,medium
+2026-01-10 16:00:00+0200,outlier,2.0,5251.0,2.0,20260110_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2026-01-10 17:00:00+0200,outlier,2.0,2.0,5053.0,20260110_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2026-01-10 18:00:00+0200,extreme_jump_or_outlier,5053.0,2.0,6427.0,20260110_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2026-03-29 04:00:00+0300,duplicate_timestamp,4177.0,4266.0,4173.0,20260329_RealTimeSCADASystemLoad_01.xls,DST/timestamp handling,resolve_duplicate_in_model_ready_only,medium
+2026-03-29 04:00:00+0300,duplicate_timestamp,4107.0,4266.0,4173.0,20260329_RealTimeSCADASystemLoad_01.xls,DST/timestamp handling,resolve_duplicate_in_model_ready_only,medium
+2026-03-29 23:00:00+0300,outlier,2.0,5100.0,4572.0,20260329_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2026-03-30 00:00:00+0300,extreme_jump_or_outlier,4572.0,2.0,4224.0,20260330_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2026-04-09 12:00:00+0300,outlier,996.0,1015.0,1310.0,20260409_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2026-04-09 15:00:00+0300,outlier,907.0,1247.0,1070.0,20260409_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2026-04-10 13:00:00+0300,outlier,942.0,1156.0,881.0,20260410_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2026-04-10 14:00:00+0300,outlier,881.0,942.0,858.0,20260410_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2026-04-10 15:00:00+0300,outlier,858.0,881.0,705.0,20260410_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2026-04-10 16:00:00+0300,outlier,705.0,858.0,1646.0,20260410_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2026-04-12 14:00:00+0300,outlier,923.0,1332.0,844.0,20260412_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2026-04-12 15:00:00+0300,outlier,844.0,923.0,1349.0,20260412_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2026-05-17 15:00:00+0300,outlier,977.0,1167.0,1416.0,20260517_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2026-05-18 15:00:00+0300,outlier,983.0,1017.0,1531.0,20260518_RealTimeSCADASystemLoad_01.xls,SCADA/source anomaly,review_before_repair; keep_if_plausible,review
+2026-06-28 00:00:00+0300,missing_timestamp,,6185.0,,,missing source file row,impute_for_model_ready_only,high
+2026-06-28 01:00:00+0300,missing_timestamp,,6185.0,,,missing source file row,impute_for_model_ready_only,high
+2026-06-28 02:00:00+0300,missing_timestamp,,6185.0,,,missing source file row,impute_for_model_ready_only,high
+2026-06-28 03:00:00+0300,missing_timestamp,,6185.0,,,DST/timestamp handling,impute_for_model_ready_only,high
+2026-06-28 04:00:00+0300,missing_timestamp,,6185.0,,,missing source file row,impute_for_model_ready_only,high
+2026-06-28 05:00:00+0300,missing_timestamp,,6185.0,,,missing source file row,impute_for_model_ready_only,high
+2026-06-28 06:00:00+0300,missing_timestamp,,6185.0,,,missing source file row,impute_for_model_ready_only,high
+2026-06-28 07:00:00+0300,missing_timestamp,,6185.0,,,missing source file row,impute_for_model_ready_only,high
+2026-06-28 08:00:00+0300,missing_timestamp,,6185.0,,,missing source file row,impute_for_model_ready_only,high
+2026-06-28 09:00:00+0300,missing_timestamp,,6185.0,,,missing source file row,impute_for_model_ready_only,high
+2026-06-28 10:00:00+0300,missing_timestamp,,6185.0,,,missing source file row,impute_for_model_ready_only,high
+2026-06-28 11:00:00+0300,missing_timestamp,,6185.0,,,missing source file row,impute_for_model_ready_only,high
+2026-06-28 12:00:00+0300,missing_timestamp,,6185.0,,,missing source file row,impute_for_model_ready_only,high
+2026-06-28 13:00:00+0300,missing_timestamp,,6185.0,,,missing source file row,impute_for_model_ready_only,high
+2026-06-28 14:00:00+0300,missing_timestamp,,6185.0,,,missing source file row,impute_for_model_ready_only,high
+2026-06-28 15:00:00+0300,missing_timestamp,,6185.0,,,missing source file row,impute_for_model_ready_only,high
+2026-06-28 16:00:00+0300,missing_timestamp,,6185.0,,,missing source file row,impute_for_model_ready_only,high
+2026-06-28 17:00:00+0300,missing_timestamp,,6185.0,,,missing source file row,impute_for_model_ready_only,high
+2026-06-28 18:00:00+0300,missing_timestamp,,6185.0,,,missing source file row,impute_for_model_ready_only,high
+2026-06-28 19:00:00+0300,missing_timestamp,,6185.0,,,missing source file row,impute_for_model_ready_only,high
+2026-06-28 20:00:00+0300,missing_timestamp,,6185.0,,,missing source file row,impute_for_model_ready_only,high
+2026-06-28 21:00:00+0300,missing_timestamp,,6185.0,,,missing source file row,impute_for_model_ready_only,high
+2026-06-28 22:00:00+0300,missing_timestamp,,6185.0,,,missing source file row,impute_for_model_ready_only,high
+2026-06-28 23:00:00+0300,missing_timestamp,,6185.0,,,missing source file row,impute_for_model_ready_only,high

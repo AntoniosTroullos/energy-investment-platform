@@ -1,0 +1,11 @@
+check,value,severity
+rows,39340,info
+start_timestamp,2022-01-01 00:00:00+0200,info
+end_timestamp,2026-06-27 23:00:00+0300,info
+missing_timestamps,28,warning
+duplicate_timestamps,18,warning
+outlier_or_extreme_jump_rows,113,warning
+negative_load_rows,3,error
+zero_load_rows,4,warning
+non_hourly_or_missing_frequency,28,warning
+incomplete_current_year_handling,2026-06-28,info

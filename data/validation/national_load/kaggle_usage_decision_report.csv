@@ -1,0 +1,2 @@
+source,decision,reason,ipto_primary_for_2022_2026,usable_for_2019_2021,scaling_required,input_status
+Kaggle auxiliary Greece load,not_safe_for_direct_merge,Kaggle auxiliary file unavailable or empty.,True,False,False,Kaggle auxiliary file not found: C:\Users\megas\dev\energy-investment-platform\data\processed\national_load\kaggle_gr_load_hourly_2019_2022_merge_ready.csv

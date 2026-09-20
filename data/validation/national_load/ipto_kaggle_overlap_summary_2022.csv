@@ -1,0 +1,2 @@
+overlapping_hours_count,missing_in_ipto_count,missing_in_kaggle_count,correlation,MAE,RMSE,MAPE,mean_bias_mw,mean_bias_percent,monthly_energy_mwh_ipto,monthly_energy_mwh_kaggle,monthly_difference_mwh,monthly_difference_percent,annual_energy_mwh_ipto,annual_energy_mwh_kaggle,annual_difference_percent,peak_load_ipto_mw,peak_load_kaggle_mw,peak_load_difference_percent
+0,,,,,,,,,,,,,,,,,,

@@ -1,0 +1,6 @@
+year,energy_mwh,average_load_mw,peak_load_mw,min_load_mw,hours_count,imputed_hours_count,quality_flag
+2022,41445521.0,4731.223858447489,8513.0,803.0,8760,3,contains_imputed_rows
+2023,38358925.0,4378.872716894977,8826.0,500.0,8760,2,contains_imputed_rows
+2024,39588338.0,4506.86908014572,9128.0,21.0,8784,5,contains_imputed_rows
+2025,39145810.0,4468.6997716894975,9141.0,4.0,8760,2,contains_imputed_rows
+2026,18673496.0,4347.728987194412,8607.0,705.0,4295,27,contains_imputed_rows
