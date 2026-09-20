@@ -1,0 +1,32 @@
+# Python
+.venv/
+**/.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# Secrets and local config
+.env
+.env.*
+!.env.example
+
+# Editor / agent local state (launch.json is shared, the rest is per-machine)
+.claude/settings.local.json
+.claude/worktrees/
+.idea/
+.vscode/
+
+# Logs and OS noise
+*.log
+.DS_Store
+
+# Regenerable downloads (recreate with scripts/download_ipto_system_load.py)
+data/raw/
+data/interim/
