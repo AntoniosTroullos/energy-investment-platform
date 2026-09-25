@@ -21,6 +21,13 @@ type ScenarioConfigContextValue = {
   setScenario: (scenario: Scenario) => void;
   savedCustomScenario: Scenario | null;
   setSavedCustomScenario: (scenario: Scenario | null) => void;
+  // One-shot handoff from Scenario Studio to the Map page: clicking a
+  // candidate in the Evaluate Scenario results stores its id here and
+  // navigates to the map, which focuses it and clears the request. Held in
+  // context (not the URL) so it survives the client-side route change without
+  // needing a Suspense boundary for useSearchParams.
+  pendingMapFocusCandidateId: string | null;
+  setPendingMapFocusCandidateId: (candidateId: string | null) => void;
 };
 
 const ScenarioConfigContext = createContext<ScenarioConfigContextValue | null>(null);
@@ -28,6 +35,7 @@ const ScenarioConfigContext = createContext<ScenarioConfigContextValue | null>(n
 export function ScenarioConfigProvider({ children }: { children: ReactNode }) {
   const [scenario, setScenario] = useState<Scenario>(defaultScenario);
   const [savedCustomScenario, setSavedCustomScenario] = useState<Scenario | null>(null);
+  const [pendingMapFocusCandidateId, setPendingMapFocusCandidateId] = useState<string | null>(null);
 
   useEffect(() => {
     const storedScenario = window.localStorage.getItem(customScenarioStorageKey);
@@ -58,7 +66,14 @@ export function ScenarioConfigProvider({ children }: { children: ReactNode }) {
 
   return (
     <ScenarioConfigContext.Provider
-      value={{ scenario, setScenario, savedCustomScenario, setSavedCustomScenario }}
+      value={{
+        scenario,
+        setScenario,
+        savedCustomScenario,
+        setSavedCustomScenario,
+        pendingMapFocusCandidateId,
+        setPendingMapFocusCandidateId,
+      }}
     >
       {children}
     </ScenarioConfigContext.Provider>

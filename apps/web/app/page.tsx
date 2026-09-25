@@ -78,7 +78,8 @@ type CandidateLoadState = "idle" | "loading" | "success" | "error";
 type InfrastructureLoadState = "idle" | "loading" | "success" | "error";
 
 export default function Home() {
-  const { scenario } = useScenarioConfig();
+  const { scenario, pendingMapFocusCandidateId, setPendingMapFocusCandidateId } =
+    useScenarioConfig();
   const [viewMode, setViewMode] = useState<ViewMode>("explorer");
   const [showPlants, setShowPlants] = useState(true);
   const [showSubstations, setShowSubstations] = useState(true);
@@ -155,6 +156,31 @@ export default function Home() {
   useEffect(() => {
     void loadGeneratorClusters();
   }, []);
+
+  // Consumes the one-shot focus request left by Scenario Studio's Evaluate
+  // Scenario results. Waits until the candidate cells have loaded (a fresh
+  // navigation to "/" may arrive before they have), then focuses the matching
+  // cell -- which also switches to Analysis mode so the cell layer is visible
+  // -- and clears the request so it never fires twice.
+  useEffect(() => {
+    if (!pendingMapFocusCandidateId || candidateCellAssets.length === 0) {
+      return;
+    }
+
+    const match = candidateCellAssets.find((asset) => asset.id === pendingMapFocusCandidateId);
+
+    if (match) {
+      handleAssetFocus(match);
+    }
+
+    setPendingMapFocusCandidateId(null);
+    // handleAssetFocus is a per-render function declaration, so listing it (or
+    // the stable setter) would re-run this every render -- harmless, since it
+    // returns immediately once the request is cleared, but pointless. The
+    // effect is meant to fire only when a request arrives or the candidate
+    // cells finish loading.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingMapFocusCandidateId, candidateCellAssets]);
 
   useEffect(() => {
     if (!selectedScenarioCaseName) {

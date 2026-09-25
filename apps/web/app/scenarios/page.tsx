@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import CoupledScenarioPanel from "../../components/CoupledScenarioPanel";
@@ -31,7 +32,14 @@ const PYPSA_TABS: { id: PypsaTab; label: string }[] = [
 ];
 
 export default function ScenarioStudioPage() {
-  const { scenario, setScenario, savedCustomScenario, setSavedCustomScenario } = useScenarioConfig();
+  const {
+    scenario,
+    setScenario,
+    savedCustomScenario,
+    setSavedCustomScenario,
+    setPendingMapFocusCandidateId,
+  } = useScenarioConfig();
+  const router = useRouter();
 
   const [scenarioStatus, setScenarioStatus] = useState("");
   const [isImportOpen, setIsImportOpen] = useState(false);
@@ -87,10 +95,7 @@ export default function ScenarioStudioPage() {
             evaluationErrorMessage={evaluationErrorMessage}
             onEvaluateScenario={handleEvaluateScenario}
             scenarioEvaluation={scenarioEvaluation}
-            // Focusing a candidate is a map interaction, and this page has no
-            // map -- a stated scope limitation, not a missing wire-up. The
-            // Map page's own Top Opportunities/Compare panels cover this.
-            onEvaluationCandidateFocus={() => {}}
+            onEvaluationCandidateFocus={handleEvaluationCandidateFocus}
           />
           <ScenarioControlsPanel scenario={scenario} onUpdateScenario={handleUpdateScenario} />
         </div>
@@ -137,6 +142,13 @@ export default function ScenarioStudioPage() {
       </section>
     </main>
   );
+
+  // This page has no map, so focusing a candidate means handing it to the Map
+  // page: record the id, then navigate there (the map picks it up on arrival).
+  function handleEvaluationCandidateFocus(candidateId: string) {
+    setPendingMapFocusCandidateId(candidateId);
+    router.push("/");
+  }
 
   function handleUpdateScenario(updates: Partial<Scenario>) {
     setScenario(sanitizeScenario({ ...scenario, ...updates }));
