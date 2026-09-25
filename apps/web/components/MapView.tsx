@@ -311,6 +311,10 @@ export default function MapView({
       return;
     }
 
+    // Set on cleanup so handlers of a map that is being torn down (queued
+    // behind a still-loading style) do nothing.
+    let isDisposed = false;
+
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
       style: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
@@ -324,6 +328,10 @@ export default function MapView({
     // Wait for the style load event before adding sources and layers.
     // Until the style is ready, layer and source operations can fail.
     map.on("load", () => {
+      if (isDisposed) {
+        return;
+      }
+
       isMapLoadedRef.current = true;
 
       addMarketZoneLayers(
@@ -665,13 +673,29 @@ export default function MapView({
     });
 
     map.on("moveend", () => {
+      if (isDisposed) {
+        return;
+      }
+
       onViewportChangeRef.current(getViewportBounds(map));
     });
 
     return () => {
-      map.remove();
+      isDisposed = true;
       mapRef.current = null;
       isMapLoadedRef.current = false;
+
+      // MapLibre throws asynchronously ("Cannot read properties of undefined
+      // (reading 'projection')") if remove() runs while the style JSON is
+      // still loading. That happens whenever this component unmounts early:
+      // a quick Map -> Studio route change, or React StrictMode's dev-only
+      // mount/unmount/mount. So remove immediately only once the style is
+      // ready; otherwise defer removal to the load event.
+      if (map.isStyleLoaded()) {
+        map.remove();
+      } else {
+        map.once("load", () => map.remove());
+      }
     };
   }, []);
 
