@@ -5,11 +5,14 @@ import { useEffect, useState } from "react";
 
 import { getScenarioList } from "../lib/pypsaScenario/pypsaScenario.api";
 import type { ScenarioListItem } from "../lib/pypsaScenario/pypsaScenario.types";
+import { REGION_METRICS, type RegionMetricId } from "../lib/spatial/colorScale";
 import StaleBadge from "./StaleBadge";
 
 type ScenarioResultsSourcePanelProps = {
   selectedCaseName: string | null;
   onSelectCaseName: (caseName: string | null) => void;
+  metricId: RegionMetricId;
+  onSelectMetric: (metricId: RegionMetricId) => void;
 };
 
 // Replaces the old in-session "just solved this" wiring: this panel is
@@ -21,6 +24,8 @@ type ScenarioResultsSourcePanelProps = {
 export default function ScenarioResultsSourcePanel({
   selectedCaseName,
   onSelectCaseName,
+  metricId,
+  onSelectMetric,
 }: ScenarioResultsSourcePanelProps) {
   const [scenarios, setScenarios] = useState<ScenarioListItem[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
@@ -84,6 +89,26 @@ export default function ScenarioResultsSourcePanel({
             </option>
           ))}
         </select>
+
+        {selectedCaseName && (
+          <div className="mt-3">
+            <label htmlFor="scenario-results-metric" className="text-xs font-medium text-zinc-100">
+              Shade regions by
+            </label>
+            <select
+              id="scenario-results-metric"
+              value={metricId}
+              onChange={(event) => onSelectMetric(event.target.value as RegionMetricId)}
+              className="mt-2 w-full rounded-lg border border-white/10 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-emerald-400"
+            >
+              {REGION_METRICS.map((metric) => (
+                <option key={metric.id} value={metric.id}>
+                  {metric.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         {selectedItem?.electricity_staleness?.is_stale && (
           <div className="mt-3 flex items-start gap-2">

@@ -1,12 +1,15 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import maplibregl from "maplibre-gl";
 import type {
   CircleLayerSpecification,
   ExpressionSpecification,
   LineLayerSpecification,
+  MapLayerMouseEvent,
 } from "maplibre-gl";
+import RegionMetricLegend from "./RegionMetricLegend";
+import { buildScaleForValues, getRegionMetric, type RegionMetricId } from "../lib/spatial/colorScale";
 import type {
   AssetSelection,
   AssetType,
@@ -45,9 +48,17 @@ type MapViewProps = {
   generatorClustersData: GeoJSON.FeatureCollection;
   showScenarioRegions: boolean;
   scenarioRegionsData: GeoJSON.FeatureCollection;
+  scenarioRegionMetricId: RegionMetricId;
   onViewportChange: (bounds: ViewportBounds) => void;
   onSelectAsset: (asset: AssetSelection) => void;
   onClearSelection: () => void;
+};
+
+type HoveredScenarioRegion = {
+  name: string;
+  value: number | null;
+  pointX: number;
+  pointY: number;
 };
 
 const GREECE_CENTER: [number, number] = [22.0, 39.0];
@@ -148,6 +159,7 @@ export default function MapView({
   generatorClustersData,
   showScenarioRegions,
   scenarioRegionsData,
+  scenarioRegionMetricId,
   onViewportChange,
   onSelectAsset,
   onClearSelection,
@@ -185,6 +197,8 @@ export default function MapView({
   const generatorClustersDataRef = useRef(generatorClustersData);
   const showScenarioRegionsRef = useRef(showScenarioRegions);
   const scenarioRegionsDataRef = useRef(scenarioRegionsData);
+  const scenarioRegionMetricIdRef = useRef(scenarioRegionMetricId);
+  const [hoveredScenarioRegion, setHoveredScenarioRegion] = useState<HoveredScenarioRegion | null>(null);
 
   useEffect(() => {
     showPlantsRef.current = showPlants;
@@ -305,6 +319,10 @@ export default function MapView({
   useEffect(() => {
     scenarioRegionsDataRef.current = scenarioRegionsData;
   }, [scenarioRegionsData]);
+
+  useEffect(() => {
+    scenarioRegionMetricIdRef.current = scenarioRegionMetricId;
+  }, [scenarioRegionMetricId]);
 
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) {
@@ -538,7 +556,37 @@ export default function MapView({
       // Scenario-solve results (real, per-region metrics from a solved PyPSA
       // scenario) -- empty FeatureCollection until a scenario is solved, see
       // addScenarioRegionLayers below.
-      addScenarioRegionLayers(map, scenarioRegionsDataRef.current, showScenarioRegionsRef.current);
+      addScenarioRegionLayers(
+        map,
+        scenarioRegionsDataRef.current,
+        scenarioRegionMetricIdRef.current,
+        showScenarioRegionsRef.current,
+      );
+
+      // event.features (populated because this listener is bound to the
+      // layer id) always has exactly the one region under the cursor, unlike
+      // the plain map-wide "click" handler below, which queries explicitly.
+      map.on("mousemove", SCENARIO_REGIONS_FILL_LAYER_ID, (event: MapLayerMouseEvent) => {
+        const feature = event.features?.[0];
+        if (!feature) {
+          return;
+        }
+
+        const properties = feature.properties ?? {};
+        const rawValue = properties[scenarioRegionMetricIdRef.current];
+        setHoveredScenarioRegion({
+          name: String(properties.name ?? properties.id ?? ""),
+          value: typeof rawValue === "number" && Number.isFinite(rawValue) ? rawValue : null,
+          pointX: event.point.x,
+          pointY: event.point.y,
+        });
+        map.getCanvas().style.cursor = "pointer";
+      });
+
+      map.on("mouseleave", SCENARIO_REGIONS_FILL_LAYER_ID, () => {
+        setHoveredScenarioRegion(null);
+        map.getCanvas().style.cursor = "";
+      });
 
       addSelectedLayers(map);
       bringLayerInFront(map, GAS_PIPELINES_CASING_LAYER_ID, SELECTED_POLYGONS_LAYER_ID);
@@ -864,6 +912,15 @@ export default function MapView({
   }, [scenarioRegionsData]);
 
   useEffect(() => {
+    updateScenarioRegionColorExpression(
+      mapRef.current,
+      isMapLoadedRef.current,
+      scenarioRegionsData,
+      scenarioRegionMetricId,
+    );
+  }, [scenarioRegionsData, scenarioRegionMetricId]);
+
+  useEffect(() => {
     updateGeoJsonSource(
       mapRef.current,
       isMapLoadedRef.current,
@@ -962,6 +1019,63 @@ export default function MapView({
           summary={marketSummary}
         />
       ) : null}
+
+      {showScenarioRegions && scenarioRegionsData.features.length > 0 ? (
+        <ScenarioRegionLegendOverlay data={scenarioRegionsData} metricId={scenarioRegionMetricId} />
+      ) : null}
+
+      {showScenarioRegions && hoveredScenarioRegion ? (
+        <ScenarioRegionTooltip region={hoveredScenarioRegion} metricId={scenarioRegionMetricId} />
+      ) : null}
+    </div>
+  );
+}
+
+function ScenarioRegionLegendOverlay({
+  data,
+  metricId,
+}: {
+  data: GeoJSON.FeatureCollection;
+  metricId: RegionMetricId;
+}) {
+  const metric = getRegionMetric(metricId);
+  const values = data.features.map((feature) => {
+    const rawValue = feature.properties?.[metricId];
+    return typeof rawValue === "number" && Number.isFinite(rawValue) ? rawValue : null;
+  });
+  const scale = buildScaleForValues(values, metric.diverging);
+
+  return (
+    <div className="pointer-events-none absolute bottom-6 left-6 w-64 rounded-2xl border border-white/10 bg-zinc-950/90 p-4 shadow-2xl shadow-black/40 backdrop-blur">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-zinc-500">
+        Solved Scenario
+      </p>
+      <p className="mt-2 text-sm font-semibold text-zinc-100">{metric.label}</p>
+      <div className="mt-3">
+        <RegionMetricLegend scale={scale} formatValue={metric.format} diverging={metric.diverging} />
+      </div>
+    </div>
+  );
+}
+
+function ScenarioRegionTooltip({
+  region,
+  metricId,
+}: {
+  region: HoveredScenarioRegion;
+  metricId: RegionMetricId;
+}) {
+  const metric = getRegionMetric(metricId);
+
+  return (
+    <div
+      className="pointer-events-none absolute z-10 max-w-[220px] -translate-x-1/2 -translate-y-full rounded-lg border border-white/10 bg-zinc-950/95 px-3 py-2 text-xs shadow-xl"
+      style={{ left: region.pointX, top: region.pointY - 12 }}
+    >
+      <p className="font-medium text-zinc-100">{region.name}</p>
+      <p className="mt-1 text-emerald-300">
+        {region.value === null ? "No data" : metric.format(region.value)}
+      </p>
     </div>
   );
 }
@@ -1097,12 +1211,13 @@ function addMarketZoneLayers(
 // dedicated source/layer IDs -- kept as its own small function rather than
 // generalizing addMarketZoneLayers itself, since that function is shared with
 // the market-price feature and this is a separate, PyPSA-scenario-specific
-// data source. Colors by average_marginal_price_eur_per_mwh, the field
-// apps/api's /scenarios/{case_name}/map/regions endpoint attaches to each
-// real admin-region polygon.
+// data source. The fill color is built dynamically per selected metric (see
+// buildScenarioRegionColorExpression) rather than one fixed price scale, so
+// this is not one static paint literal like the layers above.
 function addScenarioRegionLayers(
   map: maplibregl.Map,
   data: GeoJSON.FeatureCollection,
+  metricId: RegionMetricId,
   isVisible: boolean,
 ) {
   if (!map.getSource(SCENARIO_REGIONS_SOURCE_ID)) {
@@ -1121,24 +1236,8 @@ function addScenarioRegionLayers(
         visibility: isVisible ? "visible" : "none",
       },
       paint: {
-        "fill-color": [
-          "interpolate",
-          ["linear"],
-          ["coalesce", ["to-number", ["get", "average_marginal_price_eur_per_mwh"]], 0],
-          0,
-          "#22c55e",
-          40,
-          "#bef264",
-          80,
-          "#f59e0b",
-          120,
-          "#fb7185",
-          160,
-          "#db2777",
-          200,
-          "#7c3aed",
-        ],
-        "fill-opacity": 0.42,
+        "fill-color": buildScenarioRegionColorExpression(data, metricId),
+        "fill-opacity": 0.5,
       },
     });
   }
@@ -1158,6 +1257,55 @@ function addScenarioRegionLayers(
       },
     });
   }
+}
+
+// The same sequential/diverging color scale the Scenario Studio's SVG spatial
+// map uses (lib/spatial/colorScale.ts), expressed as a MapLibre paint
+// expression instead of a per-feature JS color lookup. A region with no value
+// for this metric (null, not just absent) gets the scale's own "missing"
+// color rather than being pulled into the value ramp at some arbitrary
+// fallback number.
+function buildScenarioRegionColorExpression(
+  data: GeoJSON.FeatureCollection,
+  metricId: RegionMetricId,
+): ExpressionSpecification {
+  const metric = getRegionMetric(metricId);
+  const values = data.features.map((feature) => {
+    const rawValue = feature.properties?.[metricId];
+    return typeof rawValue === "number" && Number.isFinite(rawValue) ? rawValue : null;
+  });
+  const scale = buildScaleForValues(values, metric.diverging);
+
+  const interpolateExpression = [
+    "interpolate",
+    ["linear"],
+    ["to-number", ["get", metricId]],
+    ...scale.stops.flatMap((stop) => [stop.value, stop.color]),
+  ];
+
+  return [
+    "case",
+    ["==", ["get", metricId], null],
+    scale.missingColor,
+    interpolateExpression,
+  ] as unknown as ExpressionSpecification;
+}
+
+function updateScenarioRegionColorExpression(
+  map: maplibregl.Map | null,
+  isLoaded: boolean,
+  data: GeoJSON.FeatureCollection,
+  metricId: RegionMetricId,
+) {
+  if (!map || !isLoaded || !map.getLayer(SCENARIO_REGIONS_FILL_LAYER_ID)) {
+    return;
+  }
+
+  map.setPaintProperty(
+    SCENARIO_REGIONS_FILL_LAYER_ID,
+    "fill-color",
+    buildScenarioRegionColorExpression(data, metricId),
+  );
 }
 
 function addLayerGroup(

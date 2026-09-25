@@ -143,6 +143,48 @@ export type ScenarioListResponse = {
 };
 
 // ---------------------------------------------------------------------------
+// Spatial results -- GET /scenarios/{case}/map/regions,
+// GET /scenarios/compare/map/regions, and GET /scenarios/network-topology.
+// Both region endpoints return a plain GeoJSON FeatureCollection; these types
+// name only the properties the spatial view reads (the real payload also
+// carries admin boundary fields -- name, name_el, iso3166_2, ... -- read
+// straight off the feature for display, not worth typing here).
+// ---------------------------------------------------------------------------
+
+// The metrics both a single-scenario region and a delta region carry, before
+// the "_a" / "_b" / "_delta" suffixing the delta endpoint applies to each.
+export type RegionMetricId =
+  | "generation_mwh"
+  | "total_load_mwh"
+  | "net_position_mwh"
+  | "average_marginal_price_eur_per_mwh"
+  | "peak_load_mw";
+
+export type ScenarioRegionProperties = {
+  id: string;
+  name: string;
+  scenario_case_name: string;
+} & Record<RegionMetricId, number | null>;
+
+// One row per REGION_METRIC_KEYS entry, each as <key>_a / <key>_b / <key>_delta
+// -- see apps/api's get_scenario_regions_delta_geojson.
+export type ScenarioRegionDeltaProperties = {
+  id: string;
+  name: string;
+  scenario_case_name_a: string;
+  scenario_case_name_b: string;
+} & {
+  [K in RegionMetricId as `${K}_a` | `${K}_b` | `${K}_delta`]: number | null;
+};
+
+export type TransmissionCorridorProperties = {
+  id: string;
+  bus0: string;
+  bus1: string;
+  s_nom_mw: number | null;
+};
+
+// ---------------------------------------------------------------------------
 // Coupled gas/hydrogen/heat scenario (Phase 5). Layers onto an already-solved
 // electricity case for the same year -- see CoupledScenarioPanel.tsx. Mirrors
 // apps/api's CoupledScenarioResult (app/scenario_models.py), which itself

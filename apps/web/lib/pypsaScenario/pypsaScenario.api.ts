@@ -96,6 +96,30 @@ export async function getScenarioOptions(): Promise<ScenarioOptions> {
   return (await response.json()) as ScenarioOptions;
 }
 
+export async function getScenarioRegionsDeltaGeoJson(
+  caseNameA: string,
+  caseNameB: string,
+): Promise<GeoJSON.FeatureCollection> {
+  const query = new URLSearchParams({ case_a: caseNameA, case_b: caseNameB });
+  const response = await fetch(`${API_BASE_URL}/scenarios/compare/map/regions?${query}`);
+  if (!response.ok) {
+    throw new Error(
+      await parseErrorDetail(response, `Unable to fetch the scenario comparison map (status ${response.status}).`),
+    );
+  }
+  return (await response.json()) as GeoJSON.FeatureCollection;
+}
+
+export async function getNetworkTopologyGeoJson(): Promise<GeoJSON.FeatureCollection> {
+  const response = await fetch(`${API_BASE_URL}/scenarios/network-topology`);
+  if (!response.ok) {
+    throw new Error(
+      await parseErrorDetail(response, `Unable to fetch the network topology (status ${response.status}).`),
+    );
+  }
+  return (await response.json()) as GeoJSON.FeatureCollection;
+}
+
 export async function getGeneratorClustersGeoJson(): Promise<GeoJSON.FeatureCollection> {
   const response = await fetch(`${API_BASE_URL}/generator-clusters`);
   if (!response.ok) {

@@ -16,6 +16,7 @@ import {
 } from "../lib/pypsaScenario/pypsaScenario.api";
 import SearchPanel from "../components/SearchPanel";
 import TopOpportunitiesPanel from "../components/TopOpportunitiesPanel";
+import type { RegionMetricId } from "../lib/spatial/colorScale";
 import { useScenarioConfig } from "../lib/scenario/ScenarioConfigContext";
 import {
   getEligibleCandidateCells,
@@ -140,6 +141,8 @@ export default function Home() {
   const [showScenarioRegions, setShowScenarioRegions] = useState(false);
   const [scenarioRegionsData, setScenarioRegionsData] =
     useState<GeoJSON.FeatureCollection>(emptyFeatureCollection);
+  const [scenarioRegionMetricId, setScenarioRegionMetricId] =
+    useState<RegionMetricId>("net_position_mwh");
 
   useEffect(() => {
     void loadCandidateCells();
@@ -451,6 +454,8 @@ export default function Home() {
         <ScenarioResultsSourcePanel
           selectedCaseName={selectedScenarioCaseName}
           onSelectCaseName={setSelectedScenarioCaseName}
+          metricId={scenarioRegionMetricId}
+          onSelectMetric={setScenarioRegionMetricId}
         />
 
         <InfrastructureFiltersPanel
@@ -552,6 +557,7 @@ export default function Home() {
           generatorClustersData={generatorClustersData}
           showScenarioRegions={showScenarioRegions}
           scenarioRegionsData={scenarioRegionsData}
+          scenarioRegionMetricId={scenarioRegionMetricId}
           onViewportChange={setViewportBounds}
           onSelectAsset={setSelectedAsset}
           onClearSelection={() => setSelectedAsset(null)}
