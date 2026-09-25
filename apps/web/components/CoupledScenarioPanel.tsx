@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -14,24 +14,18 @@ import {
 import {
   CoupledScenarioPreconditionError,
   getCoupledScenarioResult,
+  getScenarioOptions,
   pollCoupledScenarioUntilTerminal,
   runCoupledScenario,
 } from "../lib/pypsaScenario/pypsaScenario.api";
 import type {
-  CoupledEligibleYear,
+  CoupledScenarioOption,
   CoupledScenarioResult,
   RunState,
 } from "../lib/pypsaScenario/pypsaScenario.types";
 
 type SolveState = "idle" | "starting" | "running" | "success" | "crashed" | "precondition-failed" | "error";
-
-// Both constraints trace to pypsa-greece/data/static/h2_market_scenarios.csv,
-// which today has exactly one named scenario, defined only for these 3
-// years. Extend both lists the day that CSV gains more rows.
-const YEAR_OPTIONS: CoupledEligibleYear[] = [2030, 2040, 2050];
-const H2_MARKET_SCENARIO_OPTIONS = [
-  { value: "baseline_no_trade", label: "Baseline (no H2 import/export, no storage)" },
-];
+type OptionsState = "loading" | "ready" | "error";
 
 const AXIS_COLOR = "#71717a";
 const GRID_COLOR = "rgba(255,255,255,0.08)";
@@ -73,33 +67,80 @@ function h2BalanceRows(result: CoupledScenarioResult) {
   ];
 }
 
+// A (year, scenario) pair is the unit that is actually valid or not -- see
+// GET /scenarios/options -- so the picker is one select over that pair, not
+// two independent selects whose cross product could land on a combination
+// the CSV never defined. Encoded as a single string for <select>'s value.
+function optionKey(option: Pick<CoupledScenarioOption, "target_year" | "h2_market_scenario">): string {
+  return `${option.target_year}::${option.h2_market_scenario}`;
+}
+
 export default function CoupledScenarioPanel() {
-  const [targetYear, setTargetYear] = useState<CoupledEligibleYear>(2030);
-  const [h2MarketScenario, setH2MarketScenario] = useState(H2_MARKET_SCENARIO_OPTIONS[0].value);
+  const [coupledOptions, setCoupledOptions] = useState<CoupledScenarioOption[]>([]);
+  const [optionsState, setOptionsState] = useState<OptionsState>("loading");
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [solveState, setSolveState] = useState<SolveState>("idle");
   const [caseName, setCaseName] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [lastResult, setLastResult] = useState<CoupledScenarioResult | null>(null);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadOptions() {
+      try {
+        const options = await getScenarioOptions();
+        if (cancelled) {
+          return;
+        }
+        setCoupledOptions(options.coupled_options);
+        setOptionsState("ready");
+        // Prefer a combination whose electricity case is already solved (the
+        // common case, and the only one that will not immediately 428);
+        // otherwise just the first defined combination.
+        const preferred =
+          options.coupled_options.find((option) => option.electricity_solved) ?? options.coupled_options[0];
+        setSelectedKey(preferred ? optionKey(preferred) : null);
+      } catch {
+        if (!cancelled) {
+          setOptionsState("error");
+        }
+      }
+    }
+
+    void loadOptions();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const isBusy = solveState === "starting" || solveState === "running";
+  const selected = coupledOptions.find((option) => optionKey(option) === selectedKey) ?? null;
 
   async function handleSolve() {
+    if (!selected) {
+      return;
+    }
+
     setSolveState("starting");
     setErrorMessage(null);
     setStatusMessage("Starting the coupled solve...");
 
     try {
-      const started = await runCoupledScenario({ targetYear, h2MarketScenario });
+      const started = await runCoupledScenario({
+        targetYear: selected.target_year,
+        h2MarketScenario: selected.h2_market_scenario,
+      });
       setCaseName(started.case_name);
       setSolveState("running");
-      setStatusMessage(`Solving the coupled system for ${targetYear}...`);
+      setStatusMessage(`Solving the coupled system for ${selected.target_year}...`);
 
       const terminalStatus = await pollCoupledScenarioUntilTerminal(
         started.case_name,
         (status: { state: RunState }) => {
           if (status.state === "running") {
-            setStatusMessage(`Solving the coupled system for ${targetYear}...`);
+            setStatusMessage(`Solving the coupled system for ${selected.target_year}...`);
           }
         },
       );
@@ -138,47 +179,39 @@ export default function CoupledScenarioPanel() {
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[360px_1fr]">
       <div className="space-y-4">
         <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-          <label htmlFor="coupled-target-year" className="text-sm font-medium text-zinc-100">
-            Target Year
+          <label htmlFor="coupled-scenario-option" className="text-sm font-medium text-zinc-100">
+            Year &amp; H2 Market Scenario
           </label>
           <select
-            id="coupled-target-year"
-            value={targetYear}
-            disabled={isBusy}
-            onChange={(event) => setTargetYear(Number(event.target.value) as CoupledEligibleYear)}
+            id="coupled-scenario-option"
+            value={selectedKey ?? ""}
+            disabled={isBusy || optionsState !== "ready" || coupledOptions.length === 0}
+            onChange={(event) => setSelectedKey(event.target.value)}
             className="mt-3 w-full rounded-lg border border-white/10 bg-zinc-950 px-3 py-3 text-sm text-zinc-100 outline-none focus:border-emerald-400 disabled:opacity-50"
           >
-            {YEAR_OPTIONS.map((year) => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-          <label htmlFor="coupled-h2-market-scenario" className="text-sm font-medium text-zinc-100">
-            H2 Market Scenario
-          </label>
-          <select
-            id="coupled-h2-market-scenario"
-            value={h2MarketScenario}
-            disabled={isBusy}
-            onChange={(event) => setH2MarketScenario(event.target.value)}
-            className="mt-3 w-full rounded-lg border border-white/10 bg-zinc-950 px-3 py-3 text-sm text-zinc-100 outline-none focus:border-emerald-400 disabled:opacity-50"
-          >
-            {H2_MARKET_SCENARIO_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
+            {optionsState === "loading" && <option>Loading options...</option>}
+            {optionsState === "error" && <option>Could not load options</option>}
+            {optionsState === "ready" && coupledOptions.length === 0 && (
+              <option>No coupled scenarios are defined yet</option>
+            )}
+            {coupledOptions.map((option) => (
+              <option key={optionKey(option)} value={optionKey(option)} disabled={!option.electricity_solved}>
                 {option.label}
+                {option.electricity_solved ? "" : " -- needs the electricity case solved first"}
               </option>
             ))}
           </select>
+          {optionsState === "error" && (
+            <p className="mt-2 text-xs text-amber-300">
+              Could not load scenario options from the backend -- check that the API is running.
+            </p>
+          )}
         </div>
 
         <button
           type="button"
           onClick={handleSolve}
-          disabled={isBusy}
+          disabled={isBusy || !selected}
           className="w-full rounded-lg bg-cyan-500 px-4 py-3 text-sm font-semibold text-zinc-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:bg-cyan-500/40"
         >
           {isBusy ? "Solving..." : "Solve Coupled System"}
@@ -195,7 +228,8 @@ export default function CoupledScenarioPanel() {
           <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-200">
             <p className="font-semibold">Electricity case not solved yet</p>
             <p className="mt-1 text-xs">
-              {errorMessage ?? `Electricity scenario for ${targetYear} hasn't been solved yet -- solve it in the Electricity tab first, then try again.`}
+              {errorMessage ??
+                `Electricity scenario for ${selected?.target_year ?? "this year"} hasn't been solved yet -- solve it in the Electricity tab first, then try again.`}
             </p>
           </div>
         )}

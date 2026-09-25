@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
+  getScenarioOptions,
   getScenarioResult,
   pollScenarioUntilTerminal,
   runElectricityScenario,
@@ -10,23 +11,63 @@ import {
 import type {
   ElectricityScenarioResult,
   RunState,
+  ScenarioOptions,
 } from "../lib/pypsaScenario/pypsaScenario.types";
 import ScenarioResultsCharts from "./ScenarioResultsCharts";
 
 type SolveState = "idle" | "starting" | "running" | "success" | "crashed" | "error";
+type OptionsState = "loading" | "ready" | "error";
 
-const YEAR_OPTIONS = [2030, 2035, 2040, 2045, 2050];
+// Used only until GET /scenarios/options answers (or if it fails) -- picking a
+// year to render immediately beats a blank/disabled control on first paint.
+// The real bounds (and which years are solved) always come from the backend.
+const FALLBACK_YEAR = 2030;
+const FALLBACK_GROWTH_RATE = 0.01;
 
 export default function ScenarioBuilderPanel() {
-  const [targetYear, setTargetYear] = useState(2030);
-  const [annualGrowthRate, setAnnualGrowthRate] = useState(0.01);
+  const [options, setOptions] = useState<ScenarioOptions | null>(null);
+  const [optionsState, setOptionsState] = useState<OptionsState>("loading");
+  const [targetYear, setTargetYear] = useState(FALLBACK_YEAR);
+  const [annualGrowthRate, setAnnualGrowthRate] = useState(FALLBACK_GROWTH_RATE);
   const [solveState, setSolveState] = useState<SolveState>("idle");
   const [caseName, setCaseName] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [lastResult, setLastResult] = useState<ElectricityScenarioResult | null>(null);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadOptions() {
+      try {
+        const loaded = await getScenarioOptions();
+        if (cancelled) {
+          return;
+        }
+        setOptions(loaded);
+        setOptionsState("ready");
+        // Default to the first not-yet-solved year (screening a new year is
+        // the common case); fall back to the earliest offered year once
+        // everything currently listed is solved.
+        const nextUnsolved = loaded.electricity_years.find((year) => !year.solved);
+        setTargetYear(nextUnsolved?.year ?? loaded.electricity_years[0]?.year ?? FALLBACK_YEAR);
+        setAnnualGrowthRate(loaded.annual_growth_rate_default);
+      } catch {
+        if (!cancelled) {
+          setOptionsState("error");
+        }
+      }
+    }
+
+    void loadOptions();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const isBusy = solveState === "starting" || solveState === "running";
+  const selectedYearOption = options?.electricity_years.find((year) => year.year === targetYear);
+  const growthPercentStep = 0.5; // percentage points; matches the slider's 0.005 step in fraction form
 
   async function handleSolve() {
     setSolveState("starting");
@@ -61,6 +102,18 @@ export default function ScenarioBuilderPanel() {
           ? `Solved. Objective cost: €${(result.objective_eur ?? 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}/year.`
           : `Solve completed but did not find an optimal solution: ${result.message}`,
       );
+      // This year is now solved (or re-solved) -- refresh the picker's solved
+      // flags so a subsequent look at the dropdown reflects it.
+      setOptions((current) =>
+        current
+          ? {
+              ...current,
+              electricity_years: current.electricity_years.map((year) =>
+                year.year === targetYear ? { ...year, solved: true } : year,
+              ),
+            }
+          : current,
+      );
     } catch (error) {
       setSolveState("error");
       setErrorMessage(error instanceof Error ? error.message : "Unable to solve this scenario.");
@@ -77,16 +130,29 @@ export default function ScenarioBuilderPanel() {
           <select
             id="target-year"
             value={targetYear}
-            disabled={isBusy}
+            disabled={isBusy || optionsState === "loading"}
             onChange={(event) => setTargetYear(Number(event.target.value))}
             className="mt-3 w-full rounded-lg border border-white/10 bg-zinc-950 px-3 py-3 text-sm text-zinc-100 outline-none focus:border-emerald-400 disabled:opacity-50"
           >
-            {YEAR_OPTIONS.map((year) => (
-              <option key={year} value={year}>
-                {year}
+            {optionsState === "loading" && <option>Loading years...</option>}
+            {optionsState === "error" && <option value={FALLBACK_YEAR}>{FALLBACK_YEAR}</option>}
+            {options?.electricity_years.map((year) => (
+              <option key={year.year} value={year.year}>
+                {year.year}
+                {year.solved ? " (solved)" : ""}
               </option>
             ))}
           </select>
+          {optionsState === "error" && (
+            <p className="mt-2 text-xs text-amber-300">
+              Could not load the year list from the backend -- showing a fallback default ({FALLBACK_YEAR}).
+            </p>
+          )}
+          {selectedYearOption?.solved && (
+            <p className="mt-2 text-xs text-zinc-500">
+              Already solved -- solving again replaces that result.
+            </p>
+          )}
         </div>
 
         <div className="rounded-xl border border-white/10 bg-white/5 p-4">
@@ -101,9 +167,9 @@ export default function ScenarioBuilderPanel() {
           <input
             id="annual-growth-rate"
             type="range"
-            min="-0.02"
-            max="0.05"
-            step="0.005"
+            min={options?.annual_growth_rate_min ?? -0.05}
+            max={options?.annual_growth_rate_max ?? 0.10}
+            step={growthPercentStep / 100}
             value={annualGrowthRate}
             disabled={isBusy}
             onChange={(event) => setAnnualGrowthRate(Number(event.target.value))}
@@ -156,6 +222,8 @@ export default function ScenarioBuilderPanel() {
                 Objective cost: €
                 {(lastResult.objective_eur ?? 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 /year
+                {lastResult.parameters?.annual_growth_rate != null &&
+                  ` · ${(lastResult.parameters.annual_growth_rate * 100).toFixed(1)}%/yr demand growth`}
               </p>
             </div>
             <ScenarioResultsCharts result={lastResult} />

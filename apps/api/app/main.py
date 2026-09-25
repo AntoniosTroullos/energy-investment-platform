@@ -33,6 +33,7 @@ from .generators import (
     is_point_feature_in_greece,
 )
 from .market import get_greece_market_signal
+from .network_topology import get_network_topology_geojson
 from .models import (
     ClimateAssetResponse,
     GreeceMarketSignalResponse,
@@ -51,6 +52,7 @@ from .scenario_models import (
     ScenarioListResponse,
     ScenarioStatusResponse,
 )
+from .scenario_options import InvalidCoupledScenarioError, ScenarioOptionsResponse, get_scenario_options
 from .scenario_runner import ScenarioPreconditionError, ScenarioRunError
 from .settings import settings
 from .system_status import SystemStatusResponse, get_system_status
@@ -58,6 +60,7 @@ from .scenarios import (
     get_coupled_scenario_result,
     get_coupled_scenario_status,
     get_generator_clusters_geojson,
+    get_scenario_regions_delta_geojson,
     get_scenario_regions_geojson,
     get_scenario_result,
     get_scenario_status,
@@ -326,6 +329,33 @@ def scenarios_list() -> ScenarioListResponse:
     return list_electricity_scenarios()
 
 
+@app.get("/scenarios/options", response_model=ScenarioOptionsResponse)
+def scenarios_options() -> ScenarioOptionsResponse:
+    # Must be declared before the /scenarios/{case_name}/... routes below --
+    # FastAPI matches path routes in declaration order, and "options" would
+    # otherwise be captured as a case_name by the first of those.
+    return get_scenario_options()
+
+
+@app.get("/scenarios/network-topology")
+def scenarios_network_topology():
+    # Static (region centroids + the 14 fixed corridors) -- not tied to any
+    # particular case, so it lives outside the /scenarios/{case_name}/...
+    # group even though it is under /scenarios.
+    return get_network_topology_geojson()
+
+
+@app.get("/scenarios/compare/map/regions")
+def scenarios_compare_map_regions(case_a: str, case_b: str):
+    # Declared before /scenarios/{case_name}/map/regions below for the same
+    # reason as /scenarios/options above: "compare" would otherwise be
+    # captured as a case_name by that route, which is registered first-match.
+    try:
+        return get_scenario_regions_delta_geojson(case_a, case_b)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
 @app.get("/scenarios/{case_name}/status", response_model=ScenarioStatusResponse)
 def scenarios_status(case_name: str) -> ScenarioStatusResponse:
     return get_scenario_status(case_name)
@@ -353,6 +383,12 @@ async def scenarios_coupled_run(
 ) -> CoupledScenarioRunResponse:
     try:
         return await start_coupled_scenario(request)
+    except InvalidCoupledScenarioError as exc:
+        # The (year, scenario) pair itself isn't one the CSV defines -- a
+        # malformed request (422), distinct from the 428/409 cases below
+        # (a well-formed request whose precondition isn't met yet, or that
+        # collides with a run already in progress).
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
     except ScenarioPreconditionError as exc:
         # Checked before the broader ScenarioRunError (its own superclass) --
         # 428 lets the frontend render a distinct "solve electricity first"

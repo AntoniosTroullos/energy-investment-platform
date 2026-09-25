@@ -7,6 +7,7 @@ import type {
   ElectricityScenarioRunResponse,
   PypsaScenarioParams,
   ScenarioListResponse,
+  ScenarioOptions,
   ScenarioStatusResponse,
 } from "./pypsaScenario.types";
 
@@ -83,6 +84,16 @@ export async function getScenarioList(): Promise<ScenarioListResponse> {
     );
   }
   return (await response.json()) as ScenarioListResponse;
+}
+
+export async function getScenarioOptions(): Promise<ScenarioOptions> {
+  const response = await fetch(`${API_BASE_URL}/scenarios/options`);
+  if (!response.ok) {
+    throw new Error(
+      await parseErrorDetail(response, `Unable to fetch scenario options (status ${response.status}).`),
+    );
+  }
+  return (await response.json()) as ScenarioOptions;
 }
 
 export async function getGeneratorClustersGeoJson(): Promise<GeoJSON.FeatureCollection> {
