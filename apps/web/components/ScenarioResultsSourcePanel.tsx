@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 import { getScenarioList } from "../lib/pypsaScenario/pypsaScenario.api";
 import type { ScenarioListItem } from "../lib/pypsaScenario/pypsaScenario.types";
+import StaleBadge from "./StaleBadge";
 
 type ScenarioResultsSourcePanelProps = {
   selectedCaseName: string | null;
@@ -49,6 +50,8 @@ export default function ScenarioResultsSourcePanel({
     void loadScenarios();
   }, [refreshToken]);
 
+  const selectedItem = scenarios.find((item) => item.case_name === selectedCaseName) ?? null;
+
   return (
     <section className="mt-8">
       <div className="flex items-center justify-between">
@@ -77,10 +80,20 @@ export default function ScenarioResultsSourcePanel({
           <option value="">None</option>
           {scenarios.map((item) => (
             <option key={item.case_name} value={item.case_name}>
-              {item.target_year} — {item.case_name}
+              {`${item.target_year} — ${item.case_name}${item.electricity_staleness?.is_stale ? " (outdated)" : ""}`}
             </option>
           ))}
         </select>
+
+        {selectedItem?.electricity_staleness?.is_stale && (
+          <div className="mt-3 flex items-start gap-2">
+            <StaleBadge staleness={selectedItem.electricity_staleness} />
+            <p className="text-xs text-zinc-400">
+              Solved before the model last changed — hover the badge for details, and re-solve in
+              Scenario Studio to refresh.
+            </p>
+          </div>
+        )}
 
         {errorMessage && <p className="mt-3 text-xs text-rose-300">{errorMessage}</p>}
 

@@ -14,6 +14,7 @@ import {
 
 import { getScenarioList } from "../lib/pypsaScenario/pypsaScenario.api";
 import type { ScenarioListItem } from "../lib/pypsaScenario/pypsaScenario.types";
+import StaleBadge from "./StaleBadge";
 
 type ScenarioComparisonPanelProps = {
   // Re-fetches the scenario library whenever this value changes -- pass the
@@ -68,6 +69,13 @@ export default function ScenarioComparisonPanel({ refreshSignal }: ScenarioCompa
     new Set(solvedScenarios.flatMap((scenario) => Object.keys(scenario.generation_by_carrier_mwh))),
   );
 
+  const stalenessFlags = solvedScenarios.flatMap((scenario) => [
+    scenario.electricity_staleness,
+    scenario.coupled_staleness,
+  ]);
+  const resultCount = stalenessFlags.filter((flag) => flag !== null).length;
+  const outdatedCount = stalenessFlags.filter((flag) => flag?.is_stale).length;
+
   const hasCoupled = solvedScenarios.some((scenario) => scenario.coupled_objective_eur_per_year !== null);
 
   const costRows = solvedScenarios.map((scenario) => ({
@@ -117,6 +125,15 @@ export default function ScenarioComparisonPanel({ refreshSignal }: ScenarioCompa
         <p className="mt-4 text-xs text-zinc-500">
           No solved scenarios yet — solve one in the Electricity tab to see it here.
         </p>
+      )}
+
+      {solvedScenarios.length > 0 && outdatedCount > 0 && (
+        <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-200">
+          {outdatedCount} of {resultCount} results were solved before the model (code or input tables)
+          last changed, so they may not match what a fresh solve would give. Hover an{" "}
+          <span className="font-semibold uppercase tracking-[0.15em]">Outdated</span> badge to see what
+          changed; re-solve that year in its tab to refresh it.
+        </div>
       )}
 
       {solvedScenarios.length > 0 && (
@@ -212,16 +229,26 @@ export default function ScenarioComparisonPanel({ refreshSignal }: ScenarioCompa
                 {solvedScenarios.map((scenario) => (
                   <tr key={scenario.case_name} className="border-t border-white/10">
                     <td className="px-3 py-2">{scenario.target_year}</td>
-                    <td className="px-3 py-2 font-mono text-zinc-400">{scenario.case_name}</td>
+                    <td className="px-3 py-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-zinc-400">{scenario.case_name}</span>
+                        <StaleBadge staleness={scenario.electricity_staleness} />
+                      </div>
+                    </td>
                     <td className="px-3 py-2">
                       {scenario.objective_eur?.toLocaleString(undefined, { maximumFractionDigits: 0 }) ?? "—"}
                     </td>
                     {hasCoupled && (
                       <>
                         <td className="px-3 py-2">
-                          {scenario.coupled_objective_eur_per_year?.toLocaleString(undefined, {
-                            maximumFractionDigits: 0,
-                          }) ?? "—"}
+                          <div className="flex items-center gap-2">
+                            <span>
+                              {scenario.coupled_objective_eur_per_year?.toLocaleString(undefined, {
+                                maximumFractionDigits: 0,
+                              }) ?? "—"}
+                            </span>
+                            <StaleBadge staleness={scenario.coupled_staleness} />
+                          </div>
                         </td>
                         <td className="px-3 py-2">
                           {scenario.coupled_annual_heat_twh?.toFixed(1) ?? "—"}

@@ -46,6 +46,15 @@ export type ScenarioMetrics = {
   storage_final_state_of_charge_mwh?: Record<string, number>;
 };
 
+// What a case was actually solved with -- present once it has a result.
+// Mirrors apps/api's ElectricityScenarioParameters.
+export type ElectricityScenarioParameters = {
+  annual_growth_rate: number | null;
+  snapshot_strategy: string | null;
+  forecast_model: string | null;
+  scenario_multiplier: number | null;
+};
+
 export type ElectricityScenarioResult = {
   case_name: string;
   target_year: number;
@@ -53,6 +62,25 @@ export type ElectricityScenarioResult = {
   message: string;
   objective_eur: number | null;
   metrics: ScenarioMetrics;
+  parameters: ElectricityScenarioParameters | null;
+  solved_at_utc: string | null;
+};
+
+// Whether anything a result depends on changed after it was solved (model
+// code, model input tables, or -- for coupled -- the parent electricity
+// case). Mirrors apps/api's app/staleness.py.
+export type StaleReasonCode = "model_code_changed" | "model_inputs_changed" | "parent_resolved";
+
+export type StaleReason = {
+  code: StaleReasonCode;
+  detail: string;
+  changed_at: string;
+};
+
+export type Staleness = {
+  solved_at: string | null;
+  is_stale: boolean;
+  reasons: StaleReason[];
 };
 
 // One row of the live scenario library (GET /scenarios) -- only case
@@ -73,6 +101,41 @@ export type ScenarioListItem = {
   coupled_objective_eur_per_year: number | null;
   coupled_annual_heat_twh: number | null;
   coupled_h2_electrolysis_output_mwh: number | null;
+  electricity_staleness: Staleness | null;
+  coupled_staleness: Staleness | null;
+  annual_growth_rate: number | null;
+  solved_at_utc: string | null;
+};
+
+// ---------------------------------------------------------------------------
+// GET /scenarios/options -- valid parameter choices, read from the real
+// upstream source (h2_market_scenarios.csv for the coupled combinations) so
+// the pickers below never hard-code a list that can drift from it. Mirrors
+// apps/api's app/scenario_options.py.
+// ---------------------------------------------------------------------------
+
+export type ElectricityYearOption = {
+  year: number;
+  solved: boolean;
+};
+
+export type CoupledScenarioOption = {
+  target_year: number;
+  h2_market_scenario: string;
+  label: string;
+  // Whether run_coupled_scenario's own precondition (electricity case solved
+  // for this year) is met right now.
+  electricity_solved: boolean;
+};
+
+export type ScenarioOptions = {
+  target_year_min: number;
+  target_year_max: number;
+  annual_growth_rate_min: number;
+  annual_growth_rate_max: number;
+  annual_growth_rate_default: number;
+  electricity_years: ElectricityYearOption[];
+  coupled_options: CoupledScenarioOption[];
 };
 
 export type ScenarioListResponse = {
@@ -88,12 +151,11 @@ export type ScenarioListResponse = {
 // optional/nullable fields throughout.
 // ---------------------------------------------------------------------------
 
-// Both constraints trace to pypsa-greece/data/static/h2_market_scenarios.csv,
-// which today has exactly one named scenario defined only for these 3 years.
-export type CoupledEligibleYear = 2030 | 2040 | 2050;
-
+// Which (year, scenario) pairs are valid comes from GET /scenarios/options
+// (CoupledScenarioOption, above) -- reading h2_market_scenarios.csv directly
+// -- rather than being frozen here as a small literal union.
 export type CoupledScenarioParams = {
-  targetYear: CoupledEligibleYear;
+  targetYear: number;
   h2MarketScenario: string;
 };
 

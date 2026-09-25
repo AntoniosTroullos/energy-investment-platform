@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // NEXT_DIST_DIR (scripts/dev.mjs --reload) builds a second dev server
+    // into .next-alt/ so it doesn't collide with one already running.
+    ".next-alt/**",
   ]),
 ]);
 

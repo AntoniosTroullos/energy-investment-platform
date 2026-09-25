@@ -4,12 +4,23 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from .staleness import Staleness
+
 RunState = Literal["not_found", "running", "crashed", "done"]
+
+# Limits and default of the electricity run request. Defined once because both
+# the request validation below and GET /scenarios/options (which the frontend
+# builds its pickers from) must agree on them.
+TARGET_YEAR_MIN = 2026
+TARGET_YEAR_MAX = 2060
+GROWTH_RATE_MIN = -0.05
+GROWTH_RATE_MAX = 0.10
+GROWTH_RATE_DEFAULT = 0.01
 
 
 class ElectricityScenarioRunRequest(BaseModel):
-    target_year: int = Field(ge=2026, le=2060)
-    annual_growth_rate: float = Field(default=0.01, ge=-0.05, le=0.10)
+    target_year: int = Field(ge=TARGET_YEAR_MIN, le=TARGET_YEAR_MAX)
+    annual_growth_rate: float = Field(default=GROWTH_RATE_DEFAULT, ge=GROWTH_RATE_MIN, le=GROWTH_RATE_MAX)
 
 
 class ElectricityScenarioRunResponse(BaseModel):
@@ -48,6 +59,20 @@ class ScenarioMetrics(BaseModel):
     storage_final_state_of_charge_mwh: dict[str, float] = Field(default_factory=dict)
 
 
+class ElectricityScenarioParameters(BaseModel):
+    """The inputs a case was solved with, echoed back so a result is never
+    shown without the parameters that produced it. A deliberate whitelist of
+    the upstream result's `request` block (no extra="allow" here, unlike this
+    file's other upstream-mirroring models): that block also carries absolute
+    local file paths (base_config_path, regional_features_path, ...), which
+    must not leak into an API response. Unlisted keys are silently dropped."""
+
+    annual_growth_rate: float | None = None
+    snapshot_strategy: str | None = None
+    forecast_model: str | None = None
+    scenario_multiplier: float | None = None
+
+
 class ElectricityScenarioResult(BaseModel):
     model_config = ConfigDict(extra="allow")
 
@@ -57,6 +82,8 @@ class ElectricityScenarioResult(BaseModel):
     message: str
     objective_eur: float | None = None
     metrics: ScenarioMetrics
+    parameters: ElectricityScenarioParameters | None = None
+    solved_at_utc: str | None = None
 
 
 class ScenarioListItem(BaseModel):
@@ -74,6 +101,9 @@ class ScenarioListItem(BaseModel):
     message: str | None = None
     objective_eur: float | None = None
     generation_by_carrier_mwh: dict[str, float] = Field(default_factory=dict)
+    # What this case was solved with (None until it has a result).
+    annual_growth_rate: float | None = None
+    solved_at_utc: str | None = None
     # Coupled gas/hydrogen/heat solve layered on this electricity case, if one
     # has been run (state "not_found" when it hasn't). Only headline numbers --
     # the full result lives at GET /scenarios/{case}/coupled/result.
@@ -81,6 +111,10 @@ class ScenarioListItem(BaseModel):
     coupled_objective_eur_per_year: float | None = None
     coupled_annual_heat_twh: float | None = None
     coupled_h2_electrolysis_output_mwh: float | None = None
+    # Whether model code/inputs (or, for coupled, the parent electricity case)
+    # changed after each result was solved. None when there is no result.
+    electricity_staleness: Staleness | None = None
+    coupled_staleness: Staleness | None = None
 
 
 class ScenarioListResponse(BaseModel):
@@ -97,14 +131,15 @@ class ScenarioListResponse(BaseModel):
 
 
 class CoupledScenarioRunRequest(BaseModel):
-    # Both constraints trace directly to pypsa-greece/data/static/
-    # h2_market_scenarios.csv, which today has exactly one named scenario
-    # ("baseline_no_trade") defined only for these 3 years. Loosen these
-    # Literals the day that CSV gains more rows -- until then they turn an
-    # invalid combination into a clean 422 instead of a crashed subprocess
-    # (the underlying script raises ValueError for anything else).
-    target_year: Literal[2030, 2040, 2050] = 2030
-    h2_market_scenario: Literal["baseline_no_trade"] = "baseline_no_trade"
+    # Which (year, scenario) pairs are valid is defined by pypsa-greece/data/
+    # static/h2_market_scenarios.csv, not by this file. They used to be frozen
+    # here as Literals (today: one scenario, 3 years) and had to be edited in
+    # three places whenever that CSV grew. Now the combination is checked
+    # against the CSV at request time (scenario_options.validate_coupled_request
+    # -> a clean 422 instead of a crashed subprocess), so a new row there is
+    # picked up with no code change.
+    target_year: int = Field(default=2030, ge=TARGET_YEAR_MIN, le=TARGET_YEAR_MAX)
+    h2_market_scenario: str = "baseline_no_trade"
 
 
 class CoupledScenarioRunResponse(BaseModel):

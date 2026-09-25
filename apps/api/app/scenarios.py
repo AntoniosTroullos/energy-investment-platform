@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import csv
 import re
+from datetime import datetime, timezone
 from pathlib import Path
 
-from . import scenario_runner
-from .evaluation import get_source_layer_feature_collection
+from . import network_topology, scenario_options, scenario_runner, staleness
 from .pypsa_bridge.normalize import normalize_coupled_result, normalize_electricity_result
 from .scenario_models import (
     CoupledScenarioResult,
@@ -16,6 +16,7 @@ from .scenario_models import (
     ElectricityScenarioRunResponse,
     ScenarioListItem,
     ScenarioListResponse,
+    ScenarioMetrics,
     ScenarioStatusResponse,
 )
 
@@ -48,6 +49,12 @@ def get_scenario_status(case_name: str) -> ScenarioStatusResponse:
 
 
 async def start_coupled_scenario(request: CoupledScenarioRunRequest) -> CoupledScenarioRunResponse:
+    # Checked before scenario_runner even builds a case name: an undefined
+    # (year, scenario) pair is a malformed request, not an unmet precondition
+    # (that check -- is the electricity case solved -- happens inside
+    # run_coupled_scenario, once we know the pair itself is valid).
+    scenario_options.validate_coupled_request(request.target_year, request.h2_market_scenario)
+
     case_name = await scenario_runner.run_coupled_scenario(
         request.target_year, request.h2_market_scenario
     )
@@ -69,7 +76,15 @@ def get_coupled_scenario_result(case_name: str) -> CoupledScenarioResult:
 
 def get_scenario_result(case_name: str) -> ElectricityScenarioResult:
     raw = scenario_runner.get_result(case_name)
-    return normalize_electricity_result(case_name, raw)
+    result_path = scenario_runner.case_dir(case_name) / "scenario_result.json"
+    return normalize_electricity_result(case_name, raw, solved_at_utc=_file_mtime_iso(result_path))
+
+
+def _file_mtime_iso(path: Path) -> str | None:
+    try:
+        return datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc).isoformat()
+    except OSError:
+        return None
 
 
 def list_electricity_scenarios() -> ScenarioListResponse:
@@ -79,6 +94,12 @@ def list_electricity_scenarios() -> ScenarioListResponse:
     Deliberately not the hand-curated, already-stale scenario_comparison.csv."""
     if not scenario_runner.SCENARIO_ROOT.exists():
         return ScenarioListResponse(scenarios=[])
+
+    # Globbed once per listing, not per case -- the same few dozen upstream
+    # files are checked against every result's mtime.
+    project_root = scenario_runner.PYTHON_PROJECT_ROOT
+    electricity_watch = staleness.electricity_watchlist(project_root)
+    coupled_watch = staleness.coupled_watchlist(project_root)
 
     items: list[ScenarioListItem] = []
     for entry in sorted(scenario_runner.SCENARIO_ROOT.iterdir()):
@@ -97,6 +118,8 @@ def list_electricity_scenarios() -> ScenarioListResponse:
         message: str | None = status.message
         objective_eur: float | None = None
         generation_by_carrier_mwh: dict[str, float] = {}
+        annual_growth_rate: float | None = None
+        solved_at_utc: str | None = None
 
         if status.state == "done":
             try:
@@ -105,6 +128,8 @@ def list_electricity_scenarios() -> ScenarioListResponse:
                 message = result.message
                 objective_eur = result.objective_eur
                 generation_by_carrier_mwh = result.metrics.generation_by_carrier_mwh
+                annual_growth_rate = result.parameters.annual_growth_rate if result.parameters else None
+                solved_at_utc = result.solved_at_utc
             except FileNotFoundError:
                 pass
 
@@ -125,6 +150,16 @@ def list_electricity_scenarios() -> ScenarioListResponse:
                 # library listing -- the electricity row still stands on its own.
                 pass
 
+        electricity_result_file = scenario_runner.case_dir(case_name) / "scenario_result.json"
+        coupled_result_file = scenario_runner.coupled_result_dir(case_name) / "scenario_result.json"
+        electricity_staleness = staleness.assess(electricity_result_file, electricity_watch, project_root)
+        coupled_staleness = staleness.assess(
+            coupled_result_file,
+            coupled_watch,
+            project_root,
+            parent_result_path=electricity_result_file,
+        )
+
         items.append(
             ScenarioListItem(
                 case_name=case_name,
@@ -134,15 +169,51 @@ def list_electricity_scenarios() -> ScenarioListResponse:
                 message=message,
                 objective_eur=objective_eur,
                 generation_by_carrier_mwh=generation_by_carrier_mwh,
+                annual_growth_rate=annual_growth_rate,
+                solved_at_utc=solved_at_utc,
                 coupled_state=coupled_status.state,
                 coupled_objective_eur_per_year=coupled_objective,
                 coupled_annual_heat_twh=coupled_heat_twh,
                 coupled_h2_electrolysis_output_mwh=coupled_h2_output,
+                electricity_staleness=electricity_staleness,
+                coupled_staleness=coupled_staleness,
             )
         )
 
     items.sort(key=lambda item: item.target_year)
     return ScenarioListResponse(scenarios=items)
+
+
+# The pickable per-region metrics for both the single-scenario map and the
+# delta-between-cases map -- one shared list so the two views can never end up
+# offering different metric choices for what is meant to be the same concept.
+REGION_METRIC_KEYS = (
+    "generation_mwh",
+    "total_load_mwh",
+    "net_position_mwh",
+    "average_marginal_price_eur_per_mwh",
+    "peak_load_mw",
+)
+
+
+def _region_metric_values(bus_id: str, metrics: ScenarioMetrics) -> dict[str, float | None]:
+    generation_mwh = metrics.generation_by_bus_mwh.get(bus_id)
+    total_load_mwh = metrics.total_load_by_bus_mwh.get(bus_id)
+    return {
+        "generation_mwh": generation_mwh,
+        "total_load_mwh": total_load_mwh,
+        # Generation minus load for the year: positive means this region is a
+        # net exporter to the rest of the network, negative a net importer.
+        # Not one of the upstream metrics.py fields -- both operands it needs
+        # already are, so it is derived here rather than requested upstream.
+        "net_position_mwh": (
+            generation_mwh - total_load_mwh
+            if generation_mwh is not None and total_load_mwh is not None
+            else None
+        ),
+        "average_marginal_price_eur_per_mwh": metrics.average_marginal_price_by_bus.get(bus_id),
+        "peak_load_mw": metrics.peak_load_by_bus_mw.get(bus_id),
+    }
 
 
 def get_scenario_regions_geojson(case_name: str) -> dict:
@@ -152,20 +223,54 @@ def get_scenario_regions_geojson(case_name: str) -> dict:
     generators.csv) -- confirmed directly, not the clustered real-generator-
     fleet network -- so region-level is the real resolution its output
     supports; joining to anything finer would imply precision that isn't
-    there."""
+    there. Geometry is network_topology's simplified copy of the polygons
+    (~95% smaller than the raw file with no visible loss at map scale)."""
     result = get_scenario_result(case_name)
-    metrics = result.metrics
+    regions = network_topology.get_simplified_admin_regions()
 
-    regions = get_source_layer_feature_collection("admin_regions.geojson")
     enriched_features = []
     for feature in regions["features"]:
         bus_id = feature.get("properties", {}).get("id")
-        properties = dict(feature.get("properties", {}))
-        properties["scenario_case_name"] = case_name
-        properties["generation_mwh"] = metrics.generation_by_bus_mwh.get(bus_id)
-        properties["average_marginal_price_eur_per_mwh"] = metrics.average_marginal_price_by_bus.get(bus_id)
-        properties["peak_load_mw"] = metrics.peak_load_by_bus_mw.get(bus_id)
-        properties["total_load_mwh"] = metrics.total_load_by_bus_mwh.get(bus_id)
+        properties = {
+            **feature.get("properties", {}),
+            "scenario_case_name": case_name,
+            **_region_metric_values(bus_id, result.metrics),
+        }
+        enriched_features.append({**feature, "properties": properties})
+
+    return {"type": "FeatureCollection", "features": enriched_features}
+
+
+def get_scenario_regions_delta_geojson(case_name_a: str, case_name_b: str) -> dict:
+    """Per-region (b - a) difference for every REGION_METRIC_KEYS metric, for
+    a solved-vs-solved comparison map -- e.g. "how did net position shift
+    between the 2030 and 2050 cases". Each metric's own value under both
+    cases is included too (<key>_a, <key>_b), not just the delta, so a hover
+    tooltip can show "62,000 -> 58,500 MWh (-3,500)" rather than the
+    difference alone."""
+    result_a = get_scenario_result(case_name_a)
+    result_b = get_scenario_result(case_name_b)
+    regions = network_topology.get_simplified_admin_regions()
+
+    enriched_features = []
+    for feature in regions["features"]:
+        bus_id = feature.get("properties", {}).get("id")
+        values_a = _region_metric_values(bus_id, result_a.metrics)
+        values_b = _region_metric_values(bus_id, result_b.metrics)
+
+        properties = {
+            **feature.get("properties", {}),
+            "scenario_case_name_a": case_name_a,
+            "scenario_case_name_b": case_name_b,
+        }
+        for key in REGION_METRIC_KEYS:
+            value_a, value_b = values_a[key], values_b[key]
+            properties[f"{key}_a"] = value_a
+            properties[f"{key}_b"] = value_b
+            properties[f"{key}_delta"] = (
+                value_b - value_a if value_a is not None and value_b is not None else None
+            )
+
         enriched_features.append({**feature, "properties": properties})
 
     return {"type": "FeatureCollection", "features": enriched_features}
