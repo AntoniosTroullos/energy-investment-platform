@@ -6,6 +6,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["--prefix", "apps/web", "run", "dev"],
       "port": 3000
+    },
+    {
+      "name": "energy-dev-alt-ports",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["scripts/dev.mjs", "--reload", "--api-port", "8100", "--web-port", "3100"],
+      "port": 3100
     }
   ]
 }
