@@ -1,28 +1,35 @@
 import json
+import sys
 from math import cos, radians
 from pathlib import Path
 
-from shapely import STRtree
-from shapely.geometry import shape
-from shapely.ops import unary_union
-
+from shapely.geometry import mapping, shape
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
+
+from pipeline.land_constraints import evaluate_cell, load_constraint_layers
+
 SOURCE_DIR = BASE_DIR / "data" / "source"
 GENERATED_DIR = BASE_DIR / "data" / "generated"
 OUTPUT_PATH = GENERATED_DIR / "candidate_cells.geojson"
 
-# A simple square grid keeps the first generation step easy to inspect.
+# A simple square grid keeps the first generation step easy to inspect. Each
+# cell's geometry is no longer necessarily this full square, though -- see
+# land_constraints.evaluate_cell, called below, which clips it down to the
+# real buildable land left once hard exclusions (Natura 2000 for solar,
+# banned regions/regional units/small islands for wind) are subtracted.
 GRID_STEP_DEGREES = 0.45
 
-# At this grid resolution (~50km cells), "any intersection with Natura 2000" flags
-# nearly every cell (measured: 39 of 42 cells, when Greece's real Natura 2000 land
-# coverage is ~27%) -- almost any large cell grazes some protected site somewhere
-# within it, even where the actual overlap is a small corner. A cell is only flagged
-# once a meaningful share of its area actually overlaps -- this is a screening-tool
-# threshold, not a legal figure; a real siting decision would evaluate the specific
+# Below this, a cell's remaining buildable land isn't a real candidate site --
+# dropped entirely (land_constraints.MIN_BUILDABLE_FRACTION). Below this
+# (higher) threshold, it's still real and kept, but flagged for review: most
+# of the cell was lost to a hard exclusion, same screening-tool-threshold
+# reasoning the old (single, cruder) 15%-Natura-overlap cutoff used -- not a
+# legal figure, a real siting decision would evaluate the specific
 # development footprint, not the whole grid cell.
-NATURA_2000_EXCLUSION_THRESHOLD = 0.15
+CONSTRAINT_REVIEW_BUILDABLE_FRACTION_THRESHOLD = 0.5
 
 
 def load_geojson(path: Path) -> dict:
@@ -34,20 +41,18 @@ def main():
     region = load_geojson(SOURCE_DIR / "region_boundary.geojson")
     substations = load_geojson(SOURCE_DIR / "substations.geojson")
     lines = load_geojson(SOURCE_DIR / "transmission_lines.geojson")
-    # Real Natura 2000 protected-area data (443 features), replacing the previous
-    # exclusions.geojson placeholder (2 fake hand-drawn polygons that were never a
-    # real constraint layer -- see KNOWLEDGE_TRANSFER.md in pypsa-greece for the
-    # history). An STRtree is built once so checking each grid cell against all 443
-    # real (often complex, many-vertex) polygons stays fast.
-    natura_2000 = load_geojson(SOURCE_DIR / "natura_2000.geojson")
-    natura_2000_geometries = [shape(feature["geometry"]) for feature in natura_2000["features"]]
-    natura_2000_index = STRtree(natura_2000_geometries)
     resource_zones = load_geojson(SOURCE_DIR / "resource_zones.geojson")
+    # Real Natura 2000, admin-region, regional-unit and island data -- see
+    # land_constraints.py's module docstring for the cited government siting
+    # framework these back. Loaded once; each layer's own index/union is built
+    # inside load_constraint_layers, not per grid cell.
+    constraint_layers = load_constraint_layers(SOURCE_DIR)
 
     region_polygon = region["features"][0]["geometry"]["coordinates"][0]
     region_bbox = get_polygon_bbox(region_polygon)
 
     generated_features = []
+    dropped_hard_excluded_count = 0
     candidate_index = 1
     x = region_bbox["min_x"]
 
@@ -75,10 +80,27 @@ def main():
                 centroid,
                 lines["features"],
             )
-            natura_2000_overlap_fraction = get_natura_2000_overlap_fraction(
-                cell_polygon, natura_2000_index, natura_2000_geometries
+
+            cell_shape = shape({"type": "Polygon", "coordinates": [cell_polygon]})
+            constraint_result = evaluate_cell(cell_shape, technology, constraint_layers)
+
+            # Nothing left worth calling a candidate -- e.g. a wind cell fully
+            # inside Attica, or a solar cell fully inside a Natura 2000 site.
+            # Dropped rather than emitted as a degenerate near-empty polygon.
+            if constraint_result.hard_excluded:
+                dropped_hard_excluded_count += 1
+                y += GRID_STEP_DEGREES
+                continue
+
+            candidate_geometry = (
+                constraint_result.buildable_geometry
+                if constraint_result.buildable_geometry is not None
+                else cell_shape
             )
-            excluded = natura_2000_overlap_fraction > NATURA_2000_EXCLUSION_THRESHOLD
+            excluded = (
+                constraint_result.buildable_fraction
+                < CONSTRAINT_REVIEW_BUILDABLE_FRACTION_THRESHOLD
+            )
             connection_cost_level = get_connection_cost_level(
                 distance_to_substation_km,
                 distance_to_line_km,
@@ -96,14 +118,19 @@ def main():
             generated_features.append(
                 build_candidate_feature(
                     candidate_index=candidate_index,
-                    cell_polygon=cell_polygon,
+                    candidate_geometry=candidate_geometry,
                     technology=technology,
                     solar_score=solar_score,
                     wind_score=wind_score,
                     distance_to_substation_km=distance_to_substation_km,
                     distance_to_line_km=distance_to_line_km,
                     excluded=excluded,
-                    natura_2000_overlap_fraction=natura_2000_overlap_fraction,
+                    buildable_fraction=constraint_result.buildable_fraction,
+                    natura_2000_overlap_fraction=constraint_result.natura_2000_overlap_fraction,
+                    natura_2000_conditional_warning=constraint_result.natura_2000_conditional_warning,
+                    nearest_unesco_site_name=constraint_result.nearest_unesco_site_name,
+                    nearest_unesco_site_km=constraint_result.nearest_unesco_site_km,
+                    unesco_study_trigger_warning=constraint_result.unesco_study_trigger_warning,
                     connection_cost_level=connection_cost_level,
                     investment_score=investment_score,
                 )
@@ -126,19 +153,27 @@ def main():
             indent=2,
         )
 
-    print(f"Generated {len(generated_features)} candidate cells at {OUTPUT_PATH}")
+    print(
+        f"Generated {len(generated_features)} candidate cells at {OUTPUT_PATH} "
+        f"({dropped_hard_excluded_count} grid cells dropped -- no meaningful buildable land left)"
+    )
 
 
 def build_candidate_feature(
     candidate_index: int,
-    cell_polygon: list[list[float]],
+    candidate_geometry,  # a shapely Polygon or MultiPolygon
     technology: str,
     solar_score: int,
     wind_score: int,
     distance_to_substation_km: float,
     distance_to_line_km: float,
     excluded: bool,
+    buildable_fraction: float,
     natura_2000_overlap_fraction: float,
+    natura_2000_conditional_warning: bool,
+    nearest_unesco_site_name: str | None,
+    nearest_unesco_site_km: float | None,
+    unesco_study_trigger_warning: bool,
     connection_cost_level: str,
     investment_score: int,
 ) -> dict:
@@ -156,15 +191,29 @@ def build_candidate_feature(
             "distance_to_line_km": round(distance_to_line_km, 1),
             "excluded": excluded,
             "land_excluded": excluded,
-            "natura_2000_overlap_fraction": round(natura_2000_overlap_fraction, 4),
+            # The fraction of this grid cell that is actually buildable land
+            # for this technology, after subtracting whatever is a hard
+            # exclusion for it (1.0 = nothing was subtracted). The polygon's
+            # own geometry already reflects this -- this is that same fact as
+            # a number, for the UI/scoring to read without re-deriving it from
+            # geometry area.
+            "buildable_fraction": round(buildable_fraction, 4),
+            "natura_2000_overlap_fraction": natura_2000_overlap_fraction,
+            # Wind only: real (Law 4685/2020) conditional-licensing signal --
+            # Natura 2000 overlap that is a warning, never a geometric
+            # exclusion, for this technology. Always False for solar, where
+            # any overlap is instead cut out of the geometry entirely.
+            "natura_2000_conditional_warning": natura_2000_conditional_warning,
+            # Solar only: real (news.gtp.gr-cited) mandatory-study trigger --
+            # a warning, not an exclusion, so it never touches the geometry.
+            "nearest_unesco_site_name": nearest_unesco_site_name,
+            "nearest_unesco_site_km": nearest_unesco_site_km,
+            "unesco_study_trigger_warning": unesco_study_trigger_warning,
             "connection_cost_level": connection_cost_level,
             "status": "Constraint Review" if excluded else "Screened Candidate",
             "investment_score": investment_score,
         },
-        "geometry": {
-            "type": "Polygon",
-            "coordinates": [cell_polygon],
-        },
+        "geometry": mapping(candidate_geometry),
     }
 
 
@@ -234,22 +283,6 @@ def get_resource_scores(
             )
 
     return (60, 60)
-
-
-def get_natura_2000_overlap_fraction(
-    cell_polygon: list[list[float]],
-    natura_2000_index: STRtree,
-    natura_2000_geometries: list,
-) -> float:
-    cell_shape = shape({"type": "Polygon", "coordinates": [cell_polygon]})
-    match_indices = natura_2000_index.query(cell_shape, predicate="intersects")
-
-    if len(match_indices) == 0:
-        return 0.0
-
-    matched_union = unary_union([natura_2000_geometries[i] for i in match_indices])
-    overlap_area = cell_shape.intersection(matched_union).area
-    return overlap_area / cell_shape.area
 
 
 def polygons_intersect(left_polygon: list[list[float]], right_polygon: list[list[float]]) -> bool:

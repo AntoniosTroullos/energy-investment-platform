@@ -20,24 +20,42 @@ export function isCandidateExcludedByNatura(
 }
 
 function getPolygonCentroid(geometry: GeoJSON.Geometry) {
-  if (geometry.type !== "Polygon") {
+  // A candidate cell's geometry may now be a MultiPolygon: land_constraints.py
+  // (apps/api/pipeline) clips real exclusion zones (Natura 2000 for solar,
+  // banned regions/islands for wind) out of the raw grid square, and the
+  // remainder isn't always a single simply-connected shape. Averaged across
+  // every ring of every part -- an approximation (the true area centroid
+  // would weight larger parts more), but this centroid only feeds a coarse
+  // "is this roughly in a Natura area" screening check, not the map's own
+  // rendering of the (already-correct) geometry itself.
+  const rings =
+    geometry.type === "Polygon"
+      ? geometry.coordinates
+      : geometry.type === "MultiPolygon"
+        ? geometry.coordinates.flat()
+        : null;
+
+  if (!rings || rings.length === 0) {
     return null;
   }
 
-  const ring = geometry.coordinates[0];
-  if (!ring || ring.length === 0) {
+  let sumLongitude = 0;
+  let sumLatitude = 0;
+  let pointCount = 0;
+
+  for (const ring of rings) {
+    for (const [longitude, latitude] of ring) {
+      sumLongitude += longitude;
+      sumLatitude += latitude;
+      pointCount += 1;
+    }
+  }
+
+  if (pointCount === 0) {
     return null;
   }
 
-  const [sumLongitude, sumLatitude] = ring.reduce(
-    ([longitudeTotal, latitudeTotal], [longitude, latitude]) => [
-      longitudeTotal + longitude,
-      latitudeTotal + latitude,
-    ],
-    [0, 0],
-  );
-
-  return [sumLongitude / ring.length, sumLatitude / ring.length] as [number, number];
+  return [sumLongitude / pointCount, sumLatitude / pointCount] as [number, number];
 }
 
 function geometryContainsPoint(
