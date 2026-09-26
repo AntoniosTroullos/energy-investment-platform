@@ -72,14 +72,34 @@ def case_dir(case_name: str) -> Path:
     return SCENARIO_ROOT / case_name
 
 
-def coupled_result_dir(case_name: str) -> Path:
+def coupled_result_dir(
+    case_name: str,
+    chronological_storage: bool = False,
+    linked_representative_periods: bool = False,
+) -> Path:
     """build_and_solve_coupled_year.py writes into <case_dir>/coupled_outputs/
     -- a sibling of, not a replacement for, the electricity case's own
     scenario_result.json. Scoping the coupled marker/result inside this
     subdirectory (rather than case_dir() directly) means a coupled run's
     RUNNING.json can never collide with an electricity run's, even though
-    both share the same case_name/case_dir."""
-    return case_dir(case_name) / "coupled_outputs"
+    both share the same case_name/case_dir.
+
+    The two alternate storage-modeling flags change *where* that script
+    writes its result, confirmed directly from run_coupled_year(): passing
+    chronological_storage=True solves an entirely separate case directory
+    (<case_name>_chronological), and linked_representative_periods=True uses
+    a different subdirectory name within the same case dir. Both default to
+    False so every existing caller (which never passes them) keeps resolving
+    the one path this bridge has always used."""
+    case_root = (
+        case_dir(f"{case_name}_chronological") if chronological_storage else case_dir(case_name)
+    )
+    subdir = (
+        "coupled_outputs_linked_representative_periods"
+        if linked_representative_periods
+        else "coupled_outputs"
+    )
+    return case_root / subdir
 
 
 def _running_marker_path(case_name: str) -> Path:
@@ -90,12 +110,20 @@ def _result_path(case_name: str) -> Path:
     return case_dir(case_name) / "scenario_result.json"
 
 
-def _coupled_running_marker_path(case_name: str) -> Path:
-    return coupled_result_dir(case_name) / "RUNNING.json"
+def _coupled_running_marker_path(
+    case_name: str,
+    chronological_storage: bool = False,
+    linked_representative_periods: bool = False,
+) -> Path:
+    return coupled_result_dir(case_name, chronological_storage, linked_representative_periods) / "RUNNING.json"
 
 
-def _coupled_result_path(case_name: str) -> Path:
-    return coupled_result_dir(case_name) / "scenario_result.json"
+def _coupled_result_path(
+    case_name: str,
+    chronological_storage: bool = False,
+    linked_representative_periods: bool = False,
+) -> Path:
+    return coupled_result_dir(case_name, chronological_storage, linked_representative_periods) / "scenario_result.json"
 
 
 def _pid_is_alive(pid: int) -> bool:
@@ -122,10 +150,17 @@ def poll_status(case_name: str) -> ScenarioStatus:
     return _poll(_running_marker_path(case_name), _result_path(case_name))
 
 
-def poll_coupled_status(case_name: str) -> ScenarioStatus:
+def poll_coupled_status(
+    case_name: str,
+    chronological_storage: bool = False,
+    linked_representative_periods: bool = False,
+) -> ScenarioStatus:
     """Coupled (gas/hydrogen/heat) case status -- same race-free logic as
-    poll_status(), pointed at the coupled_outputs/ subdirectory instead."""
-    return _poll(_coupled_running_marker_path(case_name), _coupled_result_path(case_name))
+    poll_status(), pointed at the storage-method-specific marker/result path."""
+    return _poll(
+        _coupled_running_marker_path(case_name, chronological_storage, linked_representative_periods),
+        _coupled_result_path(case_name, chronological_storage, linked_representative_periods),
+    )
 
 
 def _poll(marker: Path, result: Path) -> ScenarioStatus:
@@ -162,7 +197,11 @@ def _poll(marker: Path, result: Path) -> ScenarioStatus:
     return ScenarioStatus("not_found")
 
 
-async def run_electricity_scenario(target_year: int, annual_growth_rate: float) -> str:
+async def run_electricity_scenario(
+    target_year: int,
+    annual_growth_rate: float,
+    force_fetch: bool = False,
+) -> str:
     """Starts a real electricity scenario solve in the background via the
     real run_multiyear_electricity.py CLI. Returns the case name -- it also
     serves as the job id, since the case directory on disk IS the job's
@@ -180,13 +219,19 @@ async def run_electricity_scenario(target_year: int, annual_growth_rate: float) 
         encoding="utf-8",
     )
 
-    process = await asyncio.create_subprocess_exec(
+    args = [
         str(PYPSA_PYTHON),
         str(RUN_MULTIYEAR_SCRIPT),
         "--years",
         str(target_year),
         "--annual-growth-rate",
         str(annual_growth_rate),
+    ]
+    if force_fetch:
+        args.append("--force-fetch")
+
+    process = await asyncio.create_subprocess_exec(
+        *args,
         cwd=str(PYTHON_PROJECT_ROOT),
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
@@ -210,13 +255,20 @@ async def run_electricity_scenario(target_year: int, annual_growth_rate: float) 
     return case_name
 
 
-async def run_coupled_scenario(target_year: int, h2_market_scenario: str) -> str:
+async def run_coupled_scenario(
+    target_year: int,
+    h2_market_scenario: str,
+    chronological_storage: bool = False,
+    linked_representative_periods: bool = False,
+) -> str:
     """Starts a real coupled gas/hydrogen/heat solve via
     build_and_solve_coupled_year.py, which layers onto an *already-solved*
     electricity case for the same year (it hard-fails with FileNotFoundError
-    otherwise). Checked here via poll_status() -- the same function that
-    already tracks electricity-case status -- so a doomed subprocess is never
-    launched in the first place."""
+    otherwise -- true for both alternate storage-modeling methods too, since
+    the script checks the base case before branching on either flag).
+    Checked here via poll_status() -- the same function that already tracks
+    electricity-case status -- so a doomed subprocess is never launched in
+    the first place."""
     case_name = electricity_case_name(target_year)
 
     electricity_status = poll_status(case_name)
@@ -226,14 +278,16 @@ async def run_coupled_scenario(target_year: int, h2_market_scenario: str) -> str
             f"(current state: {electricity_status.state})."
         )
 
-    coupled_status = poll_coupled_status(case_name)
+    coupled_status = poll_coupled_status(case_name, chronological_storage, linked_representative_periods)
     if coupled_status.state == "running":
         raise ScenarioRunError(
             f"A coupled solve for '{case_name}' is already running (PID {coupled_status.pid})."
         )
 
-    marker = _coupled_running_marker_path(case_name)
-    coupled_result_dir(case_name).mkdir(parents=True, exist_ok=True)
+    marker = _coupled_running_marker_path(case_name, chronological_storage, linked_representative_periods)
+    coupled_result_dir(case_name, chronological_storage, linked_representative_periods).mkdir(
+        parents=True, exist_ok=True
+    )
     marker.write_text(
         json.dumps(
             {
@@ -245,13 +299,21 @@ async def run_coupled_scenario(target_year: int, h2_market_scenario: str) -> str
         encoding="utf-8",
     )
 
-    process = await asyncio.create_subprocess_exec(
+    args = [
         str(PYPSA_PYTHON),
         str(RUN_COUPLED_SCRIPT),
         "--year",
         str(target_year),
         "--h2-market-scenario",
         h2_market_scenario,
+    ]
+    if chronological_storage:
+        args.append("--chronological-storage")
+    if linked_representative_periods:
+        args.append("--linked-representative-periods")
+
+    process = await asyncio.create_subprocess_exec(
+        *args,
         cwd=str(PYTHON_PROJECT_ROOT),
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
@@ -294,8 +356,12 @@ def get_result(case_name: str) -> dict:
     return json.loads(result.read_text(encoding="utf-8"))
 
 
-def get_coupled_result(case_name: str) -> dict:
-    result = _coupled_result_path(case_name)
+def get_coupled_result(
+    case_name: str,
+    chronological_storage: bool = False,
+    linked_representative_periods: bool = False,
+) -> dict:
+    result = _coupled_result_path(case_name, chronological_storage, linked_representative_periods)
     if not result.exists():
         raise FileNotFoundError(f"No coupled result found for '{case_name}'.")
     return json.loads(result.read_text(encoding="utf-8"))

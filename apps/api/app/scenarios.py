@@ -35,7 +35,7 @@ ELECTRICITY_CASE_PATTERN = re.compile(r"^future_electricity_(\d{4})$")
 
 async def start_electricity_scenario(request: ElectricityScenarioRunRequest) -> ElectricityScenarioRunResponse:
     case_name = await scenario_runner.run_electricity_scenario(
-        request.target_year, request.annual_growth_rate
+        request.target_year, request.annual_growth_rate, request.force_fetch
     )
     status = scenario_runner.poll_status(case_name)
     return ElectricityScenarioRunResponse(case_name=case_name, state=status.state)
@@ -56,21 +56,34 @@ async def start_coupled_scenario(request: CoupledScenarioRunRequest) -> CoupledS
     scenario_options.validate_coupled_request(request.target_year, request.h2_market_scenario)
 
     case_name = await scenario_runner.run_coupled_scenario(
-        request.target_year, request.h2_market_scenario
+        request.target_year,
+        request.h2_market_scenario,
+        request.chronological_storage,
+        request.linked_representative_periods,
     )
-    status = scenario_runner.poll_coupled_status(case_name)
+    status = scenario_runner.poll_coupled_status(
+        case_name, request.chronological_storage, request.linked_representative_periods
+    )
     return CoupledScenarioRunResponse(case_name=case_name, state=status.state)
 
 
-def get_coupled_scenario_status(case_name: str) -> ScenarioStatusResponse:
-    status = scenario_runner.poll_coupled_status(case_name)
+def get_coupled_scenario_status(
+    case_name: str,
+    chronological_storage: bool = False,
+    linked_representative_periods: bool = False,
+) -> ScenarioStatusResponse:
+    status = scenario_runner.poll_coupled_status(case_name, chronological_storage, linked_representative_periods)
     return ScenarioStatusResponse(
         case_name=case_name, state=status.state, pid=status.pid, message=status.message
     )
 
 
-def get_coupled_scenario_result(case_name: str) -> CoupledScenarioResult:
-    raw = scenario_runner.get_coupled_result(case_name)
+def get_coupled_scenario_result(
+    case_name: str,
+    chronological_storage: bool = False,
+    linked_representative_periods: bool = False,
+) -> CoupledScenarioResult:
+    raw = scenario_runner.get_coupled_result(case_name, chronological_storage, linked_representative_periods)
     return normalize_coupled_result(case_name, raw)
 
 

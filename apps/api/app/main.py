@@ -13,7 +13,9 @@ from .evaluation import (
     evaluate_scenario,
     get_candidate_feature_collection,
     get_source_layer_feature_collection,
+    load_candidate_cells,
 )
+from . import investment_analysis
 from .generators import (
     filter_feature_collection,
     get_generators_duplicates,
@@ -33,7 +35,7 @@ from .generators import (
     is_point_feature_in_greece,
 )
 from .market import get_greece_market_signal
-from .network_topology import get_network_topology_geojson
+from .network_topology import get_candidate_region_ids, get_network_topology_geojson
 from .models import (
     ClimateAssetResponse,
     GreeceMarketSignalResponse,
@@ -42,6 +44,7 @@ from .models import (
     ScenarioEvaluationResponse,
 )
 from .regional_demand import get_regional_demand_allocation
+from .models import CandidateInvestmentAnalysisResponse
 from .scenario_models import (
     CoupledScenarioResult,
     CoupledScenarioRunRequest,
@@ -96,6 +99,29 @@ def system_status(deep: bool = False) -> SystemStatusResponse:
 @app.get("/candidates")
 def candidates():
     return get_candidate_feature_collection()
+
+
+@app.get("/candidates/investment-analysis", response_model=CandidateInvestmentAnalysisResponse)
+def candidates_investment_analysis(case_name: str) -> CandidateInvestmentAnalysisResponse:
+    # Bridges the static candidate-screening cells to a real solved PyPSA
+    # scenario's regional prices/generation -- see app/investment_analysis.py.
+    try:
+        result = get_scenario_result(case_name)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    region_ids = get_candidate_region_ids()
+    costs = investment_analysis.load_technology_costs()
+    analyses = [
+        investment_analysis.evaluate_candidate_investment(cell, region_ids.get(cell.id), result.metrics, costs)
+        for cell in load_candidate_cells()
+    ]
+    return CandidateInvestmentAnalysisResponse(
+        case_name=case_name,
+        target_year=result.target_year,
+        analyses=analyses,
+        assumptions=investment_analysis.ASSUMPTIONS_NOTE,
+    )
 
 
 @lru_cache(maxsize=1)
@@ -399,14 +425,22 @@ async def scenarios_coupled_run(
 
 
 @app.get("/scenarios/{case_name}/coupled/status", response_model=ScenarioStatusResponse)
-def scenarios_coupled_status(case_name: str) -> ScenarioStatusResponse:
-    return get_coupled_scenario_status(case_name)
+def scenarios_coupled_status(
+    case_name: str,
+    chronological_storage: bool = False,
+    linked_representative_periods: bool = False,
+) -> ScenarioStatusResponse:
+    return get_coupled_scenario_status(case_name, chronological_storage, linked_representative_periods)
 
 
 @app.get("/scenarios/{case_name}/coupled/result", response_model=CoupledScenarioResult)
-def scenarios_coupled_result(case_name: str) -> CoupledScenarioResult:
+def scenarios_coupled_result(
+    case_name: str,
+    chronological_storage: bool = False,
+    linked_representative_periods: bool = False,
+) -> CoupledScenarioResult:
     try:
-        return get_coupled_scenario_result(case_name)
+        return get_coupled_scenario_result(case_name, chronological_storage, linked_representative_periods)
     except FileNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 

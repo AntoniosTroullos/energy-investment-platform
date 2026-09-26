@@ -32,6 +32,47 @@ class RunCoupledScenarioPreconditionTests(unittest.TestCase):
             issubclass(scenario_runner.ScenarioPreconditionError, scenario_runner.ScenarioRunError)
         )
 
+    def test_precondition_guard_also_fires_for_alternate_storage_methods(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            with patch.object(scenario_runner, "SCENARIO_ROOT", Path(tmpdir)):
+                with self.assertRaises(scenario_runner.ScenarioPreconditionError):
+                    asyncio.run(
+                        scenario_runner.run_coupled_scenario(
+                            2030, "baseline_no_trade", chronological_storage=True
+                        )
+                    )
+
+
+class CoupledResultDirTests(unittest.TestCase):
+    """build_and_solve_coupled_year.py writes to one of three different
+    locations depending on which alternate storage-modeling flag is set (see
+    coupled_result_dir's docstring) -- these confirm scenario_runner resolves
+    the exact same three paths."""
+
+    def test_default_path_matches_existing_behavior(self):
+        with patch.object(scenario_runner, "SCENARIO_ROOT", Path("/scenarios")):
+            path = scenario_runner.coupled_result_dir("future_electricity_2030")
+        self.assertEqual(path, Path("/scenarios/future_electricity_2030/coupled_outputs"))
+
+    def test_chronological_storage_uses_a_separate_case_directory(self):
+        with patch.object(scenario_runner, "SCENARIO_ROOT", Path("/scenarios")):
+            path = scenario_runner.coupled_result_dir(
+                "future_electricity_2030", chronological_storage=True
+            )
+        self.assertEqual(
+            path, Path("/scenarios/future_electricity_2030_chronological/coupled_outputs")
+        )
+
+    def test_linked_representative_periods_uses_a_different_subdirectory(self):
+        with patch.object(scenario_runner, "SCENARIO_ROOT", Path("/scenarios")):
+            path = scenario_runner.coupled_result_dir(
+                "future_electricity_2030", linked_representative_periods=True
+            )
+        self.assertEqual(
+            path,
+            Path("/scenarios/future_electricity_2030/coupled_outputs_linked_representative_periods"),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

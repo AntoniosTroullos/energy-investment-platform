@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from .staleness import Staleness
 
@@ -21,6 +21,10 @@ GROWTH_RATE_DEFAULT = 0.01
 class ElectricityScenarioRunRequest(BaseModel):
     target_year: int = Field(ge=TARGET_YEAR_MIN, le=TARGET_YEAR_MAX)
     annual_growth_rate: float = Field(default=GROWTH_RATE_DEFAULT, ge=GROWTH_RATE_MIN, le=GROWTH_RATE_MAX)
+    # Refetch demand data from ENTSO-E instead of using the cached copy --
+    # run_multiyear_electricity.py's own --force-fetch flag, previously never
+    # forwarded by this bridge at all.
+    force_fetch: bool = False
 
 
 class ElectricityScenarioRunResponse(BaseModel):
@@ -71,6 +75,7 @@ class ElectricityScenarioParameters(BaseModel):
     snapshot_strategy: str | None = None
     forecast_model: str | None = None
     scenario_multiplier: float | None = None
+    force_fetch: bool | None = None
 
 
 class ElectricityScenarioResult(BaseModel):
@@ -140,6 +145,22 @@ class CoupledScenarioRunRequest(BaseModel):
     # picked up with no code change.
     target_year: int = Field(default=2030, ge=TARGET_YEAR_MIN, le=TARGET_YEAR_MAX)
     h2_market_scenario: str = "baseline_no_trade"
+    # Two alternate storage-modeling methods build_and_solve_coupled_year.py
+    # supports in place of its default representative-days snapshots -- see
+    # that script's own mutual-exclusion check (run_coupled_year, top of
+    # function), mirrored here so a bad combination is a clean 422 rather
+    # than a subprocess that launches and then raises.
+    chronological_storage: bool = False
+    linked_representative_periods: bool = False
+
+    @model_validator(mode="after")
+    def _check_storage_methods_are_exclusive(self) -> "CoupledScenarioRunRequest":
+        if self.chronological_storage and self.linked_representative_periods:
+            raise ValueError(
+                "chronological_storage and linked_representative_periods are mutually "
+                "exclusive -- choose at most one alternate storage-modeling method."
+            )
+        return self
 
 
 class CoupledScenarioRunResponse(BaseModel):
