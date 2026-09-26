@@ -3,7 +3,8 @@ import sys
 from math import cos, radians
 from pathlib import Path
 
-from shapely.geometry import mapping, shape
+from shapely import STRtree
+from shapely.geometry import Point, mapping, shape
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 if str(BASE_DIR) not in sys.path:
@@ -20,7 +21,29 @@ OUTPUT_PATH = GENERATED_DIR / "candidate_cells.geojson"
 # land_constraints.evaluate_cell, called below, which clips it down to the
 # real buildable land left once hard exclusions (Natura 2000 for solar,
 # banned regions/regional units/small islands for wind) are subtracted.
-GRID_STEP_DEGREES = 0.45
+#
+# 0.1 degrees is ~11km x ~9km at this pilot region's ~38.8 degN latitude --
+# still coarse next to a real utility-scale project footprint (a few km2),
+# but a genuine improvement on the previous 0.45 degrees (~50km x ~42km,
+# 2000+km2 per cell -- far larger than any real candidate site, which is why
+# the constraint-clipping this pipeline now does was worth so little before:
+# a 50km square barely notices losing a 15%-overlap corner). Tightening
+# further would need the O(candidates) grid-cell loop and per-cell
+# shapely operations below to be genuinely fast at a few thousand candidates
+# rather than a few hundred -- worth doing if this pilot region's real
+# resolution needs demand it, not assumed here.
+GRID_STEP_DEGREES = 0.1
+
+# A fast-path margin for the nearest-substation/nearest-line spatial queries
+# below (~25-33km at this pilot region's latitude) -- NOT itself a distance
+# claim, and not blindly trusted even when it finds something: see
+# _guaranteed_safe_radius_km, which the two functions below use to decide
+# whether a fast-path answer is provably correct or needs an exact full-scan
+# fallback. Exists only to avoid comparing every candidate cell against every
+# one of the real ~3,100 substations / ~40,000 line segments once the grid
+# tightened past a few hundred cells -- larger just means fewer fallbacks,
+# smaller never means a wrong answer.
+NEAREST_FEATURE_QUERY_BUFFER_DEGREES = 0.3
 
 # Below this, a cell's remaining buildable land isn't a real candidate site --
 # dropped entirely (land_constraints.MIN_BUILDABLE_FRACTION). Below this
@@ -42,6 +65,12 @@ def main():
     substations = load_geojson(SOURCE_DIR / "substations.geojson")
     lines = load_geojson(SOURCE_DIR / "transmission_lines.geojson")
     resource_zones = load_geojson(SOURCE_DIR / "resource_zones.geojson")
+    # Spatial indices so the nearest-substation/nearest-line lookups below
+    # don't compare every candidate cell against every one of the real
+    # ~3,100 substations / ~1,000 transmission lines -- see
+    # NEAREST_FEATURE_QUERY_BUFFER_DEGREES.
+    substation_index = STRtree([shape(f["geometry"]) for f in substations["features"]])
+    line_index = STRtree([shape(f["geometry"]) for f in lines["features"]])
     # Real Natura 2000, admin-region, regional-unit and island data -- see
     # land_constraints.py's module docstring for the cited government siting
     # framework these back. Loaded once; each layer's own index/union is built
@@ -74,10 +103,12 @@ def main():
             technology = "Solar PV" if solar_score >= wind_score else "Onshore Wind"
             distance_to_substation_km = get_min_point_distance_km(
                 centroid,
+                substation_index,
                 substations["features"],
             )
             distance_to_line_km = get_min_line_distance_km(
                 centroid,
+                line_index,
                 lines["features"],
             )
 
@@ -373,19 +404,75 @@ def point_on_segment(
     )
 
 
-def get_min_point_distance_km(point: tuple[float, float], features: list[dict]) -> float:
-    distances = [
+def _nearby_feature_indices(point: tuple[float, float], index: STRtree):
+    """Indices worth checking exactly, from a fast bounding-box query around
+    `point`. NOT itself the answer, and NOT safe to trust unconditionally --
+    STRtree.query matches tree-geometry BOUNDING BOXES, so a long, far
+    feature whose bbox happens to reach into the query buffer can appear here
+    even though its true nearest point is much farther than the buffer
+    radius; conversely a genuinely close feature is always found (its bbox
+    must reach the buffer if its geometry does). See
+    _guaranteed_safe_radius_km, which the callers use to decide whether an
+    answer computed only from these candidates can actually be trusted."""
+    return index.query(Point(point).buffer(NEAREST_FEATURE_QUERY_BUFFER_DEGREES))
+
+
+def _guaranteed_safe_radius_km(point: tuple[float, float]) -> float:
+    """The largest km distance for which NEAREST_FEATURE_QUERY_BUFFER_DEGREES
+    (a raw-degree buffer, isotropic in lon/lat terms) is guaranteed to have
+    captured every feature at least that close, in the same locally-projected
+    km space distance_to_segment_km/approximate_distance_km use for `point`.
+    Longitude degrees are shorter than latitude degrees away from the equator
+    (by cos(latitude)) -- so that is the tighter, safe bound: a feature
+    exactly this far away due east/west of `point` sits exactly at the edge
+    of the query buffer; anything genuinely closer is guaranteed to have been
+    found by it."""
+    return NEAREST_FEATURE_QUERY_BUFFER_DEGREES * 111.0 * abs(cos(radians(point[1])))
+
+
+def get_min_point_distance_km(
+    point: tuple[float, float],
+    substation_index: STRtree,
+    features: list[dict],
+) -> float:
+    candidate_indices = _nearby_feature_indices(point, substation_index)
+    fast_distances = [
+        approximate_distance_km(point, tuple(features[i]["geometry"]["coordinates"]))
+        for i in candidate_indices
+    ]
+    fast_min = min(fast_distances) if fast_distances else None
+
+    if fast_min is not None and fast_min < _guaranteed_safe_radius_km(point):
+        return fast_min
+
+    # The fast path found nothing, or found nothing closer than the buffer's
+    # guaranteed-safe radius -- not proof that nothing closer exists just
+    # outside it (see _nearby_feature_indices). Fall back to an exact,
+    # unrestricted scan rather than ever risk a wrong answer.
+    return min(
         approximate_distance_km(point, tuple(feature["geometry"]["coordinates"]))
         for feature in features
-    ]
-    return min(distances)
+    )
 
 
-def get_min_line_distance_km(point: tuple[float, float], features: list[dict]) -> float:
+def get_min_line_distance_km(
+    point: tuple[float, float],
+    line_index: STRtree,
+    features: list[dict],
+) -> float:
+    fast_min = _min_line_distance_among(point, features, _nearby_feature_indices(point, line_index))
+
+    if fast_min is not None and fast_min < _guaranteed_safe_radius_km(point):
+        return fast_min
+
+    return _min_line_distance_among(point, features, range(len(features))) or 0.0
+
+
+def _min_line_distance_among(point: tuple[float, float], features: list[dict], indices) -> float | None:
     min_distance = None
 
-    for feature in features:
-        coordinates = feature["geometry"]["coordinates"]
+    for i in indices:
+        coordinates = features[i]["geometry"]["coordinates"]
 
         for start, end in zip(coordinates, coordinates[1:]):
             distance = distance_to_segment_km(point, tuple(start), tuple(end))
@@ -393,7 +480,7 @@ def get_min_line_distance_km(point: tuple[float, float], features: list[dict]) -
             if min_distance is None or distance < min_distance:
                 min_distance = distance
 
-    return min_distance if min_distance is not None else 0.0
+    return min_distance
 
 
 def distance_to_segment_km(
