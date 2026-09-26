@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "../config";
 import type {
+  CoupledScenarioMode,
   CoupledScenarioParams,
   CoupledScenarioResult,
   CoupledScenarioRunResponse,
@@ -10,6 +11,20 @@ import type {
   ScenarioOptions,
   ScenarioStatusResponse,
 } from "./pypsaScenario.types";
+
+function coupledModeQuery(mode?: CoupledScenarioMode): string {
+  if (!mode?.chronologicalStorage && !mode?.linkedRepresentativePeriods) {
+    return "";
+  }
+  const query = new URLSearchParams();
+  if (mode.chronologicalStorage) {
+    query.set("chronological_storage", "true");
+  }
+  if (mode.linkedRepresentativePeriods) {
+    query.set("linked_representative_periods", "true");
+  }
+  return `?${query}`;
+}
 
 // Calls the FastAPI backend directly (base URL from lib/config.ts), matching
 // the one real, actually-used integration convention in this codebase
@@ -34,6 +49,7 @@ export async function runElectricityScenario(
     body: JSON.stringify({
       target_year: params.targetYear,
       annual_growth_rate: params.annualGrowthRate,
+      force_fetch: params.forceFetch ?? false,
     }),
   });
 
@@ -175,6 +191,8 @@ export async function runCoupledScenario(
     body: JSON.stringify({
       target_year: params.targetYear,
       h2_market_scenario: params.h2MarketScenario,
+      chronological_storage: params.chronologicalStorage ?? false,
+      linked_representative_periods: params.linkedRepresentativePeriods ?? false,
     }),
   });
 
@@ -193,8 +211,11 @@ export async function runCoupledScenario(
   return (await response.json()) as CoupledScenarioRunResponse;
 }
 
-export async function getCoupledScenarioStatus(caseName: string): Promise<ScenarioStatusResponse> {
-  const response = await fetch(`${API_BASE_URL}/scenarios/${caseName}/coupled/status`);
+export async function getCoupledScenarioStatus(
+  caseName: string,
+  mode?: CoupledScenarioMode,
+): Promise<ScenarioStatusResponse> {
+  const response = await fetch(`${API_BASE_URL}/scenarios/${caseName}/coupled/status${coupledModeQuery(mode)}`);
   if (!response.ok) {
     throw new Error(
       await parseErrorDetail(response, `Unable to check the coupled solve status (status ${response.status}).`),
@@ -203,8 +224,11 @@ export async function getCoupledScenarioStatus(caseName: string): Promise<Scenar
   return (await response.json()) as ScenarioStatusResponse;
 }
 
-export async function getCoupledScenarioResult(caseName: string): Promise<CoupledScenarioResult> {
-  const response = await fetch(`${API_BASE_URL}/scenarios/${caseName}/coupled/result`);
+export async function getCoupledScenarioResult(
+  caseName: string,
+  mode?: CoupledScenarioMode,
+): Promise<CoupledScenarioResult> {
+  const response = await fetch(`${API_BASE_URL}/scenarios/${caseName}/coupled/result${coupledModeQuery(mode)}`);
   if (!response.ok) {
     throw new Error(
       await parseErrorDetail(response, `Unable to fetch the coupled solve results (status ${response.status}).`),
@@ -219,9 +243,10 @@ export async function getCoupledScenarioResult(caseName: string): Promise<Couple
 export async function pollCoupledScenarioUntilTerminal(
   caseName: string,
   onTick?: (status: ScenarioStatusResponse) => void,
+  mode?: CoupledScenarioMode,
 ): Promise<ScenarioStatusResponse> {
   for (let attempt = 0; attempt < MAX_POLL_ATTEMPTS; attempt += 1) {
-    const status = await getCoupledScenarioStatus(caseName);
+    const status = await getCoupledScenarioStatus(caseName, mode);
     onTick?.(status);
 
     if (status.state === "done" || status.state === "crashed") {

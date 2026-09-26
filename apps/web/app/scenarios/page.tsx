@@ -3,11 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import CoupledScenarioPanel from "../../components/CoupledScenarioPanel";
-import ScenarioBuilderPanel from "../../components/ScenarioBuilderPanel";
 import ScenarioComparisonPanel from "../../components/ScenarioComparisonPanel";
 import ScenarioControlsPanel from "../../components/ScenarioControlsPanel";
 import ScenarioPresetsPanel from "../../components/ScenarioPresetsPanel";
+import ScenarioWizardPanel from "../../components/ScenarioWizardPanel";
 import SpatialResultsPanel from "../../components/SpatialResultsPanel";
 import { apiUrl } from "../../lib/config";
 import { useScenarioConfig } from "../../lib/scenario/ScenarioConfigContext";
@@ -24,11 +23,10 @@ import {
 const SCENARIO_EVALUATION_API_URL = apiUrl("/scenario/evaluate");
 
 type EvaluationRequestState = "idle" | "loading" | "success" | "error";
-type PypsaTab = "electricity" | "coupled" | "spatial" | "compare";
+type PypsaTab = "build" | "spatial" | "compare";
 
 const PYPSA_TABS: { id: PypsaTab; label: string }[] = [
-  { id: "electricity", label: "Electricity" },
-  { id: "coupled", label: "Coupled Gas / H2 / Heat" },
+  { id: "build", label: "Build & Solve" },
   { id: "spatial", label: "Spatial Results" },
   { id: "compare", label: "Compare Scenarios" },
 ];
@@ -50,7 +48,7 @@ export default function ScenarioStudioPage() {
   const [evaluationRequestState, setEvaluationRequestState] = useState<EvaluationRequestState>("idle");
   const [evaluationErrorMessage, setEvaluationErrorMessage] = useState("");
 
-  const [activeTab, setActiveTab] = useState<PypsaTab>("electricity");
+  const [activeTab, setActiveTab] = useState<PypsaTab>("build");
 
   const activePresetName = getActivePresetName(scenario);
 
@@ -112,7 +110,7 @@ export default function ScenarioStudioPage() {
         </p>
 
         <div className="mt-4 rounded-xl border border-white/10 bg-white/5 p-2">
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
             {PYPSA_TABS.map((tab) => (
               <button
                 key={tab.id}
@@ -131,8 +129,7 @@ export default function ScenarioStudioPage() {
         </div>
 
         <div className="mt-6">
-          {activeTab === "electricity" && <ScenarioBuilderPanel />}
-          {activeTab === "coupled" && <CoupledScenarioPanel />}
+          {activeTab === "build" && <ScenarioWizardPanel />}
           {activeTab === "spatial" && <SpatialResultsPanel />}
           {activeTab === "compare" && (
             // Re-fetches GET /scenarios each time this tab is opened -- a

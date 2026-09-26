@@ -11,6 +11,8 @@ export type RunState = "not_found" | "running" | "crashed" | "done";
 export type PypsaScenarioParams = {
   targetYear: number;
   annualGrowthRate: number;
+  // Refetch demand data from ENTSO-E instead of using the cached copy.
+  forceFetch?: boolean;
 };
 
 export type ElectricityScenarioRunResponse = {
@@ -53,6 +55,7 @@ export type ElectricityScenarioParameters = {
   snapshot_strategy: string | null;
   forecast_model: string | null;
   scenario_multiplier: number | null;
+  force_fetch: boolean | null;
 };
 
 export type ElectricityScenarioResult = {
@@ -186,7 +189,7 @@ export type TransmissionCorridorProperties = {
 
 // ---------------------------------------------------------------------------
 // Coupled gas/hydrogen/heat scenario (Phase 5). Layers onto an already-solved
-// electricity case for the same year -- see CoupledScenarioPanel.tsx. Mirrors
+// electricity case for the same year -- see ScenarioWizardPanel.tsx. Mirrors
 // apps/api's CoupledScenarioResult (app/scenario_models.py), which itself
 // mirrors pythonProject1's build_and_solve_coupled_year.py -- a script
 // confirmed to be under active, uncommitted development upstream, hence the
@@ -199,6 +202,19 @@ export type TransmissionCorridorProperties = {
 export type CoupledScenarioParams = {
   targetYear: number;
   h2MarketScenario: string;
+  // Two alternate, mutually-exclusive storage-modeling methods -- see
+  // apps/api's CoupledScenarioRunRequest. Both default to false (the
+  // representative-days method already in use).
+  chronologicalStorage?: boolean;
+  linkedRepresentativePeriods?: boolean;
+};
+
+// Which storage-modeling variant a coupled status/result lookup should read
+// -- must match whatever flags the run itself was started with, since each
+// combination is solved into (and read from) a different location.
+export type CoupledScenarioMode = {
+  chronologicalStorage?: boolean;
+  linkedRepresentativePeriods?: boolean;
 };
 
 export type CoupledScenarioRunResponse = {
