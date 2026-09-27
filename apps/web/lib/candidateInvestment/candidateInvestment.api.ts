@@ -1,5 +1,8 @@
 import { API_BASE_URL } from "../config";
-import type { CandidateInvestmentAnalysisResponse } from "./candidateInvestment.types";
+import type {
+  CandidateInvestmentAnalysisResponse,
+  PortfolioAnalysisResponse,
+} from "./candidateInvestment.types";
 
 // Same fetch conventions as lib/pypsaScenario/pypsaScenario.api.ts
 // (parseErrorDetail, API_BASE_URL) -- kept as its own small module since this
@@ -26,4 +29,21 @@ export async function getCandidateInvestmentAnalysis(
     );
   }
   return (await response.json()) as CandidateInvestmentAnalysisResponse;
+}
+
+export async function getPortfolioAnalysis(
+  caseName: string,
+  candidateIds: string[],
+): Promise<PortfolioAnalysisResponse> {
+  const response = await fetch(`${API_BASE_URL}/candidates/portfolio-analysis`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ case_name: caseName, candidate_ids: candidateIds }),
+  });
+  if (!response.ok) {
+    throw new Error(
+      await parseErrorDetail(response, `Unable to compute portfolio analysis (status ${response.status}).`),
+    );
+  }
+  return (await response.json()) as PortfolioAnalysisResponse;
 }

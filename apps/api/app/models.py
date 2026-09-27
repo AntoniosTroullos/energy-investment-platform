@@ -177,3 +177,55 @@ class CandidateInvestmentAnalysisResponse(BaseModel):
     # data source) -- rendered as a permanent disclosure by the frontend, not
     # left implicit.
     assumptions: dict[str, str]
+
+
+class PortfolioAnalysisRequest(BaseModel):
+    case_name: str
+    candidate_ids: list[str]
+
+
+class PortfolioCandidateSummary(BaseModel):
+    """One requested candidate's contribution to the portfolio -- present for
+    EVERY requested id, including one that doesn't exist or that couldn't be
+    fully computed (via `message`), never silently dropped."""
+
+    candidate_id: str
+    technology: str
+    carrier: str | None = None
+    region_id: str | None = None
+    assumed_capacity_mw: float | None = None
+    capex_eur: float | None = None
+    npv_eur: float | None = None
+    irr_pct: float | None = None
+    message: str | None = None
+
+
+class PortfolioBreakdownEntry(BaseModel):
+    label: str
+    capex_eur: float
+    assumed_capacity_mw: float
+    candidate_count: int
+    capex_share_pct: float
+
+
+class PortfolioAnalysisResponse(BaseModel):
+    case_name: str
+    target_year: int
+    candidates: list[PortfolioCandidateSummary]
+    included_count: int
+    excluded_count: int
+    total_capex_eur: float | None = None
+    total_assumed_capacity_mw: float | None = None
+    # Sum of each included candidate's own NPV -- valid regardless of
+    # differing lifetimes/discount rates across technologies.
+    total_npv_eur: float | None = None
+    # NOT a weighted average of each candidate's own IRR (averaging IRRs
+    # across investments is not mathematically valid) -- computed from the
+    # combined annual cash-flow stream. See app/investment_analysis.py's
+    # combine_cash_flows.
+    portfolio_irr_pct: float | None = None
+    portfolio_payback_years: float | None = None
+    technology_breakdown: list[PortfolioBreakdownEntry]
+    region_breakdown: list[PortfolioBreakdownEntry]
+    concentration_flags: list[str]
+    assumptions: dict[str, str]

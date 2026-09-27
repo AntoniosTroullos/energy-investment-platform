@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { getCandidateInvestmentAnalysis } from "../lib/candidateInvestment/candidateInvestment.api";
+import { getCandidateInvestmentAnalysis, getPortfolioAnalysis } from "../lib/candidateInvestment/candidateInvestment.api";
 import type {
   CandidateInvestmentAnalysis,
   CandidateInvestmentAnalysisResponse,
+  PortfolioAnalysisResponse,
 } from "../lib/candidateInvestment/candidateInvestment.types";
 import { apiUrl } from "../lib/config";
 import { getScenarioList } from "../lib/pypsaScenario/pypsaScenario.api";
@@ -13,6 +14,7 @@ import type { ScenarioListItem } from "../lib/pypsaScenario/pypsaScenario.types"
 import { matchesCandidateScenario } from "../lib/scenario/candidate-screening";
 import type { Scenario } from "../lib/scenario/scenario.types";
 import type { AssetSelection } from "../types/asset";
+import PortfolioSummary from "./PortfolioSummary";
 
 type CandidateInvestmentPanelProps = {
   scenario: Scenario;
@@ -22,6 +24,7 @@ type ScenariosState = "loading" | "ready" | "error";
 type AnalysisState = "idle" | "loading" | "ready" | "error";
 
 const CANDIDATES_API_URL = apiUrl("/candidates");
+const PORTFOLIO_STORAGE_KEY = "energy-investment-platform-candidate-portfolio";
 
 type RankedCandidate = CandidateInvestmentAnalysis & { name: string };
 
@@ -58,6 +61,16 @@ export default function CandidateInvestmentPanel({ scenario }: CandidateInvestme
   const [analysisResponse, setAnalysisResponse] = useState<CandidateInvestmentAnalysisResponse | null>(null);
   const [analysisState, setAnalysisState] = useState<AnalysisState>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const [portfolioIds, setPortfolioIds] = useState<string[]>([]);
+  const [portfolioResponse, setPortfolioResponse] = useState<PortfolioAnalysisResponse | null>(null);
+  const [portfolioState, setPortfolioState] = useState<AnalysisState>("idle");
+  const [portfolioErrorMessage, setPortfolioErrorMessage] = useState<string | null>(null);
+  // Guards the persistence effect below from firing (with the initial []
+  // state) before the load effect has had a chance to read localStorage --
+  // without this, the save effect would immediately overwrite a real saved
+  // portfolio with an empty array on every mount.
+  const hasLoadedPortfolioRef = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -134,6 +147,70 @@ export default function CandidateInvestmentPanel({ scenario }: CandidateInvestme
     };
   }, [selectedCaseName]);
 
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(PORTFOLIO_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          setPortfolioIds(parsed);
+        }
+      }
+    } catch {
+      // Malformed or inaccessible storage -- start with an empty portfolio.
+    } finally {
+      hasLoadedPortfolioRef.current = true;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!hasLoadedPortfolioRef.current) {
+      return;
+    }
+    try {
+      window.localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(portfolioIds));
+    } catch {
+      // Private browsing / storage quota -- the portfolio just won't survive a reload.
+    }
+  }, [portfolioIds]);
+
+  useEffect(() => {
+    if (!selectedCaseName || portfolioIds.length === 0) {
+      setPortfolioResponse(null);
+      setPortfolioState("idle");
+      return;
+    }
+    let cancelled = false;
+    setPortfolioState("loading");
+    setPortfolioErrorMessage(null);
+
+    getPortfolioAnalysis(selectedCaseName, portfolioIds)
+      .then((response) => {
+        if (cancelled) {
+          return;
+        }
+        setPortfolioResponse(response);
+        setPortfolioState("ready");
+      })
+      .catch((error: unknown) => {
+        if (cancelled) {
+          return;
+        }
+        setPortfolioState("error");
+        setPortfolioErrorMessage(error instanceof Error ? error.message : "Unable to compute portfolio analysis.");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedCaseName, portfolioIds]);
+
+  function togglePortfolioMembership(candidateId: string) {
+    setPortfolioIds((current) =>
+      current.includes(candidateId) ? current.filter((id) => id !== candidateId) : [...current, candidateId],
+    );
+  }
+
   const eligibleIds = new Set(
     candidateAssets.filter((asset) => matchesCandidateScenario(asset, scenario)).map((asset) => asset.id),
   );
@@ -153,7 +230,15 @@ export default function CandidateInvestmentPanel({ scenario }: CandidateInvestme
   const byNpvOnly = eligibleAnalyses
     .filter((candidate) => candidate.irr_pct === null && candidate.npv_eur !== null)
     .sort((a, b) => (b.npv_eur as number) - (a.npv_eur as number));
-  const rankedCandidates = [...byIrr, ...byNpvOnly].slice(0, 10);
+  const top10 = [...byIrr, ...byNpvOnly].slice(0, 10);
+  // A candidate already in the portfolio stays visible (with its toggle
+  // button) even if it later falls out of the top 10 -- so adding it never
+  // makes it seem to vanish.
+  const top10Ids = new Set(top10.map((candidate) => candidate.candidate_id));
+  const alsoInPortfolio = eligibleAnalyses.filter(
+    (candidate) => portfolioIds.includes(candidate.candidate_id) && !top10Ids.has(candidate.candidate_id),
+  );
+  const rankedCandidates = [...top10, ...alsoInPortfolio];
 
   return (
     <section className="mt-8 rounded-xl border border-white/10 bg-white/5 p-4">
@@ -241,8 +326,35 @@ export default function CandidateInvestmentPanel({ scenario }: CandidateInvestme
                       : "—"}
                   </p>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => togglePortfolioMembership(candidate.candidate_id)}
+                  className={`mt-3 w-full rounded-lg border px-3 py-1.5 text-xs font-medium transition ${
+                    portfolioIds.includes(candidate.candidate_id)
+                      ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20"
+                      : "border-white/10 bg-zinc-950 text-zinc-300 hover:bg-zinc-900"
+                  }`}
+                >
+                  {portfolioIds.includes(candidate.candidate_id) ? "✓ In portfolio — remove" : "Add to portfolio"}
+                </button>
               </div>
             ))
+          )}
+
+          {portfolioIds.length > 0 && (
+            <div>
+              {portfolioState === "loading" && (
+                <p className="text-xs text-zinc-400">Computing portfolio economics...</p>
+              )}
+              {portfolioState === "error" && (
+                <div className="rounded-lg border border-rose-500/20 bg-rose-500/10 px-3 py-3">
+                  <p className="text-sm text-rose-300">{portfolioErrorMessage}</p>
+                </div>
+              )}
+              {portfolioResponse && portfolioState === "ready" && (
+                <PortfolioSummary response={portfolioResponse} onClear={() => setPortfolioIds([])} />
+              )}
+            </div>
           )}
 
           <div className="rounded-lg border border-white/10 bg-white/5 p-3 text-[11px] leading-5 text-zinc-500">

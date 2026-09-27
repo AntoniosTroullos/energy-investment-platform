@@ -6,7 +6,11 @@ from app.investment_analysis import (
     TechnologyCostRow,
     annual_net_cash_flows,
     assumed_capacity_mw,
+    build_breakdown,
     candidate_carrier,
+    candidate_cash_flows,
+    combine_cash_flows,
+    concentration_flags,
     degraded_generation_mwh,
     evaluate_candidate_investment,
     irr,
@@ -15,7 +19,7 @@ from app.investment_analysis import (
     npv_eur,
     payback_period_years,
 )
-from app.models import CandidateCell
+from app.models import CandidateCell, CandidateInvestmentAnalysis
 from app.scenario_models import ScenarioMetrics
 
 
@@ -212,6 +216,126 @@ class EvaluateCandidateInvestmentTests(unittest.TestCase):
         self.assertIsNotNone(result.npv_eur)
         self.assertIsNotNone(result.lcoe_eur_per_mwh)
         self.assertIsNotNone(result.payback_years)
+
+
+class CandidateCashFlowsTests(unittest.TestCase):
+    def _metrics(self) -> ScenarioMetrics:
+        return ScenarioMetrics(
+            generation_by_carrier_mwh={"solar": 4380.0},
+            installed_capacity_by_carrier_mw={"solar": 1.0},
+            average_marginal_price_by_bus={"Attica": 80.0},
+        )
+
+    def _costs(self) -> dict:
+        return {
+            "solar": TechnologyCostRow(
+                carrier="solar",
+                marginal_cost_eur_per_mwh=0.0,
+                overnight_capex_eur_per_kw=600.0,
+                lifetime_years=25.0,
+                discount_rate_pct=7.0,
+                fom_pct_of_capex=2.0,
+            )
+        }
+
+    def test_matches_evaluate_candidate_investments_own_derivation(self):
+        cell = _make_cell(buildable_fraction=0.8)
+        with patch.object(investment_analysis, "cell_area_km2", return_value=1.0):
+            flows = candidate_cash_flows(cell, "Attica", self._metrics(), self._costs())
+            result = evaluate_candidate_investment(cell, "Attica", self._metrics(), self._costs())
+
+        self.assertIsNotNone(flows)
+        self.assertEqual(flows[0], -result.capex_eur)
+        self.assertAlmostEqual(irr(flows) * 100, result.irr_pct, places=1)
+
+    def test_unsupported_technology_yields_none(self):
+        cell = _make_cell(technology="Battery Storage")
+        self.assertIsNone(candidate_cash_flows(cell, "Attica", self._metrics(), self._costs()))
+
+
+class CombineCashFlowsTests(unittest.TestCase):
+    def test_sums_element_wise_with_zero_padding(self):
+        combined = combine_cash_flows([[-100.0, 50.0, 60.0], [-50.0, 30.0]])
+        self.assertEqual(combined, [-150.0, 80.0, 60.0])
+
+    def test_empty_list_yields_empty(self):
+        self.assertEqual(combine_cash_flows([]), [])
+
+    def test_single_list_is_unchanged(self):
+        self.assertEqual(combine_cash_flows([[-10.0, 5.0]]), [-10.0, 5.0])
+
+    def test_portfolio_irr_is_not_the_average_of_individual_irrs(self):
+        # Two very different single-year projects: a small, wildly profitable
+        # one and a large, barely-profitable one. The combined-cash-flow IRR
+        # must land near the large project's IRR (capital-weighted), NOT the
+        # naive arithmetic mean of the two IRRs.
+        tiny_high_irr = [-10.0, 100.0]  # 900% IRR
+        large_low_irr = [-1_000_000.0, 1_050_000.0]  # 5% IRR
+        combined = combine_cash_flows([tiny_high_irr, large_low_irr])
+        portfolio_irr = irr(combined)
+        naive_average = (irr(tiny_high_irr) + irr(large_low_irr)) / 2
+        self.assertLess(portfolio_irr, naive_average / 2)
+
+
+class BuildBreakdownTests(unittest.TestCase):
+    def test_groups_by_key_and_computes_capex_share(self):
+        analyses = [
+            CandidateInvestmentAnalysis(
+                candidate_id="a", technology="Solar PV", carrier="solar", region_id="Attica",
+                capex_eur=300.0, assumed_capacity_mw=30.0,
+            ),
+            CandidateInvestmentAnalysis(
+                candidate_id="b", technology="Solar PV", carrier="solar", region_id="Attica",
+                capex_eur=100.0, assumed_capacity_mw=10.0,
+            ),
+            CandidateInvestmentAnalysis(
+                candidate_id="c", technology="Onshore Wind", carrier="wind", region_id="Crete",
+                capex_eur=600.0, assumed_capacity_mw=60.0,
+            ),
+        ]
+        entries = build_breakdown(analyses, lambda a: a.carrier)
+        by_label = {entry.label: entry for entry in entries}
+
+        self.assertEqual(by_label["solar"].capex_eur, 400.0)
+        self.assertEqual(by_label["solar"].candidate_count, 2)
+        self.assertEqual(by_label["wind"].capex_eur, 600.0)
+        self.assertAlmostEqual(by_label["solar"].capex_share_pct, 40.0, places=6)
+        self.assertAlmostEqual(by_label["wind"].capex_share_pct, 60.0, places=6)
+        self.assertEqual(entries[0].label, "wind")  # sorted descending by share
+
+    def test_empty_input_yields_no_entries(self):
+        self.assertEqual(build_breakdown([], lambda a: a.carrier), [])
+
+    def test_missing_key_groups_under_unknown(self):
+        analyses = [
+            CandidateInvestmentAnalysis(candidate_id="a", technology="Solar PV", carrier=None, capex_eur=100.0)
+        ]
+        entries = build_breakdown(analyses, lambda a: a.carrier)
+        self.assertEqual(entries[0].label, "unknown")
+
+
+class ConcentrationFlagsTests(unittest.TestCase):
+    def test_flags_a_group_above_threshold(self):
+        from app.models import PortfolioBreakdownEntry
+
+        high = PortfolioBreakdownEntry(
+            label="Attica", capex_eur=700.0, assumed_capacity_mw=70.0, candidate_count=2, capex_share_pct=70.0
+        )
+        low = PortfolioBreakdownEntry(
+            label="Crete", capex_eur=300.0, assumed_capacity_mw=30.0, candidate_count=1, capex_share_pct=30.0
+        )
+        flags = concentration_flags([[high, low]])
+        self.assertEqual(len(flags), 1)
+        self.assertIn("Attica", flags[0])
+        self.assertIn("70%", flags[0])
+
+    def test_no_flag_at_or_below_threshold(self):
+        from app.models import PortfolioBreakdownEntry
+
+        entry = PortfolioBreakdownEntry(
+            label="Attica", capex_eur=600.0, assumed_capacity_mw=60.0, candidate_count=2, capex_share_pct=60.0
+        )
+        self.assertEqual(concentration_flags([[entry]]), [])
 
 
 def _make_cell(technology: str = "Solar PV", buildable_fraction: float | None = 0.5, geometry: dict | None = None) -> CandidateCell:

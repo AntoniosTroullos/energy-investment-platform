@@ -33,9 +33,15 @@ import csv
 from dataclasses import dataclass
 from pathlib import Path
 
+import pyproj
 from shapely.geometry import shape
+from shapely.ops import transform
 
-from .models import CandidateCell, CandidateInvestmentAnalysis
+from .models import (
+    CandidateCell,
+    CandidateInvestmentAnalysis,
+    PortfolioBreakdownEntry,
+)
 from .scenario_models import ScenarioMetrics
 from .settings import Settings
 from .settings import settings as default_settings
@@ -71,6 +77,11 @@ DEGRADATION_PCT_PER_YEAR = {
     "solar": SOLAR_DEGRADATION_PCT_PER_YEAR,
     "wind": WIND_DEGRADATION_PCT_PER_YEAR,
 }
+
+# Built once and reused for every cell -- pyproj.Transformer construction
+# does a real CRS-database lookup and is too expensive to redo per call
+# (this ran once per candidate cell, per request, with no caching).
+_TO_EGSA87 = pyproj.Transformer.from_crs("EPSG:4326", "EPSG:2100", always_xy=True).transform
 
 HOURS_PER_YEAR = 8760.0
 
@@ -164,11 +175,7 @@ def cell_area_km2(cell: CandidateCell) -> float:
     measuring area -- same approach as pipeline/fetch_osm_regional_units.py's
     geodesic_area_km2 (raw shapely .area on WGS84 lon/lat degrees is not a
     real area)."""
-    import pyproj
-    from shapely.ops import transform
-
-    project = pyproj.Transformer.from_crs("EPSG:4326", "EPSG:2100", always_xy=True).transform
-    projected = transform(project, shape(cell.geometry))
+    projected = transform(_TO_EGSA87, shape(cell.geometry))
     return projected.area / 1_000_000.0
 
 
@@ -344,97 +351,122 @@ def national_capacity_factor(
     return generation / (capacity * HOURS_PER_YEAR)
 
 
+@dataclass(frozen=True)
+class CandidateFinancialInputs:
+    carrier: str
+    capacity_mw: float
+    capex_eur: float
+    generation_year0_mwh: float
+    captured_price_eur_per_mwh: float
+    marginal_cost_eur_per_mwh: float
+    lifetime_years: float
+    discount_rate_pct: float
+    fom_pct_of_capex: float
+
+
+def _derive_financial_inputs(
+    cell: CandidateCell,
+    region_id: str | None,
+    metrics: ScenarioMetrics,
+    costs: dict[str, TechnologyCostRow],
+) -> tuple[CandidateFinancialInputs | None, str | None, str | None, float | None]:
+    """Every place evaluate_candidate_investment used to return early with a
+    `message` before this was extracted -- shared by evaluate_candidate_investment
+    and candidate_cash_flows (the latter used by the portfolio aggregation
+    below) so the derivation exists in exactly one place. Returns (inputs,
+    message, carrier, partial_capacity_mw): carrier and partial_capacity_mw
+    are filled in as soon as they're known even when a later step fails, so
+    a caller can still surface them alongside the message exactly as the
+    original, non-extracted version did."""
+    carrier = candidate_carrier(cell.technology)
+    if carrier is None:
+        return None, "Only solar and wind candidates are supported by this analysis.", None, None
+
+    cost_row = costs.get(carrier)
+    if cost_row is None or cost_row.overnight_capex_eur_per_kw is None:
+        return None, f"No capital cost data for '{carrier}' in technology_costs.csv.", carrier, None
+
+    if region_id is None:
+        return None, "This candidate's centroid does not fall inside any of the 13 modeled regions.", carrier, None
+
+    capacity_mw = assumed_capacity_mw(cell, carrier)
+    if not capacity_mw:
+        return None, "Could not derive an assumed installed capacity for this candidate.", carrier, None
+
+    capacity_factor = national_capacity_factor(
+        carrier, metrics.generation_by_carrier_mwh, metrics.installed_capacity_by_carrier_mw
+    )
+    captured_price = metrics.average_marginal_price_by_bus.get(region_id)
+    if capacity_factor is None or captured_price is None:
+        return (
+            None,
+            "This solved scenario has no capacity factor or price data for this carrier/region.",
+            carrier,
+            capacity_mw,
+        )
+
+    capex_eur = capacity_mw * 1000.0 * cost_row.overnight_capex_eur_per_kw
+    generation_year0_mwh = capacity_mw * capacity_factor * HOURS_PER_YEAR
+
+    inputs = CandidateFinancialInputs(
+        carrier=carrier,
+        capacity_mw=capacity_mw,
+        capex_eur=capex_eur,
+        generation_year0_mwh=generation_year0_mwh,
+        captured_price_eur_per_mwh=captured_price,
+        marginal_cost_eur_per_mwh=cost_row.marginal_cost_eur_per_mwh,
+        lifetime_years=cost_row.lifetime_years or 0.0,
+        discount_rate_pct=cost_row.discount_rate_pct or 0.0,
+        fom_pct_of_capex=cost_row.fom_pct_of_capex or 0.0,
+    )
+    return inputs, None, carrier, capacity_mw
+
+
 def evaluate_candidate_investment(
     cell: CandidateCell,
     region_id: str | None,
     metrics: ScenarioMetrics,
     costs: dict[str, TechnologyCostRow],
 ) -> CandidateInvestmentAnalysis:
-    carrier = candidate_carrier(cell.technology)
-    if carrier is None:
-        return CandidateInvestmentAnalysis(
-            candidate_id=cell.id,
-            technology=cell.technology,
-            region_id=region_id,
-            message="Only solar and wind candidates are supported by this analysis.",
-        )
+    inputs, message, carrier, capacity_mw = _derive_financial_inputs(cell, region_id, metrics, costs)
 
-    cost_row = costs.get(carrier)
-    if cost_row is None or cost_row.overnight_capex_eur_per_kw is None:
+    if inputs is None:
         return CandidateInvestmentAnalysis(
             candidate_id=cell.id,
             technology=cell.technology,
             carrier=carrier,
             region_id=region_id,
-            message=f"No capital cost data for '{carrier}' in technology_costs.csv.",
+            assumed_capacity_mw=round(capacity_mw, 2) if capacity_mw is not None else None,
+            message=message,
         )
-
-    if region_id is None:
-        return CandidateInvestmentAnalysis(
-            candidate_id=cell.id,
-            technology=cell.technology,
-            carrier=carrier,
-            message="This candidate's centroid does not fall inside any of the 13 modeled regions.",
-        )
-
-    capacity_mw = assumed_capacity_mw(cell, carrier)
-    if not capacity_mw:
-        return CandidateInvestmentAnalysis(
-            candidate_id=cell.id,
-            technology=cell.technology,
-            carrier=carrier,
-            region_id=region_id,
-            message="Could not derive an assumed installed capacity for this candidate.",
-        )
-
-    capacity_factor = national_capacity_factor(
-        carrier, metrics.generation_by_carrier_mwh, metrics.installed_capacity_by_carrier_mw
-    )
-    captured_price = metrics.average_marginal_price_by_bus.get(region_id)
-
-    if capacity_factor is None or captured_price is None:
-        return CandidateInvestmentAnalysis(
-            candidate_id=cell.id,
-            technology=cell.technology,
-            carrier=carrier,
-            region_id=region_id,
-            assumed_capacity_mw=round(capacity_mw, 2),
-            message="This solved scenario has no capacity factor or price data for this carrier/region.",
-        )
-
-    capex_eur = capacity_mw * 1000.0 * cost_row.overnight_capex_eur_per_kw
-    generation_year0_mwh = capacity_mw * capacity_factor * HOURS_PER_YEAR
-    lifetime_years = cost_row.lifetime_years or 0.0
-    discount_rate_pct = cost_row.discount_rate_pct or 0.0
-    fom_pct_of_capex = cost_row.fom_pct_of_capex or 0.0
 
     npv_value = npv_eur(
-        capex_eur=capex_eur,
-        generation_year0_mwh=generation_year0_mwh,
-        captured_price_eur_per_mwh=captured_price,
-        marginal_cost_eur_per_mwh=cost_row.marginal_cost_eur_per_mwh,
-        carrier=carrier,
-        lifetime_years=lifetime_years,
-        discount_rate_pct=discount_rate_pct,
-        fom_pct_of_capex=fom_pct_of_capex,
+        capex_eur=inputs.capex_eur,
+        generation_year0_mwh=inputs.generation_year0_mwh,
+        captured_price_eur_per_mwh=inputs.captured_price_eur_per_mwh,
+        marginal_cost_eur_per_mwh=inputs.marginal_cost_eur_per_mwh,
+        carrier=inputs.carrier,
+        lifetime_years=inputs.lifetime_years,
+        discount_rate_pct=inputs.discount_rate_pct,
+        fom_pct_of_capex=inputs.fom_pct_of_capex,
     )
     flows = annual_net_cash_flows(
-        capex_eur=capex_eur,
-        generation_year0_mwh=generation_year0_mwh,
-        captured_price_eur_per_mwh=captured_price,
-        marginal_cost_eur_per_mwh=cost_row.marginal_cost_eur_per_mwh,
-        carrier=carrier,
-        lifetime_years=lifetime_years,
-        fom_pct_of_capex=fom_pct_of_capex,
+        capex_eur=inputs.capex_eur,
+        generation_year0_mwh=inputs.generation_year0_mwh,
+        captured_price_eur_per_mwh=inputs.captured_price_eur_per_mwh,
+        marginal_cost_eur_per_mwh=inputs.marginal_cost_eur_per_mwh,
+        carrier=inputs.carrier,
+        lifetime_years=inputs.lifetime_years,
+        fom_pct_of_capex=inputs.fom_pct_of_capex,
     )
     lcoe_value = lcoe_eur_per_mwh(
-        capex_eur=capex_eur,
-        generation_year0_mwh=generation_year0_mwh,
-        marginal_cost_eur_per_mwh=cost_row.marginal_cost_eur_per_mwh,
-        carrier=carrier,
-        lifetime_years=lifetime_years,
-        discount_rate_pct=discount_rate_pct,
-        fom_pct_of_capex=fom_pct_of_capex,
+        capex_eur=inputs.capex_eur,
+        generation_year0_mwh=inputs.generation_year0_mwh,
+        marginal_cost_eur_per_mwh=inputs.marginal_cost_eur_per_mwh,
+        carrier=inputs.carrier,
+        lifetime_years=inputs.lifetime_years,
+        discount_rate_pct=inputs.discount_rate_pct,
+        fom_pct_of_capex=inputs.fom_pct_of_capex,
     )
     irr_value = irr(flows)
     payback_value = payback_period_years(flows)
@@ -442,14 +474,105 @@ def evaluate_candidate_investment(
     return CandidateInvestmentAnalysis(
         candidate_id=cell.id,
         technology=cell.technology,
-        carrier=carrier,
+        carrier=inputs.carrier,
         region_id=region_id,
-        assumed_capacity_mw=round(capacity_mw, 2),
-        capex_eur=round(capex_eur, 0),
-        annual_generation_year0_mwh=round(generation_year0_mwh, 1),
-        captured_price_eur_per_mwh=round(captured_price, 2),
+        assumed_capacity_mw=round(inputs.capacity_mw, 2),
+        capex_eur=round(inputs.capex_eur, 0),
+        annual_generation_year0_mwh=round(inputs.generation_year0_mwh, 1),
+        captured_price_eur_per_mwh=round(inputs.captured_price_eur_per_mwh, 2),
         lcoe_eur_per_mwh=round(lcoe_value, 2) if lcoe_value is not None else None,
         npv_eur=round(npv_value, 0),
         irr_pct=round(irr_value * 100, 2) if irr_value is not None else None,
         payback_years=round(payback_value, 1) if payback_value is not None else None,
     )
+
+
+def candidate_cash_flows(
+    cell: CandidateCell,
+    region_id: str | None,
+    metrics: ScenarioMetrics,
+    costs: dict[str, TechnologyCostRow],
+) -> list[float] | None:
+    """The same undiscounted annual cash flows evaluate_candidate_investment
+    derives internally for its own IRR/payback -- exposed standalone so a
+    portfolio aggregation can combine multiple candidates' flows into one
+    portfolio-level cash-flow stream (see combine_cash_flows) rather than
+    averaging each candidate's own IRR, which is not how IRR combines across
+    investments."""
+    inputs, _, _, _ = _derive_financial_inputs(cell, region_id, metrics, costs)
+    if inputs is None:
+        return None
+    return annual_net_cash_flows(
+        capex_eur=inputs.capex_eur,
+        generation_year0_mwh=inputs.generation_year0_mwh,
+        captured_price_eur_per_mwh=inputs.captured_price_eur_per_mwh,
+        marginal_cost_eur_per_mwh=inputs.marginal_cost_eur_per_mwh,
+        carrier=inputs.carrier,
+        lifetime_years=inputs.lifetime_years,
+        fom_pct_of_capex=inputs.fom_pct_of_capex,
+    )
+
+
+def combine_cash_flows(flows_list: list[list[float]]) -> list[float]:
+    """Zero-pads each candidate's own (whole-years-only, per
+    annual_net_cash_flows) cash-flow list to the longest one and sums
+    element-wise -- the correct way to get a portfolio-level cash-flow
+    stream (and, from it, a real portfolio IRR/payback via irr()/
+    payback_period_years()), as opposed to averaging each candidate's own
+    IRR, which is not how IRR combines across investments. Implies that a
+    technology's cash flows simply stop at its own modeled lifetime -- no
+    repowering/reinvestment is assumed after that."""
+    if not flows_list:
+        return []
+    max_len = max(len(flows) for flows in flows_list)
+    combined = [0.0] * max_len
+    for flows in flows_list:
+        for index, value in enumerate(flows):
+            combined[index] += value
+    return combined
+
+
+# Single-category concentration threshold used only to generate a
+# plain-language note -- an arbitrary, commonly-used-in-practice figure for a
+# small portfolio, not a formal risk metric.
+CONCENTRATION_THRESHOLD_PCT = 60.0
+
+
+def build_breakdown(
+    included: list[CandidateInvestmentAnalysis],
+    key_fn,
+) -> list[PortfolioBreakdownEntry]:
+    groups: dict[str, list[CandidateInvestmentAnalysis]] = {}
+    for analysis in included:
+        label = key_fn(analysis) or "unknown"
+        groups.setdefault(label, []).append(analysis)
+
+    total_capex = sum(analysis.capex_eur or 0.0 for analysis in included)
+    entries = []
+    for label, group in groups.items():
+        group_capex = sum(analysis.capex_eur or 0.0 for analysis in group)
+        group_capacity = sum(analysis.assumed_capacity_mw or 0.0 for analysis in group)
+        entries.append(
+            PortfolioBreakdownEntry(
+                label=label,
+                capex_eur=round(group_capex, 0),
+                assumed_capacity_mw=round(group_capacity, 2),
+                candidate_count=len(group),
+                capex_share_pct=round(100.0 * group_capex / total_capex, 1) if total_capex else 0.0,
+            )
+        )
+    entries.sort(key=lambda entry: entry.capex_share_pct, reverse=True)
+    return entries
+
+
+def concentration_flags(breakdown_groups: list[list[PortfolioBreakdownEntry]]) -> list[str]:
+    flags = []
+    for entries in breakdown_groups:
+        for entry in entries:
+            if entry.capex_share_pct > CONCENTRATION_THRESHOLD_PCT:
+                flags.append(
+                    f"{entry.label} accounts for {entry.capex_share_pct:.0f}% of portfolio capex "
+                    f"(a single-category concentration above the {CONCENTRATION_THRESHOLD_PCT:.0f}% "
+                    "threshold used here -- not a formal risk metric)."
+                )
+    return flags

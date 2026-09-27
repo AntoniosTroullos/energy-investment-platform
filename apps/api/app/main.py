@@ -37,14 +37,17 @@ from .generators import (
 from .market import get_greece_market_signal
 from .network_topology import get_candidate_region_ids, get_network_topology_geojson
 from .models import (
+    CandidateInvestmentAnalysisResponse,
     ClimateAssetResponse,
     GreeceMarketSignalResponse,
+    PortfolioAnalysisRequest,
+    PortfolioAnalysisResponse,
+    PortfolioCandidateSummary,
     RegionalDemandAllocationResponse,
     ScenarioEvaluationRequest,
     ScenarioEvaluationResponse,
 )
 from .regional_demand import get_regional_demand_allocation
-from .models import CandidateInvestmentAnalysisResponse
 from .scenario_models import (
     CoupledScenarioResult,
     CoupledScenarioRunRequest,
@@ -121,6 +124,92 @@ def candidates_investment_analysis(case_name: str) -> CandidateInvestmentAnalysi
         target_year=result.target_year,
         analyses=analyses,
         assumptions=investment_analysis.ASSUMPTIONS_NOTE,
+    )
+
+
+@app.post("/candidates/portfolio-analysis", response_model=PortfolioAnalysisResponse)
+def candidates_portfolio_analysis(request: PortfolioAnalysisRequest) -> PortfolioAnalysisResponse:
+    # Combines several candidates' real cash flows into portfolio-level
+    # metrics -- see app/investment_analysis.py's combine_cash_flows for why
+    # portfolio IRR is NOT a weighted average of each candidate's own IRR.
+    try:
+        result = get_scenario_result(request.case_name)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    region_ids = get_candidate_region_ids()
+    costs = investment_analysis.load_technology_costs()
+    cells_by_id = {cell.id: cell for cell in load_candidate_cells()}
+
+    summaries: list[PortfolioCandidateSummary] = []
+    included = []
+    included_flows: list[list[float]] = []
+
+    for candidate_id in request.candidate_ids:
+        cell = cells_by_id.get(candidate_id)
+        if cell is None:
+            summaries.append(
+                PortfolioCandidateSummary(candidate_id=candidate_id, technology="unknown", message="Unknown candidate id.")
+            )
+            continue
+
+        region_id = region_ids.get(candidate_id)
+        analysis = investment_analysis.evaluate_candidate_investment(cell, region_id, result.metrics, costs)
+        summaries.append(
+            PortfolioCandidateSummary(
+                candidate_id=candidate_id,
+                technology=analysis.technology,
+                carrier=analysis.carrier,
+                region_id=analysis.region_id,
+                assumed_capacity_mw=analysis.assumed_capacity_mw,
+                capex_eur=analysis.capex_eur,
+                npv_eur=analysis.npv_eur,
+                irr_pct=analysis.irr_pct,
+                message=analysis.message,
+            )
+        )
+        if analysis.message is None:
+            included.append(analysis)
+            flows = investment_analysis.candidate_cash_flows(cell, region_id, result.metrics, costs)
+            if flows is not None:
+                included_flows.append(flows)
+
+    total_capex = sum(a.capex_eur or 0.0 for a in included) if included else None
+    total_capacity = sum(a.assumed_capacity_mw or 0.0 for a in included) if included else None
+    total_npv = sum(a.npv_eur or 0.0 for a in included) if included else None
+
+    combined_flows = investment_analysis.combine_cash_flows(included_flows)
+    portfolio_irr = investment_analysis.irr(combined_flows) if combined_flows else None
+    portfolio_payback = investment_analysis.payback_period_years(combined_flows) if combined_flows else None
+
+    technology_breakdown = investment_analysis.build_breakdown(included, lambda a: a.carrier)
+    region_breakdown = investment_analysis.build_breakdown(included, lambda a: a.region_id)
+    flags = investment_analysis.concentration_flags([technology_breakdown, region_breakdown])
+
+    return PortfolioAnalysisResponse(
+        case_name=request.case_name,
+        target_year=result.target_year,
+        candidates=summaries,
+        included_count=len(included),
+        excluded_count=len(request.candidate_ids) - len(included),
+        total_capex_eur=round(total_capex, 0) if total_capex is not None else None,
+        total_assumed_capacity_mw=round(total_capacity, 2) if total_capacity is not None else None,
+        total_npv_eur=round(total_npv, 0) if total_npv is not None else None,
+        portfolio_irr_pct=round(portfolio_irr * 100, 2) if portfolio_irr is not None else None,
+        portfolio_payback_years=round(portfolio_payback, 1) if portfolio_payback is not None else None,
+        technology_breakdown=technology_breakdown,
+        region_breakdown=region_breakdown,
+        concentration_flags=flags,
+        assumptions={
+            **investment_analysis.ASSUMPTIONS_NOTE,
+            "portfolio_combination": (
+                "Portfolio IRR/payback are computed from each included candidate's own annual cash flows "
+                "summed together (zero-padded to the longest lifetime), NOT an average of individual IRRs -- "
+                "averaging IRRs across investments is not mathematically valid. Assumes no repowering/"
+                "reinvestment after a technology's modeled lifetime ends. Portfolio NPV is the sum of each "
+                "candidate's own NPV (valid regardless of differing lifetimes/discount rates)."
+            ),
+        },
     )
 
 
