@@ -141,3 +141,39 @@ class CandidateCell(BaseModel):
     status: str
     investment_score: float
     geometry: dict
+    # Fraction of the cell's grid square left buildable after land-constraint
+    # clipping (pipeline/generate_candidates.py) -- not read by the existing
+    # screening filter, but needed by investment_analysis.py to size an
+    # assumed installed capacity for the buildable land that remains.
+    buildable_fraction: float | None = None
+
+
+class CandidateInvestmentAnalysis(BaseModel):
+    """One candidate cell's real-data-grounded financial analysis for a given
+    solved PyPSA scenario -- see app/investment_analysis.py. Every field this
+    module cannot compute becomes `message`, never a silently dropped row."""
+
+    candidate_id: str
+    technology: str
+    carrier: str | None = None
+    region_id: str | None = None
+    assumed_capacity_mw: float | None = None
+    capex_eur: float | None = None
+    annual_generation_year0_mwh: float | None = None
+    captured_price_eur_per_mwh: float | None = None
+    lcoe_eur_per_mwh: float | None = None
+    npv_eur: float | None = None
+    irr_pct: float | None = None
+    payback_years: float | None = None
+    message: str | None = None
+
+
+class CandidateInvestmentAnalysisResponse(BaseModel):
+    case_name: str
+    target_year: int
+    analyses: list[CandidateInvestmentAnalysis]
+    # Plain-language notes on every assumption/proxy this analysis relies on
+    # (power density, capacity-factor methodology, captured-price proxy, cost
+    # data source) -- rendered as a permanent disclosure by the frontend, not
+    # left implicit.
+    assumptions: dict[str, str]

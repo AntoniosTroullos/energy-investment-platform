@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import CandidateInvestmentPanel from "../../components/CandidateInvestmentPanel";
 import ScenarioComparisonPanel from "../../components/ScenarioComparisonPanel";
 import ScenarioControlsPanel from "../../components/ScenarioControlsPanel";
 import ScenarioPresetsPanel from "../../components/ScenarioPresetsPanel";
@@ -99,6 +100,7 @@ export default function ScenarioStudioPage() {
           />
           <ScenarioControlsPanel scenario={scenario} onUpdateScenario={handleUpdateScenario} />
         </div>
+        <CandidateInvestmentPanel scenario={scenario} />
       </section>
 
       <section className="mt-12">

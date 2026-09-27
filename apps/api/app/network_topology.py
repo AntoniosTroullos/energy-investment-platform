@@ -19,8 +19,9 @@ from functools import lru_cache
 from pathlib import Path
 
 from shapely.geometry import mapping, shape
+from shapely.prepared import prep
 
-from .evaluation import get_source_layer_feature_collection
+from .evaluation import get_source_layer_feature_collection, load_candidate_cells
 from .settings import Settings
 from .settings import settings as default_settings
 
@@ -66,6 +67,37 @@ def get_region_centroids() -> dict[str, tuple[float, float]]:
         centroid = shape(geometry).centroid
         centroids[region_id] = (centroid.x, centroid.y)
     return centroids
+
+
+@lru_cache(maxsize=1)
+def get_candidate_region_ids() -> dict[str, str | None]:
+    """Which of the 13 admin regions each candidate cell's centroid falls
+    inside -- candidate cells carry no region/bus identifier of their own
+    (see pipeline/generate_candidates.py), so this is a new geometry join,
+    not a plain key lookup. Uses the ORIGINAL (unsimplified) region
+    boundaries, like get_region_centroids, each wrapped in shapely.prepared
+    .prep -- the same technique app/generators.py's
+    get_prepared_greece_boundary already uses for point-in-region membership
+    tests. A cell whose centroid falls outside all 13 (e.g. a small island
+    not covered by any admin-region polygon) maps to None rather than being
+    dropped."""
+    raw_regions = get_source_layer_feature_collection("admin_regions.geojson")
+    prepared_regions: list[tuple[str, object]] = []
+    for feature in raw_regions.get("features", []):
+        region_id = feature.get("properties", {}).get("id")
+        geometry = feature.get("geometry")
+        if not region_id or not geometry:
+            continue
+        prepared_regions.append((region_id, prep(shape(geometry))))
+
+    region_ids: dict[str, str | None] = {}
+    for cell in load_candidate_cells():
+        centroid = shape(cell.geometry).centroid
+        region_ids[cell.id] = next(
+            (region_id for region_id, prepared in prepared_regions if prepared.contains(centroid)),
+            None,
+        )
+    return region_ids
 
 
 def _lines_csv_path(cfg: Settings) -> Path:

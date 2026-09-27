@@ -3,8 +3,10 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+from app.models import CandidateCell
 from app.network_topology import (
     REGION_SIMPLIFY_TOLERANCE_DEGREES,
+    get_candidate_region_ids,
     get_network_topology_geojson,
     get_region_centroids,
     get_simplified_admin_regions,
@@ -126,6 +128,68 @@ class NetworkTopologyGeojsonTests(unittest.TestCase):
                 topology = get_network_topology_geojson(settings)
 
         self.assertIsNone(topology["features"][0]["properties"]["s_nom_mw"])
+
+
+def _make_cell(cell_id: str, center: tuple[float, float]) -> CandidateCell:
+    x, y = center
+    return CandidateCell(
+        id=cell_id,
+        name=cell_id,
+        technology="Solar PV",
+        solar_score=80.0,
+        wind_score=10.0,
+        distance_to_substation_km=5.0,
+        distance_to_line_km=3.0,
+        land_excluded=False,
+        connection_cost_level="Low",
+        status="Screened Candidate",
+        investment_score=70.0,
+        geometry={
+            "type": "Polygon",
+            "coordinates": [[[x - 0.05, y - 0.05], [x + 0.05, y - 0.05], [x + 0.05, y + 0.05], [x - 0.05, y + 0.05], [x - 0.05, y - 0.05]]],
+        },
+    )
+
+
+class CandidateRegionIdsTests(unittest.TestCase):
+    """A candidate cell carries no region/bus identifier of its own -- this
+    is a new geometry join (centroid point-in-polygon against the 13 admin
+    regions), not a plain key lookup. Exercised here against two small
+    synthetic, non-overlapping square regions rather than the real 13, so
+    membership/non-membership is unambiguous."""
+
+    REGIONS_GEOJSON = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "properties": {"id": "RegionA"},
+                "geometry": {"type": "Polygon", "coordinates": [[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]]},
+            },
+            {
+                "type": "Feature",
+                "properties": {"id": "RegionB"},
+                "geometry": {"type": "Polygon", "coordinates": [[[2, 2], [3, 2], [3, 3], [2, 3], [2, 2]]]},
+            },
+        ],
+    }
+
+    def test_assigns_each_cell_to_the_region_its_centroid_falls_inside(self):
+        cells = [
+            _make_cell("cell-in-a", (0.5, 0.5)),
+            _make_cell("cell-in-b", (2.5, 2.5)),
+            _make_cell("cell-outside-both", (10.0, 10.0)),
+        ]
+        get_candidate_region_ids.cache_clear()
+        with patch("app.network_topology.get_source_layer_feature_collection", return_value=self.REGIONS_GEOJSON):
+            with patch("app.network_topology.load_candidate_cells", return_value=cells):
+                region_ids = get_candidate_region_ids()
+
+        self.assertEqual(
+            region_ids,
+            {"cell-in-a": "RegionA", "cell-in-b": "RegionB", "cell-outside-both": None},
+        )
+        get_candidate_region_ids.cache_clear()
 
 
 class LoadTransmissionCorridorRowsTests(unittest.TestCase):
