@@ -422,22 +422,30 @@ def _derive_financial_inputs(
     return inputs, None, carrier, capacity_mw
 
 
-def evaluate_candidate_investment(
+def evaluate_candidate_with_cash_flows(
     cell: CandidateCell,
     region_id: str | None,
     metrics: ScenarioMetrics,
     costs: dict[str, TechnologyCostRow],
-) -> CandidateInvestmentAnalysis:
+) -> tuple[CandidateInvestmentAnalysis, list[float] | None]:
+    """One derivation pass producing both the per-candidate analysis and its
+    annual cash flows -- evaluate_candidate_investment and
+    candidate_cash_flows are thin wrappers around this, so a caller needing
+    both (the portfolio endpoint) never derives the same financial inputs
+    for the same candidate twice."""
     inputs, message, carrier, capacity_mw = _derive_financial_inputs(cell, region_id, metrics, costs)
 
     if inputs is None:
-        return CandidateInvestmentAnalysis(
-            candidate_id=cell.id,
-            technology=cell.technology,
-            carrier=carrier,
-            region_id=region_id,
-            assumed_capacity_mw=round(capacity_mw, 2) if capacity_mw is not None else None,
-            message=message,
+        return (
+            CandidateInvestmentAnalysis(
+                candidate_id=cell.id,
+                technology=cell.technology,
+                carrier=carrier,
+                region_id=region_id,
+                assumed_capacity_mw=round(capacity_mw, 2) if capacity_mw is not None else None,
+                message=message,
+            ),
+            None,
         )
 
     npv_value = npv_eur(
@@ -471,7 +479,7 @@ def evaluate_candidate_investment(
     irr_value = irr(flows)
     payback_value = payback_period_years(flows)
 
-    return CandidateInvestmentAnalysis(
+    analysis = CandidateInvestmentAnalysis(
         candidate_id=cell.id,
         technology=cell.technology,
         carrier=inputs.carrier,
@@ -485,6 +493,17 @@ def evaluate_candidate_investment(
         irr_pct=round(irr_value * 100, 2) if irr_value is not None else None,
         payback_years=round(payback_value, 1) if payback_value is not None else None,
     )
+    return analysis, flows
+
+
+def evaluate_candidate_investment(
+    cell: CandidateCell,
+    region_id: str | None,
+    metrics: ScenarioMetrics,
+    costs: dict[str, TechnologyCostRow],
+) -> CandidateInvestmentAnalysis:
+    analysis, _ = evaluate_candidate_with_cash_flows(cell, region_id, metrics, costs)
+    return analysis
 
 
 def candidate_cash_flows(
@@ -494,23 +513,12 @@ def candidate_cash_flows(
     costs: dict[str, TechnologyCostRow],
 ) -> list[float] | None:
     """The same undiscounted annual cash flows evaluate_candidate_investment
-    derives internally for its own IRR/payback -- exposed standalone so a
-    portfolio aggregation can combine multiple candidates' flows into one
-    portfolio-level cash-flow stream (see combine_cash_flows) rather than
-    averaging each candidate's own IRR, which is not how IRR combines across
-    investments."""
-    inputs, _, _, _ = _derive_financial_inputs(cell, region_id, metrics, costs)
-    if inputs is None:
-        return None
-    return annual_net_cash_flows(
-        capex_eur=inputs.capex_eur,
-        generation_year0_mwh=inputs.generation_year0_mwh,
-        captured_price_eur_per_mwh=inputs.captured_price_eur_per_mwh,
-        marginal_cost_eur_per_mwh=inputs.marginal_cost_eur_per_mwh,
-        carrier=inputs.carrier,
-        lifetime_years=inputs.lifetime_years,
-        fom_pct_of_capex=inputs.fom_pct_of_capex,
-    )
+    derives internally for its own IRR/payback -- exposed standalone for any
+    caller that only needs the flows (e.g. combine_cash_flows for a
+    portfolio-level cash-flow stream, rather than averaging each candidate's
+    own IRR, which is not how IRR combines across investments)."""
+    _, flows = evaluate_candidate_with_cash_flows(cell, region_id, metrics, costs)
+    return flows
 
 
 def combine_cash_flows(flows_list: list[list[float]]) -> list[float]:

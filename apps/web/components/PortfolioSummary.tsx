@@ -52,13 +52,25 @@ export default function PortfolioSummary({ response, onClear }: PortfolioSummary
             {response.excluded_count > 0 && ` · ${response.excluded_count} excluded`}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={onClear}
-          className="shrink-0 rounded-lg border border-white/10 bg-zinc-950 px-3 py-1.5 text-xs text-zinc-300 transition hover:bg-zinc-900"
-        >
-          Clear portfolio
-        </button>
+        <div className="flex shrink-0 gap-2">
+          <a
+            href={`/scenarios/memo?type=portfolio&case_name=${encodeURIComponent(response.case_name)}&ids=${response.candidates
+              .map((candidate) => encodeURIComponent(candidate.candidate_id))
+              .join(",")}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-lg border border-white/10 bg-zinc-950 px-3 py-1.5 text-xs text-zinc-300 transition hover:bg-zinc-900"
+          >
+            Export memo
+          </a>
+          <button
+            type="button"
+            onClick={onClear}
+            className="rounded-lg border border-white/10 bg-zinc-950 px-3 py-1.5 text-xs text-zinc-300 transition hover:bg-zinc-900"
+          >
+            Clear portfolio
+          </button>
+        </div>
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">

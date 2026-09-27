@@ -103,13 +103,25 @@ export default function ScenarioComparisonPanel({ refreshSignal }: ScenarioCompa
         <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
           Scenario Comparison
         </h2>
-        <button
-          type="button"
-          onClick={() => void loadScenarios()}
-          className="text-xs text-emerald-300 hover:text-emerald-200"
-        >
-          Refresh
-        </button>
+        <div className="flex items-center gap-4">
+          {solvedScenarios.length > 0 && (
+            <a
+              href="/scenarios/memo?type=compare"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-emerald-300 hover:text-emerald-200"
+            >
+              Export memo
+            </a>
+          )}
+          <button
+            type="button"
+            onClick={() => void loadScenarios()}
+            className="text-xs text-emerald-300 hover:text-emerald-200"
+          >
+            Refresh
+          </button>
+        </div>
       </div>
       <p className="mt-2 text-xs text-zinc-500">
         Every solved electricity scenario, compared side by side, with the coupled gas / hydrogen / heat solve alongside it where one has been run.

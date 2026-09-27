@@ -12,7 +12,7 @@ export default function AppNav() {
   const pathname = usePathname();
 
   return (
-    <header className="flex h-14 w-full shrink-0 items-center justify-between border-b border-white/10 bg-zinc-900 px-6">
+    <header className="flex h-14 w-full shrink-0 items-center justify-between border-b border-white/10 bg-zinc-900 px-6 print:hidden">
       <p className="text-sm font-semibold tracking-tight text-zinc-100">
         Energy Investment Platform
       </p>

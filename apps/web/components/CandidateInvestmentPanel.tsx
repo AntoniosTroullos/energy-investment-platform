@@ -326,17 +326,29 @@ export default function CandidateInvestmentPanel({ scenario }: CandidateInvestme
                       : "—"}
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => togglePortfolioMembership(candidate.candidate_id)}
-                  className={`mt-3 w-full rounded-lg border px-3 py-1.5 text-xs font-medium transition ${
-                    portfolioIds.includes(candidate.candidate_id)
-                      ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20"
-                      : "border-white/10 bg-zinc-950 text-zinc-300 hover:bg-zinc-900"
-                  }`}
-                >
-                  {portfolioIds.includes(candidate.candidate_id) ? "✓ In portfolio — remove" : "Add to portfolio"}
-                </button>
+                <div className="mt-3 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => togglePortfolioMembership(candidate.candidate_id)}
+                    className={`flex-1 rounded-lg border px-3 py-1.5 text-xs font-medium transition ${
+                      portfolioIds.includes(candidate.candidate_id)
+                        ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20"
+                        : "border-white/10 bg-zinc-950 text-zinc-300 hover:bg-zinc-900"
+                    }`}
+                  >
+                    {portfolioIds.includes(candidate.candidate_id) ? "✓ In portfolio — remove" : "Add to portfolio"}
+                  </button>
+                  {selectedCaseName && (
+                    <a
+                      href={`/scenarios/memo?type=candidate&case_name=${encodeURIComponent(selectedCaseName)}&id=${encodeURIComponent(candidate.candidate_id)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 rounded-lg border border-white/10 bg-zinc-950 px-3 py-1.5 text-center text-xs font-medium text-zinc-300 transition hover:bg-zinc-900"
+                    >
+                      Export memo
+                    </a>
+                  )}
+                </div>
               </div>
             ))
           )}

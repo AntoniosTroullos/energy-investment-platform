@@ -154,7 +154,9 @@ def candidates_portfolio_analysis(request: PortfolioAnalysisRequest) -> Portfoli
             continue
 
         region_id = region_ids.get(candidate_id)
-        analysis = investment_analysis.evaluate_candidate_investment(cell, region_id, result.metrics, costs)
+        analysis, flows = investment_analysis.evaluate_candidate_with_cash_flows(
+            cell, region_id, result.metrics, costs
+        )
         summaries.append(
             PortfolioCandidateSummary(
                 candidate_id=candidate_id,
@@ -170,7 +172,6 @@ def candidates_portfolio_analysis(request: PortfolioAnalysisRequest) -> Portfoli
         )
         if analysis.message is None:
             included.append(analysis)
-            flows = investment_analysis.candidate_cash_flows(cell, region_id, result.metrics, costs)
             if flows is not None:
                 included_flows.append(flows)
 
