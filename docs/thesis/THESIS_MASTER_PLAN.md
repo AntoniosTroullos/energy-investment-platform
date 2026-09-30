@@ -126,6 +126,7 @@ decision support, and what do such models reveal about where and in what to inve
 | 20 Sep 2026 | PLATFORM | Git history (re)started: scaffolding, IPTO pipeline, asset pipeline, PyPSA bridge, map explorer, Scenario Studio |
 | 26 Sep 2026 | PLATFORM | Scenario options from CSV, dev tooling, staleness flags, network topology & regional metrics, spatial results, real land-constraint polygons, 11 km grid, Scenario Wizard |
 | 27 Sep 2026 | PLATFORM | Real IRR/NPV/LCOE per candidate; portfolio IRR; investment-memo export |
+| 30 Sep 2026 | MODEL | Post-freeze override (author-approved, see D2-REVISED §7.2): real Greek production coupled run (R8c) + a coupled-validator bug fix |
 
 The dates come from git logs and `MODEL/pypsa-greece/KNOWLEDGE_TRANSFER.md`. Check them with
 `git log` in both repositories before quoting.
@@ -147,7 +148,7 @@ Maturity: **●** production-quality and tested · **◐** working, with caveats
 | C9 | Representative-period selection (wind-tercile stratified, 3 days/month; monthly days; seasonal weeks; linked periods; chronology expansion) | `MODEL/pypsa-greece/scripts/select_representative_days.py`, `MODEL/src/energy_data/linked_representative_periods.py`, `seasonal_storage_chronology.py` | ~0.6k LOC | ◐ | Ch. Methods: temporal aggregation |
 | C10 | PyPSA electricity model (13-bus baseline, 112–114-bus clustered variant, capacity expansion, HiGHS) | `MODEL/pypsa-greece/src/build_network.py`, `run_model.py`, `solve_network.py`, `metrics.py`, `config/*.yaml` | ~0.8k LOC | ● | Ch. Methods + Results core |
 | C11 | Standalone gas / H₂ / heating market models (Phases A–D) | `MODEL/pypsa-greece/src/{gas_market,hydrogen_market,heating_demand}.py`, `scripts/build_*` | ~0.9k LOC | ○ diagnostic (superseded by C12) | Background / "evolution of the approach" |
-| C12 | **Coupled electricity–gas–H₂–heat planning model** (energy conventions, schema, inputs, constraints, validation, metrics, strict solver) | `MODEL/pypsa-greece/src/coupled_*.py`, `energy_conventions.py`, `MODEL/scripts/build_and_solve_coupled_year.py` | ~2.3k LOC | ● code / ◐ production run (§7.2) | Ch. Methods: centrepiece formulation |
+| C12 | **Coupled electricity–gas–H₂–heat planning model** (energy conventions, schema, inputs, constraints, validation, metrics, strict solver) | `MODEL/pypsa-greece/src/coupled_*.py`, `energy_conventions.py`, `MODEL/scripts/build_and_solve_coupled_year.py`, `MODEL/pypsa-greece/scripts/build_greece_production_coupled_scenario.py` | ~2.5k LOC | ● code, ● production run (2026-09-30, see D2-REVISED §7.2 / R8c) | Ch. Methods: centrepiece formulation; Ch. Results: R8c |
 | C13 | Scenario-artifact contract (hashing, manifest, validation, provenance) | `MODEL/src/energy_data/scenario_artifact_*.py`, `scenario_contract.py` | ~0.5k LOC | ● | Ch. Implementation: reproducibility |
 | C14 | Extensions: flexible demand blocks, datacenters, thermal controls, spatial site-selection MILP, investment-cost records, portfolio report | `MODEL/src/energy_data/{flexible_demand,datacenter_inputs,thermal_controls,spatial_portfolio,investment_costs,investment_portfolio}.py` | ~0.6k LOC | ◐ unit-tested, not used in headline results | Ch. Methods (short) + Future work |
 | C15 | Spatial constraint rules (Natura 2000 Habitats/Birds, draft May-2026 RES framework: wind >1200 m, islands <300 km², Attica/Thessaloniki; solar Natura ban, 1.5 % RU cap, UNESCO 1.5 km) | `MODEL/pypsa-greece/src/spatial_constraints.py`, `PLATFORM/apps/api/pipeline/land_constraints.py` | ~0.5k LOC | ● | Ch. Methods: siting |
@@ -378,8 +379,9 @@ every number from the JSON/CSV**; the values below are for orientation only.
 | R5 | Clustered real-fleet annual runs 2026 | `clustered_mid_2026_monthly_days/`, `clustered_long_2026_seasonal_weeks/` | gas ≈ 21 TWh, solar ≈ 7.4, wind ≈ 7.7, hydro ≈ 7.2, lignite 0 | ⚠️ report with the D0 caveat (wind understated, gas overstated) |
 | R6 | Cost-driven lignite exit | KT §20, `technology_costs.csv` | lignite €157/MWh > gas €108.8/MWh, so lignite doesn't dispatch | ✅ good discussion point |
 | R7 | Future electricity 2030–2050 capacity expansion | `future_electricity_{2030..2050}/` | stylised fleet, hour-of-day fallback profiles | ❌ not a result (D1); capability only |
-| R8 | Coupled 2030 (legacy runner) | `future_electricity_2030/coupled_outputs*/` | — | ❌ not a result (D2); qualitative "motivated the redesign" only |
+| R8 | Coupled 2030 (legacy runner) | `future_electricity_2030/coupled_outputs*/` | — | ❌ not a result (D2 still applies to THIS run only); qualitative "motivated the redesign" only |
 | R8b | Coupled model verification | `MODEL/tests/test_coupled_*`, synthetic 8,760 h case, preflight refusal log | analytical balances hold; synthetic reference optimal; production preflight blocks incomplete inputs | ✅ Chapter 6 |
+| R8c | **Real Greece production coupled run (2026-09-30, post-freeze — see D2-REVISED below)** | `MODEL/data/processed/pypsa_scenarios/coupled_greece_2025_production/{scenario_result.json,scenario_manifest.json,network.nc}`, commit `d7be6cc` on `thesis-freeze` | accepted; objective EUR 2,618,675,494/yr; 5,776,869 tCO2/yr; bus balance closed to ~3e-12 MW; real per-bus shadow prices (electricity ≈€24/MWh mainland, gas €42.9/MWh, H2 €41.2/MWh, heat ≈€19.5/MWh) | ✅ Chapter 7 (headline coupled result) — every input's provenance record is in `scenario_config.json`; re-derive numbers from `scenario_result.json`, don't trust this row |
 | R9 | H₂ feasibility vs NECP, bounded | IEA (≈52 MW) vs RAAEY (271.55 MW) × NECP utilisation | 2030 target missed under both bounds at NECP utilisation; 2040/2050 far out of reach | ✅ as a diagnostic finding (D3) |
 | R10 | Standalone heating optimum | KT §25 Phase D | heat pumps dominate (~6.4 GW); balance 49.03 TWh | ⚠️ diagnostic model, superseded by coupled spec |
 | R11 | Gas balance round-trip | KT §25 Phase B | 78.75 TWh imports = 70.16 domestic + 8.59 export | ✅ validation example |
@@ -488,6 +490,51 @@ with that defect, the direction of its bias, and the fix. It is never a headline
   disappearing H₂-for-heat share, total instead of incremental heat) motivated the redesign. The
   production coupled run goes to Future Work, with the missing inputs listed.
 
+#### D2-REVISED (2026-09-30, post-freeze): a real production coupled run now exists — see R8c
+The above D2 text describes the state as of the `thesis-v1` tag / Task 13. **The author explicitly
+asked, after the freeze, to override it and get a real run working before submission** — see the
+chat log for this decision. What changed, on branch `thesis-freeze` (now past the `thesis-v1` tag,
+commit `d7be6cc`):
+- **Built the missing scenario contract.** `MODEL/pypsa-greece/scripts/build_greece_production_coupled_scenario.py`
+  assembles every required table (gas supply/plant parameters, residual gas, incremental regional
+  heat load, electrolyzer sites, heat-investment bounds) from real, already-cited sources already
+  in this repo (`gas_market.py`'s DESFA points, `technology_costs.csv`'s DEA/TYNDP figures,
+  `heating_demand.py`'s NECP/ELSTAT-anchored heating totals, `hydrogen_market.py`'s IEA-filtered
+  fixed electrolyzer fleet), plus two new derived constants sourced in the script's own docstring
+  (IPCC 2006 default gas emission factor; the standard ~10% gas GCV/NCV differential used to put
+  DEA's LHV-basis efficiency and IPCC's LHV-basis factor onto this model's HHV convention). Every
+  scope decision (13-region non-clustered electricity base, `synthetic_expansion` temporal mode
+  for the real monthly representative-day chronology, non-binding heat-capacity envelope bounds)
+  is named in that script's docstring and in the scenario config's own `provenance` array — read
+  both before citing this result.
+- **Found and fixed a real, narrow bug in the validator itself**, not a scenario-input problem:
+  `coupled_validation.py`'s `_bus_balance_diagnostics` called PyPSA's `energy_balance()` without an
+  explicit `round=`, silently inheriting `pypsa.options.params.statistics.round`'s global default
+  of 5 decimal places (1e-5 MW) — coarser than the validator's own 1e-6 MW acceptance bar, so no
+  solve of any real size could ever pass. Confirmed directly: the true residual on this solved
+  network is ~3e-12 MW (float64 noise). Fixed by passing `round=12` explicitly. All 9 `coupled_*`
+  tests and the synthetic 8,760 h end-to-end reference still pass unchanged.
+- **Result: accepted.** Objective €2,618,675,494/yr, 5,776,869 tCO2/yr, real per-bus planning
+  shadow prices. See R8c above and `scenario_result.json`/`scenario_manifest.json` directly —
+  re-derive every number from those files for the thesis, not from this paragraph.
+
+**What this changes for the thesis.** R8c is now a genuine, reportable, headline coupled-system
+result (Chapter 7), not just a methodological contribution (Chapter 4/6 still keep the formulation
++ analytical tests + synthetic reference material regardless). It is still subject to the same D0
+wind-availability caveat as every other electricity-dispatch result in this project (mainland wind
+CF ≈8%, understating wind generation and revenue, overstating gas dispatch and system/gas-linked
+prices) — state that caveat wherever R8c's numbers are used, exactly as for R4/R5/R13. It is
+**not** a future-capacity-expansion scenario (unlike the rejected D1 future-year runs) — it's a
+current-system (2025/2026) coupled planning run on the 13-region baseline fleet, a real but
+different scope than R5's clustered real-fleet dispatch; don't conflate the two when writing
+Chapter 7.
+
+**Freeze status.** `MODEL`'s `thesis-freeze` branch has moved past the `thesis-v1` tag (tag stays
+pointing at `455fa7f`; the branch is now at `d7be6cc`). The repository is **not** read-only from
+here for the coupled chapter specifically — if anything else needs changing in `MODEL` before
+submission, ask the author first, per §0.3 rule 6, rather than treating this override as a general
+reopening of the freeze.
+
 #### D3: Electrolysers: IEA (status-filtered) as the base case, RAAEY as the licensed upper bound
 - **Evidence.** The code makes the IEA DB the sole production source (`hydrogen_market.py`,
   statuses `{"Operational", "FID/Construction"}`, "user-designated"): 3 projects, about **52 MW**
@@ -507,7 +554,9 @@ with that defect, the direction of its bias, and the fix. It is never a headline
 - `PLATFORM`: tag **`thesis-v1`** on `master` (`baa2198`, the code state the thesis describes).
   The plan itself lives on branch `claude/thesis-architecture-plan-ea72aa`.
 - The appendix "Software availability" cites both tags and hashes. Both codebases are **read-only**
-  from here on.
+  from here on -- **except** `MODEL`, which the author explicitly reopened on 2026-09-30 for the
+  coupled-model production run; see D2-REVISED above. Cite both `thesis-v1` (`455fa7f`) for
+  everything else and `d7be6cc` specifically for R8c/the coupled chapter.
 
 #### Minor items
 5. **Two scenario-contract implementations.** Describe `scenario_artifact_*` as the contract and
@@ -518,8 +567,8 @@ with that defect, the direction of its bias, and the fix. It is never a headline
 | Strength | Results |
 |---|---|
 | **Strong, unaffected by D0** | R1 registry reconciliation / licensed-vs-built gap · R2 load QC · R3 next-day forecast pipeline (functional backtest) · R6 lignite-vs-gas cost ordering · R9 H₂ bounds (D3) · R11 gas balance round-trip · R12 spatial-constraint QA · R14 candidate screening geometry (areas, exclusions, distances) · R15 tests · R16 UI |
-| **Reportable with the D0 caveat (bias direction stated)** | R4 temporal-aggregation comparison (relative differences only) · R5 clustered 2026 dispatch · R13 solar/hydro/biomass NPV (upper bounds), cannibalisation sign · R14 candidate economics (solar only) |
-| **Not findings** | R7 future years (D1) · R8 coupled legacy run (D2) · R10 standalone heating optimum (diagnostic) · wind NPV/IRR (D0) |
+| **Reportable with the D0 caveat (bias direction stated)** | R4 temporal-aggregation comparison (relative differences only) · R5 clustered 2026 dispatch · R8c real production coupled run (D2-REVISED; electricity/gas-linked prices and dispatch inherit the same mainland-wind-understated bias as every other result here) · R13 solar/hydro/biomass NPV (upper bounds), cannibalisation sign · R14 candidate economics (solar only) |
+| **Not findings** | R7 future years (D1) · R8 coupled legacy run (D2, unchanged — distinct from R8c) · R10 standalone heating optimum (diagnostic) · wind NPV/IRR (D0) |
 ---
 
 ## 8. Proposed thesis structure (default; adapt to the regulations)
