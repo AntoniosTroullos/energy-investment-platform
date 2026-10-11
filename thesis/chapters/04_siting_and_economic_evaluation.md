@@ -31,6 +31,34 @@ dispatch multiplied by the nodal planning shadow price in that snapshot and by
 the snapshot weight. This is not the same as annual energy multiplied by an
 average price, and the difference is the subject of Section 4.2.
 
+For generator $g$, annual energy and captured price are therefore
+
+$$ E_g=\sum_t\omega_t p_{g,t}, \qquad
+   \pi_g^{\mathrm{cap}}=\frac{\sum_t\omega_t p_{g,t}\lambda_{n(g),t}}
+   {\sum_t\omega_t p_{g,t}} $$
+
+where $\lambda_{n(g),t}$ is the planning shadow price at the generator's node.
+Two operating indicators used in the interpretation are the realised capacity
+factor and the share of available energy curtailed:
+
+$$ \mathrm{CF}_g=\frac{\sum_t\omega_t p_{g,t}}
+   {P_g\sum_t\omega_t}, \qquad
+   \kappa_g=1-\frac{\sum_t\omega_t p_{g,t}}
+   {P_g\sum_t\omega_t\bar p_{g,t}} $$
+
+Two system-wide means are retained because they answer different questions. The
+first is weighted by snapshot duration and gives every electricity bus equal
+weight; the second weights each nodal price by the demand exposed to it:
+
+$$ \bar\lambda^{W}=\frac{\sum_t\sum_{n\in N_{\mathrm{AC}}}\omega_t\lambda_{n,t}}
+   {|N_{\mathrm{AC}}|\sum_t\omega_t}, \qquad
+   \bar\lambda^{D}=\frac{\sum_t\sum_n\omega_tD_{n,t}\lambda_{n,t}}
+   {\sum_t\sum_n\omega_tD_{n,t}} $$
+
+The carrier comparison figures use $\bar\lambda^{W}$: 71.41 EUR/MWh in
+Scenario A and 94.01 EUR/MWh in Scenario B. The corresponding demand-weighted
+values $\bar\lambda^{D}$ are 77.25 and 101.79 EUR/MWh, respectively.
+
 Three exclusions should be stated at the outset. Storage arbitrage revenue is not
 included in any figure reported here. Grid connection charges enter only through
 the screening distances of Section 4.4 and not as a modelled cost. Revenue
@@ -44,6 +72,46 @@ observed benchmark at the reported precision, while its dispatch factor is
 qualifies the results. They remain conditional merchant-case appraisals,
 however, because the solved prices are planning shadow prices from a reduced
 network, not forecasts of realised market revenue.
+
+The four financial indicators are computed from one cash-flow sequence. Let
+$I_0$ denote initial capital expenditure, $d$ annual degradation,
+$c^{\mathrm{var}}$ variable cost, and $f^{\mathrm{FOM}}$ fixed operating cost as a
+fraction of capital expenditure. With the solved captured price held constant
+over the appraisal horizon, generation and net cash flow in year $y$ are
+
+$$ E_y=E_1(1-d)^{y-1}, \qquad
+   \mathrm{NCF}_0=-I_0, \qquad
+   \mathrm{NCF}_y=E_y\left(\pi^{\mathrm{cap}}-c^{\mathrm{var}}\right)
+   -f^{\mathrm{FOM}}I_0 $$
+
+Net present value and internal rate of return are
+
+$$ \mathrm{NPV}(r)=\sum_{y=0}^{n}\frac{\mathrm{NCF}_y}{(1+r)^y} $$
+
+$$ 0=\sum_{y=0}^{n}\frac{\mathrm{NCF}_y}{(1+\mathrm{IRR})^y} $$
+
+The levelised cost of energy is the ratio of discounted lifetime cost to
+discounted lifetime generation. Defining those two present values separately
+keeps their dimensional meaning explicit:
+
+$$ C^{\mathrm{disc}}=I_0+\sum_{y=1}^{n}
+   \frac{f^{\mathrm{FOM}}I_0+c^{\mathrm{var}}E_y}{(1+r)^y} $$
+
+$$ E^{\mathrm{disc}}=\sum_{y=1}^{n}\frac{E_y}{(1+r)^y}, \qquad
+   \mathrm{LCOE}=\frac{C^{\mathrm{disc}}}{E^{\mathrm{disc}}} $$
+
+Payback is undiscounted in the implementation. If $y^*$ is the first year for
+which cumulative cash flow becomes non-negative, linear interpolation within
+that year gives
+
+$$ y^*=\min\left\{y:\sum_{k=0}^{y}\mathrm{NCF}_k\ge0\right\} $$
+
+$$ Y_{\mathrm{payback}}=y^*-1-
+   \frac{\sum_{k=0}^{y^*-1}\mathrm{NCF}_k}{\mathrm{NCF}_{y^*}} $$
+
+If cumulative cash flow never becomes non-negative within the asset lifetime,
+payback and IRR are reported as undefined rather than forced to a numerical
+value.
 
 ## 4.2 Captured Revenue and Price Cannibalisation
 
@@ -65,8 +133,8 @@ Solar therefore earns well under half the system average, while wind and the two
 dispatchable carriers earn above it. The mechanism is the one described above:
 solar output is strongly simultaneous across the fleet and depresses its own
 price, whereas hydro and biomass can place output in higher-priced hours. Wind's
-captured price is also above the unweighted bus mean because its spatial and
-temporal production pattern is not uniform. An appraisal using the system
+captured price is also above the time-weighted mean that gives every bus equal
+weight because its spatial and temporal production pattern is not uniform. An appraisal using the system
 average would therefore overstate solar revenue and understate the other three
 technologies in this solved case.
 
@@ -165,8 +233,10 @@ restrictive than that framework would be in practice.
 ## 4.5 Candidate-Level Investment Evaluation
 
 Each screened cell can be appraised by the same discounted cash-flow method
-applied to the existing fleet, using the region's solved price and the
-technology's capacity factor.
+applied to the existing fleet, using the region's solved average marginal price
+and the technology's national capacity factor. For candidates this price is a
+regional price proxy, not a technology-specific captured price, because the
+candidate has no dispatch profile in the solved system.
 
 A derivation note is required here, because the platform's own interface cannot
 produce this result for the scenarios used in this thesis. Its candidate
@@ -193,9 +263,9 @@ These figures carry a limitation more fundamental than the wind caveat, and it
 must be stated plainly because it bears directly on what the screening is for.
 The economics do not discriminate between sites. Three features of the derivation
 combine to produce this: annual generation uses the carrier's national capacity
-factor rather than a site-specific resource estimate; the captured price is the
-region's average across all technologies rather than a technology-specific
-captured price; and 96.4 % of solar cells, together with 100.0 % of wind cells,
+factor rather than a site-specific resource estimate; the price input is the
+region's time-weighted marginal price, common to every technology, rather than a
+technology-specific captured price; and 96.4 % of solar cells, together with 100.0 % of wind cells,
 reach the assumed capacity cap, so their assumed capacity is identical. The consequence is visible in the results
 themselves, where the median solar net present value equals the maximum: the
 majority of cells return exactly the same figure. [[FIGREF:F-candidate-degeneracy]] shows both halves of

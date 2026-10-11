@@ -8,15 +8,18 @@ so the numbers are traceable like any other.
 
 ## Appendix E: Software Availability and Reproduction
 
-The work described in this thesis is implemented across two repositories. Both
-are archived at the commits recorded below, and the results reported in Chapters
-3 and 4 were produced from exactly those states.
+The work described in this thesis is implemented across two repositories. The
+platform and thesis sources are publicly versioned; the modelling repository is
+archived locally. The results reported in Chapters 3 and 4 were produced from
+the states recorded below.
 
 ### Repository states
 
 The platform repository, containing the programmatic interface, the data
 pipelines and the web application, is archived at tag `thesis-v1`, commit
-`baa2198`. The modelling repository, containing the optimisation models and
+`baa2198`. That tag is the result-producing platform state; later commits add the
+thesis sources and documentation without changing the archived scenario results.
+The modelling repository, containing the optimisation models and
 their input pipelines, is archived at tag `thesis-v1`, commit `455fa7f`; note
 that the tag is annotated, so the tag object has a different identifier from the
 commit, and the commit is the correct reference.
@@ -34,11 +37,13 @@ branch tip, and everything else to `455fa7f`.
 
 ### Code availability
 
-The platform repository is hosted privately on GitHub
-(`AntoniosTroullos/energy-investment-platform`) at the commits cited above, and
-is available to the examination committee on request. The modelling repository
-is not yet hosted remotely; its state is archived locally at the commits cited
-above and is likewise available on request.
+The platform and thesis repository is publicly available at
+`https://github.com/AntoniosTroullos/energy-investment-platform`. The modelling
+repository is not hosted remotely; its state is archived locally at the commits
+cited above and is available to the examination committee on request. Therefore
+the document build, platform code and frozen evidence are publicly inspectable,
+whereas reproducing the optimisation runs themselves additionally requires the
+archived modelling repository and its input datasets.
 
 ### Execution environment
 
@@ -67,12 +72,9 @@ thesis.
 
 ### Thesis build
 
-The thesis itself is generated rather than typed. Numerical claims are extracted
-from the frozen result files into a ledger, figures are drawn from the same
-files, tables are generated from the ledger, and a check refuses to pass any
-number appearing in the text that is not present in the ledger. The scripts that
-perform this are held with the thesis sources and are the only code written to
-produce the document itself; the repository modifications made in preparing
-this thesis (the two fixes and the production run cited above) are a corrected
-and completed part of the modelling repository, not part of the build
-pipeline, and are themselves cited and verified like any other result.
+The thesis is generated from versioned sources. Numerical claims are extracted
+from frozen result files into a ledger, figures and tables derive from the same
+evidence, and an automated guard rejects any untraced number in the text. These
+scripts produce the document; model corrections and production runs remain
+versioned in the modelling repository. Equations are emitted as editable native
+Office Math objects.
