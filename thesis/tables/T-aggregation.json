@@ -1,0 +1,64 @@
+{
+  "id": "T-aggregation",
+  "section": "3.1.4",
+  "caption": "Effect of Temporal Aggregation on the Planning Solution",
+  "columns": [
+    {
+      "header": "Case",
+      "align": "left"
+    },
+    {
+      "header": "Snapshots",
+      "align": "center"
+    },
+    {
+      "header": "Weighted hours (h)",
+      "align": "center"
+    },
+    {
+      "header": "Objective (bn EUR/yr)",
+      "align": "center"
+    },
+    {
+      "header": "Total load (TWh)",
+      "align": "center"
+    },
+    {
+      "header": "Mean price (EUR/MWh)",
+      "align": "center"
+    }
+  ],
+  "rows": [
+    [
+      "long 2026 seasonal weeks",
+      "672",
+      "8760.0",
+      "1.3072",
+      "50.124946",
+      "68.07"
+    ],
+    [
+      "mid 2026 monthly days",
+      "288",
+      "8760.0",
+      "1.3137",
+      "49.9145795",
+      "69.77"
+    ]
+  ],
+  "notes": "The comparison is between temporal representations of the same fleet, both re-solved 2026-10-02 against the corrected, calibrated wind series. The objectives differ by 0.49 %. This is not a validation against a genuine 8,760-hour chronology, which has not been performed.",
+  "source": "Source: model output.",
+  "claim_ids": [
+    "R4-mid_2026_monthly_days-snapshots",
+    "R4-mid_2026_monthly_days-weighted_hours",
+    "R4-mid_2026_monthly_days-objective",
+    "R4-mid_2026_monthly_days-total_load_twh",
+    "R4-mid_2026_monthly_days-avg_price_eur_mwh",
+    "R4-long_2026_seasonal_weeks-snapshots",
+    "R4-long_2026_seasonal_weeks-weighted_hours",
+    "R4-long_2026_seasonal_weeks-objective",
+    "R4-long_2026_seasonal_weeks-total_load_twh",
+    "R4-long_2026_seasonal_weeks-avg_price_eur_mwh",
+    "R4-objective-rel-diff"
+  ]
+}

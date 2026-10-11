@@ -1,0 +1,118 @@
+{
+  "id": "T-wind-benchmark",
+  "section": "3.1.2",
+  "caption": "Wind Availability by Run Family Against the Observed Benchmark",
+  "columns": [
+    {
+      "header": "Profile or run",
+      "align": "left"
+    },
+    {
+      "header": "Mean availability (per-unit)",
+      "align": "center"
+    },
+    {
+      "header": "Capacity factor (%)",
+      "align": "center"
+    },
+    {
+      "header": "Ratio to benchmark",
+      "align": "center"
+    },
+    {
+      "header": "Direction of error",
+      "align": "left"
+    }
+  ],
+  "rows": [
+    [
+      "Committed base timeseries, regional",
+      "0.2099",
+      "20.99",
+      "0.881",
+      "Corrected 2026-10-02 (was understated, power-curve defect, D0)"
+    ],
+    [
+      "Committed base timeseries, clustered",
+      "0.2358",
+      "23.58",
+      "0.990",
+      "Corrected 2026-10-02 (was understated, power-curve defect, D0)"
+    ],
+    [
+      "Scenario A (investment basis)",
+      "0.2383",
+      "23.83",
+      "1.000",
+      "Corrected; dispatch CF 18.59 %, curtailment 21.99 %"
+    ],
+    [
+      "Scenario B (investment basis)",
+      "0.2383",
+      "23.83",
+      "1.000",
+      "Corrected; dispatch CF 18.59 %, curtailment 21.99 %"
+    ],
+    [
+      "Clustered run, monthly days",
+      "0.2409",
+      "24.09",
+      "1.011",
+      "Corrected (re-solved against the calibrated profile)"
+    ],
+    [
+      "Clustered run, seasonal weeks",
+      "0.2409",
+      "24.09",
+      "1.011",
+      "Corrected (re-solved against the calibrated profile)"
+    ],
+    [
+      "Stylised run, monthly days",
+      "0.2592",
+      "25.92",
+      "1.088",
+      "Corrected (re-solved against the calibrated profile)"
+    ],
+    [
+      "Stylised run, seasonal weeks",
+      "0.2592",
+      "25.92",
+      "1.088",
+      "Corrected (re-solved against the calibrated profile)"
+    ]
+  ],
+  "notes": "The observed benchmark is 23.83 %, computed from the DAPEEP 2025 annual bulletin by the project's own dapeep_2025_wind_capacity_factor(). A ratio above unity means wind availability is overstated. The committed profiles and Scenarios A/B use the corrected, calibrated series. For the investment scenarios the availability capacity factor is reported in the numeric columns, while the final column distinguishes the lower dispatch capacity factor after economic curtailment. All four stylised and clustered runs were re-solved 2026-10-02 against the corrected, calibrated series, so no run family in this table remains biased.",
+  "source": "Source: model output and author's elaboration.",
+  "claim_ids": [
+    "D0-benchmark-dapeep-cf",
+    "D0-committed-profile-regional",
+    "D0-committed-ratio-regional",
+    "D0-corrected-profile-regional",
+    "D0-corrected-ratio-regional",
+    "D0-committed-profile-clustered",
+    "D0-committed-ratio-clustered",
+    "D0-corrected-profile-clustered",
+    "D0-corrected-ratio-clustered",
+    "D0-calibration-cf-legacy-curve",
+    "D0-calibration-cf-standard-curve-uncalibrated",
+    "D0-calibration-cf-calibrated",
+    "D0-calibration-scale-factor",
+    "D0-run-availcf-mid_2026_monthly_days",
+    "D0-run-ratio-mid_2026_monthly_days",
+    "D0-run-availcf-long_2026_seasonal_weeks",
+    "D0-run-ratio-long_2026_seasonal_weeks",
+    "D0-run-availcf-clustered_mid_2026_monthly_days",
+    "D0-run-ratio-clustered_mid_2026_monthly_days",
+    "D0-run-availcf-clustered_long_2026_seasonal_weeks",
+    "D0-run-ratio-clustered_long_2026_seasonal_weeks",
+    "SCA-cf-wind",
+    "SCA-wind-availability-cf",
+    "SCA-wind-cf-ratio",
+    "SCA-wind-curtailment",
+    "SCB-cf-wind",
+    "SCB-wind-availability-cf",
+    "SCB-wind-cf-ratio",
+    "SCB-wind-curtailment"
+  ]
+}

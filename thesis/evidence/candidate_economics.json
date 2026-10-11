@@ -1,0 +1,219 @@
+{
+  "top_n_rule": "all non-excluded candidates; top-50 by investment score reported separately",
+  "capacity_concentration": {
+    "solar": {
+      "cells": 448,
+      "capacity_cap_mw": 200.0,
+      "at_cap": 432,
+      "at_cap_share_pct": 96.4
+    },
+    "wind": {
+      "cells": 270,
+      "capacity_cap_mw": 100.0,
+      "at_cap": 270,
+      "at_cap_share_pct": 100.0
+    }
+  },
+  "scenarios": {
+    "A": {
+      "scenario": "A",
+      "scenario_name": "Baseline",
+      "candidates_evaluated": 652,
+      "candidates_skipped": {
+        "This candidate's centroid does not fall inside any of the 13": 66
+      },
+      "by_technology": {
+        "solar": {
+          "npv": {
+            "count": 437,
+            "min": 372009.0,
+            "median": 110539699.0,
+            "mean": 107355789.2105,
+            "max": 110539699.0,
+            "positive": 437
+          },
+          "irr": {
+            "count": 437,
+            "min": 14.66,
+            "median": 14.96,
+            "mean": 14.9518,
+            "max": 14.96,
+            "positive": 437
+          },
+          "lcoe": {
+            "count": 437,
+            "min": 41.91,
+            "median": 41.91,
+            "mean": 41.91,
+            "max": 41.91,
+            "positive": 437
+          },
+          "capacity": {
+            "count": 437,
+            "min": 0.67,
+            "median": 200.0,
+            "mean": 194.4416,
+            "max": 200.0,
+            "positive": 437
+          },
+          "payback": {}
+        },
+        "wind": {
+          "npv": {
+            "count": 215,
+            "min": -44674848.0,
+            "median": -40402714.0,
+            "mean": -40269411.5442,
+            "max": -38237900.0,
+            "positive": 0
+          },
+          "irr": {
+            "count": 215,
+            "min": 3.28,
+            "median": 3.66,
+            "mean": 3.6715,
+            "max": 3.85,
+            "positive": 215
+          },
+          "lcoe": {
+            "count": 215,
+            "min": 93.2,
+            "median": 93.2,
+            "mean": 93.2,
+            "max": 93.2,
+            "positive": 215
+          },
+          "capacity": {
+            "count": 215,
+            "min": 100.0,
+            "median": 100.0,
+            "mean": 100.0,
+            "max": 100.0,
+            "positive": 215
+          },
+          "payback": {}
+        }
+      },
+      "portfolio": {
+        "solar": {
+          "candidates": 437,
+          "irr_pct": 14.952,
+          "payback_years": 6.5136,
+          "total_initial_outlay_eur": -50545859878.28
+        },
+        "wind": {
+          "candidates": 215,
+          "irr_pct": 3.6712,
+          "payback_years": 16.6614,
+          "total_initial_outlay_eur": -30935920000.0
+        },
+        "all_technologies": {
+          "candidates": 652,
+          "irr_pct": 11.2387,
+          "payback_years": 8.4287,
+          "total_initial_outlay_eur": -81481779878.28
+        }
+      }
+    },
+    "B": {
+      "scenario": "B",
+      "scenario_name": "Post-Lignite / Spot Gas",
+      "candidates_evaluated": 652,
+      "candidates_skipped": {
+        "This candidate's centroid does not fall inside any of the 13": 66
+      },
+      "by_technology": {
+        "solar": {
+          "npv": {
+            "count": 437,
+            "min": 652707.0,
+            "median": 193947033.0,
+            "mean": 188406746.1259,
+            "max": 193947033.0,
+            "positive": 437
+          },
+          "irr": {
+            "count": 437,
+            "min": 20.26,
+            "median": 20.66,
+            "mean": 20.649,
+            "max": 20.66,
+            "positive": 437
+          },
+          "lcoe": {
+            "count": 437,
+            "min": 41.94,
+            "median": 41.94,
+            "mean": 41.94,
+            "max": 41.94,
+            "positive": 437
+          },
+          "capacity": {
+            "count": 437,
+            "min": 0.67,
+            "median": 200.0,
+            "mean": 194.4416,
+            "max": 200.0,
+            "positive": 437
+          },
+          "payback": {}
+        },
+        "wind": {
+          "npv": {
+            "count": 215,
+            "min": -5313177.0,
+            "median": 273153.0,
+            "mean": 458713.1256,
+            "max": 3181940.0,
+            "positive": 206
+          },
+          "irr": {
+            "count": 215,
+            "min": 6.54,
+            "median": 6.97,
+            "mean": 6.9837,
+            "max": 7.19,
+            "positive": 215
+          },
+          "lcoe": {
+            "count": 215,
+            "min": 93.2,
+            "median": 93.2,
+            "mean": 93.2,
+            "max": 93.2,
+            "positive": 215
+          },
+          "capacity": {
+            "count": 215,
+            "min": 100.0,
+            "median": 100.0,
+            "mean": 100.0,
+            "max": 100.0,
+            "positive": 215
+          },
+          "payback": {}
+        }
+      },
+      "portfolio": {
+        "solar": {
+          "candidates": 437,
+          "irr_pct": 20.6517,
+          "payback_years": 4.7619,
+          "total_initial_outlay_eur": -50545859878.28
+        },
+        "wind": {
+          "candidates": 215,
+          "irr_pct": 6.9824,
+          "payback_years": 11.6376,
+          "total_initial_outlay_eur": -30935920000.0
+        },
+        "all_technologies": {
+          "candidates": 652,
+          "irr_pct": 15.871,
+          "payback_years": 6.1181,
+          "total_initial_outlay_eur": -81481779878.28
+        }
+      }
+    }
+  }
+}

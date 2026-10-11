@@ -1,0 +1,8 @@
+claim_id,section,claim,value,unit,citation,verification
+lit-pv-degradation,1.7,Median photovoltaic degradation rate across the reviewed fleet,0.5,% per year,"Jordan & Kurtz (2013), https://doi.org/10.1002/pip.1182",verified
+lit-wind-initial-load-factor,1.7,Initial load factor of a newly commissioned wind farm,28,%,"Staffell & Green (2014), https://doi.org/10.1016/j.renene.2013.10.041",verified
+lit-wind-load-factor-decline,1.7,Annual decline in wind farm load factor with age,0.4,percentage points per year,"Staffell & Green (2014), https://doi.org/10.1016/j.renene.2013.10.041",verified
+lit-wind-lcoe-uplift,1.7,Increase in levelised cost over asset life attributable to performance decline,9,%,"Staffell & Green (2014), https://doi.org/10.1016/j.renene.2013.10.041",verified
+lit-pv-degradation-sample,1.7,Degradation rates assembled in the review,2000,rates,"Jordan & Kurtz (2013), https://doi.org/10.1002/pip.1182",verified
+lit-network-nodes-low,1.3,Coarsest network resolution examined in the node-count study,37,nodes,"Frysztacki et al. (2021), https://doi.org/10.1016/j.apenergy.2021.116726",verified
+lit-network-nodes-high,1.3,Finest network resolution examined in the node-count study,1024,nodes,"Frysztacki et al. (2021), https://doi.org/10.1016/j.apenergy.2021.116726",verified

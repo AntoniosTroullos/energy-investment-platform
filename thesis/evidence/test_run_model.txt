@@ -1,0 +1,899 @@
+test_dispatch_arbitrage_uses_signed_power_and_weights (test_battery_economics.BatteryEconomicsTests.test_dispatch_arbitrage_uses_signed_power_and_weights) ... ok
+test_npv_is_negative_without_operating_cashflow (test_battery_economics.BatteryEconomicsTests.test_npv_is_negative_without_operating_cashflow) ... ok
+test_skip_rate_only_reduces_balancing_revenue (test_battery_economics.BatteryEconomicsTests.test_skip_rate_only_reduces_balancing_revenue) ... ok
+test_rejects_total_maximum_below_existing_capacity (test_capacity_accounting.CapacityAccountingTests.test_rejects_total_maximum_below_existing_capacity) ... ok
+test_splits_existing_generator_from_costed_candidate (test_capacity_accounting.CapacityAccountingTests.test_splits_existing_generator_from_costed_candidate) ... ok
+test_splits_existing_storage_power_from_costed_candidate (test_capacity_accounting.CapacityAccountingTests.test_splits_existing_storage_power_from_costed_candidate) ... ok
+test_validated_8760_hour_reference_closes_every_carrier (test_coupled_end_to_end.CoupledEndToEndTests.test_validated_8760_hour_reference_closes_every_carrier) ... WARNING:pypsa.networks:The network has not been optimized yet and no model is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective value is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective constant is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no model is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective value is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective constant is stored.
+INFO:pypsa.network.io:Exported network 'Unnamed Network' saved to 'C:\Users\megas\AppData\Local\Temp\tmpvg480uwj\network_input.nc contains: carriers, generators, loads, buses, stores, links
+<frozen importlib._bootstrap>:491: RuntimeWarning: numpy.ndarray size changed, may indicate binary incompatibility. Expected 16 from C header, got 96 from PyObject
+INFO:pypsa.network.io:New version 1.3.0 available! (Current: 1.1.2)
+INFO:pypsa.network.io:Imported network 'Unnamed Network' has buses, carriers, generators, links, loads, stores
+INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.io:Writing objective.
+Writing constraints.:   0%|[38;2;128;191;255m          [0m| 0/12 [00:00<?, ?it/s]Writing constraints.:  33%|[38;2;128;191;255m###3      [0m| 4/12 [00:00<00:00, 35.52it/s]Writing constraints.:  67%|[38;2;128;191;255m######6   [0m| 8/12 [00:00<00:00, 32.78it/s]Writing constraints.: 100%|[38;2;128;191;255m##########[0m| 12/12 [00:00<00:00, 29.27it/s]Writing constraints.: 100%|[38;2;128;191;255m##########[0m| 12/12 [00:00<00:00, 30.37it/s]
+Writing continuous variables.:   0%|[38;2;128;191;255m          [0m| 0/5 [00:00<?, ?it/s]Writing continuous variables.: 100%|[38;2;128;191;255m##########[0m| 5/5 [00:00<00:00, 116.99it/s]
+INFO:linopy.io: Writing time: 0.59s
+Running HiGHS 1.14.0 (git hash: 7df0786): Copyright (c) 2026 under MIT licence terms
+LP linopy-problem-_19j97f3 has 227762 rows; 96361 cols; 350402 nonzeros
+Coefficient ranges:
+  Matrix  [5e-01, 3e+00]
+  Cost    [1e+01, 1e+02]
+  Bound   [0e+00, 0e+00]
+  RHS     [1e-02, 1e+00]
+Presolving model
+52560 rows, 87601 cols, 166440 nonzeros 0s
+Dependent equations search running on 35040 equations with time limit of 1000.00s
+Dependent equations search removed 0 rows and 0 nonzeros in 0.01s (limit = 1000.00s)
+43800 rows, 78841 cols, 148920 nonzeros 1s
+Presolve reductions: rows 43800(-183962); columns 78841(-17520); nonzeros 148920(-201482) 
+Solving the presolved LP
+Using dual simplex solver
+  Iteration        Objective     Infeasibilities num(sum)
+          0     0.0000000000e+00 Pr: 35040(5562.6) 1.5s
+      41959     6.5343521935e+03 Pr: 9081(140.158) 6.8s
+      45833     8.8013333333e+03 Pr: 0(0); Du: 1(0.0424899) 12.4s
+      47153     8.8013333333e+03 Pr: 0(0); Du: 1(0.0296165) 18.1s
+      48308     8.8013333333e+03 Pr: 0(0); Du: 1(0.0233795) 24.0s
+      49263     8.8013333333e+03 Pr: 0(0); Du: 1(0.0199452) 30.1s
+      49985     8.8013333333e+03 Pr: 0(0); Du: 1(0.017938) 35.8s
+      50712     8.8013333333e+03 Pr: 0(0); Du: 1(0.0162959) 42.2s
+      51256     8.8013333333e+03 Pr: 0(0) 46.3s
+      51256     8.8013333333e+03 Pr: 0(0) 46.3s
+
+Performed postsolve
+Solving the original LP from the solution after postsolve
+
+Model name          : linopy-problem-_19j97f3
+Model status        : Optimal
+Simplex   iterations: 51256
+Objective value     :  8.8013333333e+03
+P-D objective error :  1.7566124402e-14
+HiGHS run time      :         47.09
+INFO:linopy.constants: Optimization successful: 
+Status: ok
+Termination condition: optimal
+Solution: 96361 primals, 227762 duals
+Objective: 8.80e+03
+Solver model: available
+Solver message: Optimal
+
+INFO:pypsa.optimization.optimize:The shadow-prices of the constraints Generator-fix-p-lower, Generator-fix-p-upper, Generator-ext-p-lower, Generator-ext-p-upper, Link-fix-p-lower, Link-fix-p-upper, Store-fix-e-lower, Store-fix-e-upper, Store-energy_balance were not assigned to the network.
+INFO:pypsa.network.io:Exported network 'Unnamed Network' saved to 'C:\Users\megas\AppData\Local\Temp\tmpvg480uwj\outputs\network.nc contains: sub_networks, carriers, generators, loads, buses, stores, links
+INFO:pypsa.network.io:New version 1.3.0 available! (Current: 1.1.2)
+INFO:pypsa.network.io:Imported network 'Unnamed Network' has buses, carriers, generators, links, loads, stores, sub_networks
+ok
+test_converts_electric_nameplate_vom_and_carbon_to_gas_input_side (test_coupled_gas.CoupledGasTests.test_converts_electric_nameplate_vom_and_carbon_to_gas_input_side) ... ok
+test_rejects_legacy_electricity_composite_as_gas_commodity_price (test_coupled_gas.CoupledGasTests.test_rejects_legacy_electricity_composite_as_gas_commodity_price) ... ok
+test_rejects_missing_gas_provenance_or_physical_columns (test_coupled_gas.CoupledGasTests.test_rejects_missing_gas_provenance_or_physical_columns) ... ok
+test_solved_gas_supply_equals_residual_and_power_inputs (test_coupled_gas.CoupledGasTests.test_solved_gas_supply_equals_residual_and_power_inputs) ... INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.io: Writing time: 0.29s
+Running HiGHS 1.14.0 (git hash: 7df0786): Copyright (c) 2026 under MIT licence terms
+LP linopy-problem-58xiecv1 has 12 rows; 4 cols; 14 nonzeros
+Coefficient ranges:
+  Matrix  [5e-01, 1e+00]
+  Cost    [2e+00, 3e+01]
+  Bound   [0e+00, 0e+00]
+  RHS     [1e+01, 5e+02]
+Presolving model
+0 rows, 0 cols, 0 nonzeros 0s
+0 rows, 0 cols, 0 nonzeros 0s
+Presolve reductions: rows 0(-12); columns 0(-4); nonzeros 0(-14) - Reduced to empty
+Performed postsolve
+Solving the original LP from the solution after postsolve
+
+Model name          : linopy-problem-58xiecv1
+Model status        : Optimal
+Objective value     :  3.5000000000e+03
+P-D objective error :  0.0000000000e+00
+HiGHS run time      :          0.00
+INFO:linopy.constants: Optimization successful: 
+Status: ok
+Termination condition: optimal
+Solution: 4 primals, 12 duals
+Objective: 3.50e+03
+Solver model: available
+Solver message: Optimal
+
+INFO:pypsa.optimization.optimize:The shadow-prices of the constraints Generator-fix-p-lower, Generator-fix-p-upper, Link-fix-p-lower, Link-fix-p-upper were not assigned to the network.
+ok
+test_heat_links_use_physical_efficiency_input_bounds_and_cost_basis (test_coupled_heat.CoupledHeatTests.test_heat_links_use_physical_efficiency_input_bounds_and_cost_basis) ... INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.io: Writing time: 0.09s
+Running HiGHS 1.14.0 (git hash: 7df0786): Copyright (c) 2026 under MIT licence terms
+LP linopy-problem-2nuaggvq has 18 rows; 7 cols; 24 nonzeros
+Coefficient ranges:
+  Matrix  [9e-01, 3e+00]
+  Cost    [1e+00, 3e+05]
+  Bound   [0e+00, 0e+00]
+  RHS     [1e+00, 1e+02]
+Presolving model
+0 rows, 0 cols, 0 nonzeros 0s
+0 rows, 0 cols, 0 nonzeros 0s
+Presolve reductions: rows 0(-18); columns 0(-7); nonzeros 0(-24) - Reduced to empty
+Performed postsolve
+Solving the original LP from the solution after postsolve
+
+Model name          : linopy-problem-2nuaggvq
+Model status        : Optimal
+Objective value     :  2.5052075618e+05
+P-D objective error :  5.8086549023e-17
+HiGHS run time      :          0.00
+INFO:linopy.constants: Optimization successful: 
+Status: ok
+Termination condition: optimal
+Solution: 7 primals, 18 duals
+Objective: 2.51e+05
+Solver model: available
+Solver message: Optimal
+IINFO:pypsa.optimization.optimize:The shadow-prices of the constraints Generator-fix-p-lower, Generator-fix-p-upper, Link-ext-p-lower, Link-ext-p-upper were not assigned to the network.ook
+test_incremental_heat_rejects_undocumented_electricity_overlap (test_coupled_heat.CoupledHeatTests.test_incremental_heat_rejects_undocumented_electricity_overlap) ... ok
+test_incremental_useful_heat_preserves_weighted_annual_energy (test_coupled_heat.CoupledHeatTests.test_incremental_useful_heat_preserves_weighted_annual_energy) ...ook
+test_expandable_electrolyzer_has_finite_declared_maximum (test_coupled_hydrogen_balance.CoupledHydrogenBalanceTests.test_expandable_electrolyzer_has_finite_declared_maximum) ...ook
+test_expandable_electrolyzer_rejects_missing_maximum (test_coupled_hydrogen_balance.CoupledHydrogenBalanceTests.test_expandable_electrolyzer_rejects_missing_maximum) ...ook
+test_final_demand_mode_uses_exact_declared_target_without_heating_subtraction (test_coupled_hydrogen_balance.CoupledHydrogenBalanceTests.test_final_demand_mode_uses_exact_declared_target_without_heating_subtraction) ...INFO:linopy.model: Solve problem using Highs solver
+IINFO:linopy.io: Writing time: 0.09s
+Running HiGHS 1.14.0 (git hash: 7df0786): Copyright (c) 2026 under MIT licence termsLLP linopy-problem-__nml81i has 6 rows; 2 cols; 7 nonzeros
+Coefficient ranges:
+  Matrix  [8e-01, 1e+00]
+  Cost    [1e+00, 1e+00]
+  Bound   [0e+00, 0e+00]
+  RHS     [8e-01, 2e+00]
+Presolving model
+0 rows, 0 cols, 0 nonzeros 0s
+0 rows, 0 cols, 0 nonzeros 0s
+Presolve reductions: rows 0(-6); columns 0(-2); nonzeros 0(-7) - Reduced to empty
+Performed postsolve
+Solving the original LP from the solution after postsolve
+
+Model name          : linopy-problem-__nml81i
+Model status        : Optimal
+Objective value     :  1.0000000000e+00
+P-D objective error :  0.0000000000e+00
+HiGHS run time      :          0.00INFO:linopy.constants: Optimization successful: 
+Status: ok
+Termination condition: optimal
+Solution: 2 primals, 6 duals
+Objective: 1.00e+00
+Solver model: available
+Solver message: Optimal
+
+INFO:pypsa.optimization.optimize:The shadow-prices of the constraints Generator-fix-p-lower, Generator-fix-p-upper, Link-fix-p-lower, Link-fix-p-upper were not assigned to the network.
+ok
+test_fixed_electrolyzer_rejects_missing_efficiency_or_provenance (test_coupled_hydrogen_balance.CoupledHydrogenBalanceTests.test_fixed_electrolyzer_rejects_missing_efficiency_or_provenance) ... ok
+test_production_mode_adds_minimum_without_hidden_hydrogen_load (test_coupled_hydrogen_balance.CoupledHydrogenBalanceTests.test_production_mode_adds_minimum_without_hidden_hydrogen_load) ... INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.io: Writing time: 0.07s
+Running HiGHS 1.14.0 (git hash: 7df0786): Copyright (c) 2026 under MIT licence terms
+LP linopy-problem-tnvikq_n has 9 rows; 3 cols; 11 nonzeros
+Coefficient ranges:
+  Matrix  [8e-01, 1e+00]
+  Cost    [1e+00, 1e+00]
+  Bound   [0e+00, 0e+00]
+  RHS     [8e-01, 2e+00]
+Presolving model
+0 rows, 0 cols, 0 nonzeros 0s
+0 rows, 0 cols, 0 nonzeros 0s
+Presolve reductions: rows 0(-9); columns 0(-3); nonzeros 0(-11) - Reduced to empty
+Performed postsolve
+Solving the original LP from the solution after postsolve
+
+Model name          : linopy-problem-tnvikq_n
+Model status        : Optimal
+Objective value     :  1.0000000000e+00
+P-D objective error :  0.0000000000e+00
+HiGHS run time      :          0.00
+INFO:linopy.constants: Optimization successful: 
+Status: ok
+Termination condition: optimal
+Solution: 3 primals, 9 duals
+Objective: 1.00e+00
+Solver model: available
+Solver message: Optimal
+
+INFO:pypsa.optimization.optimize:The shadow-prices of the constraints Generator-fix-p-lower, Generator-fix-p-upper, Link-fix-p-lower, Link-fix-p-upper, Coupled-H2-domestic-production-minimum were not assigned to the network.
+ok
+test_baseline_market_has_no_external_trade_or_storage (test_coupled_hydrogen_inputs.CoupledHydrogenInputTests.test_baseline_market_has_no_external_trade_or_storage) ... ok
+test_electrolyzer_investment_uses_visible_dea_inputs (test_coupled_hydrogen_inputs.CoupledHydrogenInputTests.test_electrolyzer_investment_uses_visible_dea_inputs) ... ok
+test_h2dria_uses_the_june_2026_database_online_year (test_coupled_hydrogen_inputs.CoupledHydrogenInputTests.test_h2dria_uses_the_june_2026_database_online_year) ... ok
+test_iea_is_the_only_fixed_hydrogen_production_fleet (test_coupled_hydrogen_inputs.CoupledHydrogenInputTests.test_iea_is_the_only_fixed_hydrogen_production_fleet) ... ok
+test_regional_hydrogen_load_preserves_weighted_annual_energy (test_coupled_hydrogen_inputs.CoupledHydrogenInputTests.test_regional_hydrogen_load_preserves_weighted_annual_energy) ... ok
+test_cost_and_emissions_ledgers_are_duration_weighted (test_coupled_metrics.CoupledMetricsTests.test_cost_and_emissions_ledgers_are_duration_weighted) ... INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.io: Writing time: 0.12s
+Running HiGHS 1.14.0 (git hash: 7df0786): Copyright (c) 2026 under MIT licence terms
+LP linopy-problem-03t0quvb has 12 rows; 4 cols; 14 nonzeros
+Coefficient ranges:
+  Matrix  [8e-01, 1e+00]
+  Cost    [2e+00, 3e+01]
+  Bound   [0e+00, 0e+00]
+  RHS     [8e-01, 2e+00]
+Presolving model
+0 rows, 0 cols, 0 nonzeros 0s
+0 rows, 0 cols, 0 nonzeros 0s
+Presolve reductions: rows 0(-12); columns 0(-4); nonzeros 0(-14) - Reduced to empty
+Performed postsolve
+Solving the original LP from the solution after postsolve
+
+Model name          : linopy-problem-03t0quvb
+Model status        : Optimal
+Objective value     :  4.8000000000e+01
+P-D objective error :  0.0000000000e+00
+HiGHS run time      :          0.00
+INFO:linopy.constants: Optimization successful: 
+Status: ok
+Termination condition: optimal
+Solution: 4 primals, 12 duals
+Objective: 4.80e+01
+Solver model: available
+Solver message: Optimal
+
+INFO:pypsa.optimization.optimize:The shadow-prices of the constraints Generator-fix-p-lower, Generator-fix-p-upper, Link-fix-p-lower, Link-fix-p-upper were not assigned to the network.
+ok
+test_cyclic_store_closure_is_validated (test_coupled_metrics.CoupledMetricsTests.test_cyclic_store_closure_is_validated) ... ok
+test_duration_weighted_prices_and_input_output_capacities (test_coupled_metrics.CoupledMetricsTests.test_duration_weighted_prices_and_input_output_capacities) ... INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.io: Writing time: 0.07s
+Running HiGHS 1.14.0 (git hash: 7df0786): Copyright (c) 2026 under MIT licence terms
+LP linopy-problem-3j4ph959 has 12 rows; 4 cols; 14 nonzeros
+Coefficient ranges:
+  Matrix  [8e-01, 1e+00]
+  Cost    [2e+00, 3e+01]
+  Bound   [0e+00, 0e+00]
+  RHS     [8e-01, 2e+00]
+Presolving model
+0 rows, 0 cols, 0 nonzeros 0s
+0 rows, 0 cols, 0 nonzeros 0s
+Presolve reductions: rows 0(-12); columns 0(-4); nonzeros 0(-14) - Reduced to empty
+Performed postsolve
+Solving the original LP from the solution after postsolve
+
+Model name          : linopy-problem-3j4ph959
+Model status        : Optimal
+Objective value     :  4.8000000000e+01
+P-D objective error :  0.0000000000e+00
+HiGHS run time      :          0.00
+INFO:linopy.constants: Optimization successful: 
+Status: ok
+Termination condition: optimal
+Solution: 4 primals, 12 duals
+Objective: 4.80e+01
+Solver model: available
+Solver message: Optimal
+
+INFO:pypsa.optimization.optimize:The shadow-prices of the constraints Generator-fix-p-lower, Generator-fix-p-upper, Link-fix-p-lower, Link-fix-p-upper were not assigned to the network.
+ok
+test_empty_carriers_and_zero_demand_report_finite_zeros (test_coupled_metrics.CoupledMetricsTests.test_empty_carriers_and_zero_demand_report_finite_zeros) ... ok
+test_post_solve_checks_bus_residual_target_and_failed_solve (test_coupled_metrics.CoupledMetricsTests.test_post_solve_checks_bus_residual_target_and_failed_solve) ... INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.io: Writing time: 0.07s
+Running HiGHS 1.14.0 (git hash: 7df0786): Copyright (c) 2026 under MIT licence terms
+LP linopy-problem-iehppauz has 12 rows; 4 cols; 14 nonzeros
+Coefficient ranges:
+  Matrix  [8e-01, 1e+00]
+  Cost    [2e+00, 3e+01]
+  Bound   [0e+00, 0e+00]
+  RHS     [8e-01, 2e+00]
+Presolving model
+0 rows, 0 cols, 0 nonzeros 0s
+0 rows, 0 cols, 0 nonzeros 0s
+Presolve reductions: rows 0(-12); columns 0(-4); nonzeros 0(-14) - Reduced to empty
+Performed postsolve
+Solving the original LP from the solution after postsolve
+
+Model name          : linopy-problem-iehppauz
+Model status        : Optimal
+Objective value     :  4.8000000000e+01
+P-D objective error :  0.0000000000e+00
+HiGHS run time      :          0.00
+INFO:linopy.constants: Optimization successful: 
+Status: ok
+Termination condition: optimal
+Solution: 4 primals, 12 duals
+Objective: 4.80e+01
+Solver model: available
+Solver message: Optimal
+
+INFO:pypsa.optimization.optimize:The shadow-prices of the constraints Generator-fix-p-lower, Generator-fix-p-upper, Link-fix-p-lower, Link-fix-p-upper were not assigned to the network.
+ok
+test_pre_solve_rejects_silent_unbounded_expansion (test_coupled_metrics.CoupledMetricsTests.test_pre_solve_rejects_silent_unbounded_expansion) ... ok
+test_shared_gas_entry_emissions_are_counted_once (test_coupled_metrics.CoupledMetricsTests.test_shared_gas_entry_emissions_are_counted_once) ... INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.io: Writing time: 0.04s
+Running HiGHS 1.14.0 (git hash: 7df0786): Copyright (c) 2026 under MIT licence terms
+LP linopy-problem-evv906v3 has 6 rows; 2 cols; 6 nonzeros
+Coefficient ranges:
+  Matrix  [1e+00, 1e+00]
+  Cost    [1e+00, 3e+00]
+  Bound   [0e+00, 0e+00]
+  RHS     [1e+00, 1e+00]
+Presolving model
+0 rows, 0 cols, 0 nonzeros 0s
+0 rows, 0 cols, 0 nonzeros 0s
+Presolve reductions: rows 0(-6); columns 0(-2); nonzeros 0(-6) - Reduced to empty
+Performed postsolve
+Solving the original LP from the solution after postsolve
+
+Model name          : linopy-problem-evv906v3
+Model status        : Optimal
+Objective value     :  4.0000000000e+00
+P-D objective error :  0.0000000000e+00
+HiGHS run time      :          0.00
+INFO:linopy.constants: Optimization successful: 
+Status: ok
+Termination condition: optimal
+Solution: 2 primals, 6 duals
+Objective: 4.00e+00
+Solver model: available
+Solver message: Optimal
+
+INFO:pypsa.optimization.optimize:The shadow-prices of the constraints Generator-fix-p-lower, Generator-fix-p-upper were not assigned to the network.
+ok
+test_target_closure_and_simultaneous_trade_are_validated (test_coupled_metrics.CoupledMetricsTests.test_target_closure_and_simultaneous_trade_are_validated) ... INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.io: Writing time: 0.06s
+Running HiGHS 1.14.0 (git hash: 7df0786): Copyright (c) 2026 under MIT licence terms
+LP linopy-problem-daft7fs1 has 12 rows; 4 cols; 14 nonzeros
+Coefficient ranges:
+  Matrix  [8e-01, 1e+00]
+  Cost    [2e+00, 3e+01]
+  Bound   [0e+00, 0e+00]
+  RHS     [8e-01, 2e+00]
+Presolving model
+0 rows, 0 cols, 0 nonzeros 0s
+0 rows, 0 cols, 0 nonzeros 0s
+Presolve reductions: rows 0(-12); columns 0(-4); nonzeros 0(-14) - Reduced to empty
+Performed postsolve
+Solving the original LP from the solution after postsolve
+
+Model name          : linopy-problem-daft7fs1
+Model status        : Optimal
+Objective value     :  4.8000000000e+01
+P-D objective error :  0.0000000000e+00
+HiGHS run time      :          0.00
+INFO:linopy.constants: Optimization successful: 
+Status: ok
+Termination condition: optimal
+Solution: 4 primals, 12 duals
+Objective: 4.80e+01
+Solver model: available
+Solver message: Optimal
+
+INFO:pypsa.optimization.optimize:The shadow-prices of the constraints Generator-fix-p-lower, Generator-fix-p-upper, Link-fix-p-lower, Link-fix-p-upper were not assigned to the network.
+ok
+test_failed_solve_is_preserved_as_failure (test_coupled_runner.CoupledRunnerTests.test_failed_solve_is_preserved_as_failure) ... WARNING:pypsa.networks:The network has not been optimized yet and no model is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective value is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective constant is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no model is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective value is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective constant is stored.
+INFO:pypsa.network.io:Exported network 'Unnamed Network' saved to 'C:\Users\megas\AppData\Local\Temp\tmp99ztsmsm\network_input.nc contains: generators, links, buses, carriers, loads
+INFO:pypsa.network.io:New version 1.3.0 available! (Current: 1.1.2)
+INFO:pypsa.network.io:Imported network 'Unnamed Network' has buses, carriers, generators, links, loads
+INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.io: Writing time: 0.06s
+Running HiGHS 1.14.0 (git hash: 7df0786): Copyright (c) 2026 under MIT licence terms
+LP linopy-problem-hym1hd3w has 12 rows; 4 cols; 14 nonzeros
+Coefficient ranges:
+  Matrix  [8e-01, 1e+00]
+  Cost    [1e+01, 1e+01]
+  Bound   [0e+00, 0e+00]
+  RHS     [8e-01, 1e+00]
+Presolving model
+Problem status detected on presolve: Infeasible
+Model name          : linopy-problem-hym1hd3w
+Model status        : Infeasible
+Objective value     :  0.0000000000e+00
+HiGHS run time      :          0.00
+WARNING:linopy.constants:Optimization potentially failed: 
+Status: warning
+Termination condition: infeasible
+Solution: 0 primals, 0 duals
+Objective: nan
+Solver model: available
+Solver message: Infeasible
+
+WARNING:pypsa.networks:The network has not been optimized yet and no objective value is stored.
+ok
+test_production_run_without_explicit_heat_gas_and_capacity_inputs_stops (test_coupled_runner.CoupledRunnerTests.test_production_run_without_explicit_heat_gas_and_capacity_inputs_stops) ... WARNING:pypsa.networks:The network has not been optimized yet and no model is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective value is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective constant is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no model is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective value is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective constant is stored.
+INFO:pypsa.network.io:Exported network 'Unnamed Network' saved to 'C:\Users\megas\AppData\Local\Temp\tmpbj52c38q\network_input.nc contains: generators, links, buses, carriers, loads
+ok
+test_success_without_cost_records_is_explicitly_marked_not_supplied (test_coupled_runner.CoupledRunnerTests.test_success_without_cost_records_is_explicitly_marked_not_supplied) ... WARNING:pypsa.networks:The network has not been optimized yet and no model is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective value is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective constant is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no model is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective value is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective constant is stored.
+INFO:pypsa.network.io:Exported network 'Unnamed Network' saved to 'C:\Users\megas\AppData\Local\Temp\tmp5uet5w_7\network_input.nc contains: generators, links, buses, carriers, loads
+INFO:pypsa.network.io:New version 1.3.0 available! (Current: 1.1.2)
+INFO:pypsa.network.io:Imported network 'Unnamed Network' has buses, carriers, generators, links, loads
+INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.io: Writing time: 0.21s
+Running HiGHS 1.14.0 (git hash: 7df0786): Copyright (c) 2026 under MIT licence terms
+LP linopy-problem-l9r52py7 has 12 rows; 4 cols; 14 nonzeros
+Coefficient ranges:
+  Matrix  [8e-01, 1e+00]
+  Cost    [1e+01, 1e+01]
+  Bound   [0e+00, 0e+00]
+  RHS     [8e-01, 2e+00]
+Presolving model
+0 rows, 0 cols, 0 nonzeros 0s
+0 rows, 0 cols, 0 nonzeros 0s
+Presolve reductions: rows 0(-12); columns 0(-4); nonzeros 0(-14) - Reduced to empty
+Performed postsolve
+Solving the original LP from the solution after postsolve
+
+Model name          : linopy-problem-l9r52py7
+Model status        : Optimal
+Objective value     :  2.0000000000e+01
+P-D objective error :  0.0000000000e+00
+HiGHS run time      :          0.00
+INFO:linopy.constants: Optimization successful: 
+Status: ok
+Termination condition: optimal
+Solution: 4 primals, 12 duals
+Objective: 2.00e+01
+Solver model: available
+Solver message: Optimal
+
+INFO:pypsa.optimization.optimize:The shadow-prices of the constraints Generator-fix-p-lower, Generator-fix-p-upper, Link-fix-p-lower, Link-fix-p-upper were not assigned to the network.
+INFO:pypsa.network.io:Exported network 'Unnamed Network' saved to 'C:\Users\megas\AppData\Local\Temp\tmp5uet5w_7\outputs\network.nc contains: generators, links, buses, sub_networks, carriers, loads
+ok
+test_success_writes_explicit_investment_cost_report (test_coupled_runner.CoupledRunnerTests.test_success_writes_explicit_investment_cost_report) ... WARNING:pypsa.networks:The network has not been optimized yet and no model is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective value is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective constant is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no model is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective value is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective constant is stored.
+INFO:pypsa.network.io:Exported network 'Unnamed Network' saved to 'C:\Users\megas\AppData\Local\Temp\tmp56bjkd5b\network_input.nc contains: generators, links, buses, carriers, loads
+INFO:pypsa.network.io:New version 1.3.0 available! (Current: 1.1.2)
+INFO:pypsa.network.io:Imported network 'Unnamed Network' has buses, carriers, generators, links, loads
+INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.io: Writing time: 0.18s
+Running HiGHS 1.14.0 (git hash: 7df0786): Copyright (c) 2026 under MIT licence terms
+LP linopy-problem-q7ssyyqo has 12 rows; 4 cols; 14 nonzeros
+Coefficient ranges:
+  Matrix  [8e-01, 1e+00]
+  Cost    [1e+01, 1e+01]
+  Bound   [0e+00, 0e+00]
+  RHS     [8e-01, 2e+00]
+Presolving model
+0 rows, 0 cols, 0 nonzeros 0s
+0 rows, 0 cols, 0 nonzeros 0s
+Presolve reductions: rows 0(-12); columns 0(-4); nonzeros 0(-14) - Reduced to empty
+Performed postsolve
+Solving the original LP from the solution after postsolve
+
+Model name          : linopy-problem-q7ssyyqo
+Model status        : Optimal
+Objective value     :  2.0000000000e+01
+P-D objective error :  0.0000000000e+00
+HiGHS run time      :          0.00
+INFO:linopy.constants: Optimization successful: 
+Status: ok
+Termination condition: optimal
+Solution: 4 primals, 12 duals
+Objective: 2.00e+01
+Solver model: available
+Solver message: Optimal
+
+INFO:pypsa.optimization.optimize:The shadow-prices of the constraints Generator-fix-p-lower, Generator-fix-p-upper, Link-fix-p-lower, Link-fix-p-upper were not assigned to the network.
+INFO:pypsa.network.io:Exported network 'Unnamed Network' saved to 'C:\Users\megas\AppData\Local\Temp\tmp56bjkd5b\outputs\network.nc contains: generators, links, buses, sub_networks, carriers, loads
+ok
+test_success_writes_manifest_network_and_weighted_metrics (test_coupled_runner.CoupledRunnerTests.test_success_writes_manifest_network_and_weighted_metrics) ... WARNING:pypsa.networks:The network has not been optimized yet and no model is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective value is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective constant is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no model is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective value is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective constant is stored.
+INFO:pypsa.network.io:Exported network 'Unnamed Network' saved to 'C:\Users\megas\AppData\Local\Temp\tmpl5d5yy1e\network_input.nc contains: generators, links, buses, carriers, loads
+INFO:pypsa.network.io:New version 1.3.0 available! (Current: 1.1.2)
+INFO:pypsa.network.io:Imported network 'Unnamed Network' has buses, carriers, generators, links, loads
+INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.io: Writing time: 0.07s
+Running HiGHS 1.14.0 (git hash: 7df0786): Copyright (c) 2026 under MIT licence terms
+LP linopy-problem-w_z396h1 has 12 rows; 4 cols; 14 nonzeros
+Coefficient ranges:
+  Matrix  [8e-01, 1e+00]
+  Cost    [1e+01, 1e+01]
+  Bound   [0e+00, 0e+00]
+  RHS     [8e-01, 2e+00]
+Presolving model
+0 rows, 0 cols, 0 nonzeros 0s
+0 rows, 0 cols, 0 nonzeros 0s
+Presolve reductions: rows 0(-12); columns 0(-4); nonzeros 0(-14) - Reduced to empty
+Performed postsolve
+Solving the original LP from the solution after postsolve
+
+Model name          : linopy-problem-w_z396h1
+Model status        : Optimal
+Objective value     :  2.0000000000e+01
+P-D objective error :  0.0000000000e+00
+HiGHS run time      :          0.00
+INFO:linopy.constants: Optimization successful: 
+Status: ok
+Termination condition: optimal
+Solution: 4 primals, 12 duals
+Objective: 2.00e+01
+Solver model: available
+Solver message: Optimal
+
+INFO:pypsa.optimization.optimize:The shadow-prices of the constraints Generator-fix-p-lower, Generator-fix-p-upper, Link-fix-p-lower, Link-fix-p-upper were not assigned to the network.
+INFO:pypsa.network.io:Exported network 'Unnamed Network' saved to 'C:\Users\megas\AppData\Local\Temp\tmpl5d5yy1e\outputs\network.nc contains: generators, links, buses, sub_networks, carriers, loads
+ok
+test_validation_occurs_before_solve_and_writes_no_success_artifact (test_coupled_runner.CoupledRunnerTests.test_validation_occurs_before_solve_and_writes_no_success_artifact) ... WARNING:pypsa.networks:The network has not been optimized yet and no model is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective value is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective constant is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no model is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective value is stored.
+WARNING:pypsa.networks:The network has not been optimized yet and no objective constant is stored.
+INFO:pypsa.network.io:Exported network 'Unnamed Network' saved to 'C:\Users\megas\AppData\Local\Temp\tmp5o395mwd\network_input.nc contains: generators, links, buses, carriers, loads
+INFO:pypsa.network.io:New version 1.3.0 available! (Current: 1.1.2)
+INFO:pypsa.network.io:Imported network 'Unnamed Network' has buses, carriers, generators, links, loads
+ok
+test_cyclic_store_cannot_supply_load_from_free_initial_stock (test_coupled_storage.CoupledStorageTests.test_cyclic_store_cannot_supply_load_from_free_initial_stock) ... WARNING:pypsa.consistency:The following buses have carriers which are not defined. Run n.sanitize() to add them. Components with undefined carriers:
+Index(['H2'], dtype='str', name='name')
+WARNING:pypsa.consistency:The following stores have carriers which are not defined. Run n.sanitize() to add them. Components with undefined carriers:
+Index(['store'], dtype='str', name='name')
+INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.io: Writing time: 0.05s
+Running HiGHS 1.14.0 (git hash: 7df0786): Copyright (c) 2026 under MIT licence terms
+LP linopy-problem-udfpxawx has 8 rows; 4 cols; 12 nonzeros
+Coefficient ranges:
+  Matrix  [1e+00, 1e+00]
+  Cost    [1e+00, 1e+00]
+  Bound   [0e+00, 0e+00]
+  RHS     [1e+00, 1e+01]
+Presolving model
+Problem status detected on presolve: Infeasible
+Model name          : linopy-problem-udfpxawx
+Model status        : Infeasible
+Objective value     :  0.0000000000e+00
+HiGHS run time      :          0.00
+WARNING:linopy.constants:Optimization potentially failed: 
+Status: warning
+Termination condition: infeasible
+Solution: 0 primals, 0 duals
+Objective: nan
+Solver model: available
+Solver message: Infeasible
+
+ok
+test_hourly_reference_accepts_only_genuine_consecutive_unit_weight_year (test_coupled_storage.CoupledStorageTests.test_hourly_reference_accepts_only_genuine_consecutive_unit_weight_year) ... ok
+test_storage_unit_charge_and_discharge_efficiencies_conserve_energy (test_coupled_storage.CoupledStorageTests.test_storage_unit_charge_and_discharge_efficiencies_conserve_energy) ... ok
+test_store_positive_dispatch_is_discharge_and_loss_applies_hourly (test_coupled_storage.CoupledStorageTests.test_store_positive_dispatch_is_discharge_and_loss_applies_hourly) ... ok
+test_annual_import_volume_binds_against_local_supply (test_coupled_trade.CoupledTradeTests.test_annual_import_volume_binds_against_local_supply) ... INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.io: Writing time: 0.04s
+Running HiGHS 1.14.0 (git hash: 7df0786): Copyright (c) 2026 under MIT licence terms
+LP linopy-problem-e4ccm9nv has 15 rows; 6 cols; 20 nonzeros
+Coefficient ranges:
+  Matrix  [1e+00, 1e+00]
+  Cost    [5e+00, 1e+02]
+  Bound   [0e+00, 0e+00]
+  RHS     [1e+00, 1e+01]
+Presolving model
+3 rows, 6 cols, 8 nonzeros 0s
+Dependent equations search running on 2 equations with time limit of 1000.00s
+Dependent equations search removed 0 rows and 0 nonzeros in 0.00s (limit = 1000.00s)
+3 rows, 6 cols, 8 nonzeros 0s
+Presolve reductions: rows 3(-12); columns 6(-0); nonzeros 8(-12) 
+Solving the presolved LP
+Using dual simplex solver
+  Iteration        Objective     Infeasibilities num(sum)
+          0     0.0000000000e+00 Ph1: 0(0) 0.0s
+          3     1.1000000000e+02 Pr: 0(0) 0.0s
+
+Performed postsolve
+Solving the original LP from the solution after postsolve
+
+Model name          : linopy-problem-e4ccm9nv
+Model status        : Optimal
+Simplex   iterations: 3
+Objective value     :  1.1000000000e+02
+P-D objective error :  0.0000000000e+00
+HiGHS run time      :          0.00
+INFO:linopy.constants: Optimization successful: 
+Status: ok
+Termination condition: optimal
+Solution: 6 primals, 15 duals
+Objective: 1.10e+02
+Solver model: available
+Solver message: Optimal
+
+INFO:pypsa.optimization.optimize:The shadow-prices of the constraints Generator-fix-p-lower, Generator-fix-p-upper, Trade-annual-import-electricity_border were not assigned to the network.
+ok
+test_detects_material_simultaneous_import_and_export (test_coupled_trade.CoupledTradeTests.test_detects_material_simultaneous_import_and_export) ... ok
+test_missing_price_or_capacity_disables_interface (test_coupled_trade.CoupledTradeTests.test_missing_price_or_capacity_disables_interface) ... ok
+test_rejects_direct_and_conversion_path_arbitrage (test_coupled_trade.CoupledTradeTests.test_rejects_direct_and_conversion_path_arbitrage) ... ok
+test_strict_direction_adds_binary_and_prevents_simultaneous_flow (test_coupled_trade.CoupledTradeTests.test_strict_direction_adds_binary_and_prevents_simultaneous_flow) ... INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.io: Writing time: 0.12s
+Running HiGHS 1.14.0 (git hash: 7df0786): Copyright (c) 2026 under MIT licence terms
+MIP linopy-problem-l5fsx309 has 14 rows; 6 cols; 20 nonzeros; 2 integer variables (2 binary)
+Coefficient ranges:
+  Matrix  [1e+00, 1e+01]
+  Cost    [5e+00, 1e+01]
+  Bound   [1e+00, 1e+00]
+  RHS     [1e+00, 1e+01]
+Presolving model
+0 rows, 0 cols, 0 nonzeros 0s
+0 rows, 0 cols, 0 nonzeros 0s
+Presolve reductions: rows 0(-14); columns 0(-6); nonzeros 0(-20) - Reduced to empty
+Presolve: Optimal
+
+Src: B => Branching; C => Central rounding; F => Feasibility pump; H => Heuristic;
+     I => Shifting; J => Feasibility jump; L => Sub-MIP; P => Empty MIP; R => Randomized rounding;
+     S => Solve LP; T => Evaluate node; U => Unbounded; X => User solution; Y => HiGHS solution;
+     Z => ZI Round; l => Trivial lower; p => Trivial point; u => Trivial upper; z => Trivial zero
+
+        Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+Src  Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+
+         0       0         0   0.00%   20              20                 0.00%        0      0      0         0     0.3s
+
+Solving report
+  Model             linopy-problem-l5fsx309
+  Status            Optimal
+  Primal bound      20
+  Dual bound        20
+  Gap               0% (tolerance: 0.01%)
+  P-D integral      0
+  Solution status   feasible
+                    20 (objective)
+                    0 (bound viol.)
+                    0 (int. viol.)
+                    0 (row viol.)
+  Timing            0.30
+  Max sub-MIP depth 0
+  Nodes             0
+  Repair LPs        0
+  LP iterations     0
+INFO:linopy.constants: Optimization successful: 
+Status: ok
+Termination condition: optimal
+Solution: 6 primals, 14 duals
+Objective: 2.00e+01
+Solver model: available
+Solver message: Optimal
+
+INFO:pypsa.optimization.optimize:The variable 'Trade-direction-electricity_border' could not be mapped to the network component because the component 'Trade' does not exist.
+INFO:pypsa.optimization.optimize:The shadow-prices of the constraints Generator-fix-p-lower, Generator-fix-p-upper, Trade-import-direction-electricity_border, Trade-export-direction-electricity_border were not assigned to the network.
+ok
+test_strict_direction_requires_explicit_mip_gap (test_coupled_trade.CoupledTradeTests.test_strict_direction_requires_explicit_mip_gap) ... ok
+test_accepts_complete_hourly_reference_contract (test_coupled_validation.CoupledValidationTests.test_accepts_complete_hourly_reference_contract) ... ok
+test_rejects_duplicate_or_nonconsecutive_reference_timestamps (test_coupled_validation.CoupledValidationTests.test_rejects_duplicate_or_nonconsecutive_reference_timestamps) ... ok
+test_rejects_non_finite_or_missing_candidate_values (test_coupled_validation.CoupledValidationTests.test_rejects_non_finite_or_missing_candidate_values) ... ok
+test_rejects_non_unit_physical_weights (test_coupled_validation.CoupledValidationTests.test_rejects_non_unit_physical_weights) ... ok
+test_rejects_placeholder_without_explicit_permission (test_coupled_validation.CoupledValidationTests.test_rejects_placeholder_without_explicit_permission) ... ok
+test_rejects_undocumented_incremental_heat_overlap (test_coupled_validation.CoupledValidationTests.test_rejects_undocumented_incremental_heat_overlap) ... ok
+test_rejects_undocumented_residual_gas_scope (test_coupled_validation.CoupledValidationTests.test_rejects_undocumented_residual_gas_scope) ... ok
+test_rejects_wrong_reference_hour_count_including_leap_year (test_coupled_validation.CoupledValidationTests.test_rejects_wrong_reference_hour_count_including_leap_year) ... ok
+test_existing_datacenter_is_fixed_and_pue_adjusted (test_datacenter_inputs.DatacenterInputTests.test_existing_datacenter_is_fixed_and_pue_adjusted) ... ok
+test_facility_basis_does_not_apply_pue_twice (test_datacenter_inputs.DatacenterInputTests.test_facility_basis_does_not_apply_pue_twice) ... ok
+test_new_datacenter_is_investable_and_rejects_bad_pue (test_datacenter_inputs.DatacenterInputTests.test_new_datacenter_is_investable_and_rejects_bad_pue) ... ok
+test_annual_profile_forecast_returns_stable_full_year (test_demand_forecast.DemandForecastTests.test_annual_profile_forecast_returns_stable_full_year) ... ok
+test_backtest_returns_error_columns (test_demand_forecast.DemandForecastTests.test_backtest_returns_error_columns) ... ok
+test_forecast_for_target_year_filters_calendar_year (test_demand_forecast.DemandForecastTests.test_forecast_for_target_year_filters_calendar_year) ... ok
+test_prophet_style_forecast_returns_future_rows (test_demand_forecast.DemandForecastTests.test_prophet_style_forecast_returns_future_rows) ... ok
+test_scenario_multiplier_changes_forecast_level (test_demand_forecast.DemandForecastTests.test_scenario_multiplier_changes_forecast_level) ... ok
+test_unavailable_optional_backend_has_clear_error (test_demand_forecast.DemandForecastTests.test_unavailable_optional_backend_has_clear_error) ... ok
+test_weather_regression_uses_future_weather_frame (test_demand_forecast.DemandForecastTests.test_weather_regression_uses_future_weather_frame) ... ok
+test_best_available_model_uses_ranked_metrics (test_demand_orchestrator.DemandOrchestratorTests.test_best_available_model_uses_ranked_metrics) ... ok
+test_default_model_for_horizon_has_expected_bias (test_demand_orchestrator.DemandOrchestratorTests.test_default_model_for_horizon_has_expected_bias) ... ok
+test_run_long_term_request_builds_weighted_case (test_demand_orchestrator.DemandOrchestratorTests.test_run_long_term_request_builds_weighted_case) ... ok
+test_run_next_day_request_bridges_gap_from_prior_year_history (test_demand_orchestrator.DemandOrchestratorTests.test_run_next_day_request_bridges_gap_from_prior_year_history) ... ok
+test_run_next_day_request_builds_24_hour_case (test_demand_orchestrator.DemandOrchestratorTests.test_run_next_day_request_builds_24_hour_case) ... C:\Users\megas\PycharmProjects\pythonProject1\src\energy_data\demand_orchestrator.py:185: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  today_utc = pd.Timestamp.utcnow().tz_convert("UTC").normalize()
+ok
+test_allows_cop_above_one_only_when_explicit (test_energy_conventions.EnergyConventionTests.test_allows_cop_above_one_only_when_explicit) ... ok
+test_converts_output_nameplate_to_link_input_capacity (test_energy_conventions.EnergyConventionTests.test_converts_output_nameplate_to_link_input_capacity) ... ok
+test_converts_output_side_capital_cost_to_heat_pump_input_side (test_energy_conventions.EnergyConventionTests.test_converts_output_side_capital_cost_to_heat_pump_input_side) ... ok
+test_converts_output_side_variable_cost_to_fuel_input_side (test_energy_conventions.EnergyConventionTests.test_converts_output_side_variable_cost_to_fuel_input_side) ... ok
+test_declares_distinct_carrier_energy_bases (test_energy_conventions.EnergyConventionTests.test_declares_distinct_carrier_energy_bases) ... ok
+test_rejects_invalid_conversion_efficiencies_with_parameter_context (test_energy_conventions.EnergyConventionTests.test_rejects_invalid_conversion_efficiencies_with_parameter_context) ... ok
+test_rejects_negative_or_non_finite_capacity_and_cost_inputs (test_energy_conventions.EnergyConventionTests.test_rejects_negative_or_non_finite_capacity_and_cost_inputs) ... ok
+test_api_params_use_greece_eic_and_process_type (test_entsoe_fetcher.EntsoeFetcherTests.test_api_params_use_greece_eic_and_process_type) ... ok
+test_entsoe_error_xml_raises_reason (test_entsoe_fetcher.EntsoeFetcherTests.test_entsoe_error_xml_raises_reason) ... ok
+test_existing_raw_xml_is_reused_when_force_false (test_entsoe_fetcher.EntsoeFetcherTests.test_existing_raw_xml_is_reused_when_force_false) ... ok
+test_missing_entsoe_api_key_raises_clear_error (test_entsoe_fetcher.EntsoeFetcherTests.test_missing_entsoe_api_key_raises_clear_error) ... ok
+test_parser_converts_time_series_to_tidy_rows (test_entsoe_parser.EntsoeParserTests.test_parser_converts_time_series_to_tidy_rows) ... ok
+test_parser_supports_year_ahead_min_max_envelope (test_entsoe_parser.EntsoeParserTests.test_parser_supports_year_ahead_min_max_envelope) ... ok
+test_app_facing_pipeline_writes_processed_csv_and_json_outputs (test_entsoe_pipeline.EntsoePipelineTests.test_app_facing_pipeline_writes_processed_csv_and_json_outputs) ... ok
+test_entsoe_period_for_year (test_entsoe_pipeline.EntsoePipelineTests.test_entsoe_period_for_year) ... ok
+test_multi_year_actual_load_training_frame (test_entsoe_pipeline.EntsoePipelineTests.test_multi_year_actual_load_training_frame) ... ok
+test_bounds_and_weighted_energy_target (test_flexible_demand.FlexibleDemandTests.test_bounds_and_weighted_energy_target) ... ok
+test_constraint_adapter_adds_bounds_and_energy_constraints (test_flexible_demand.FlexibleDemandTests.test_constraint_adapter_adds_bounds_and_energy_constraints) ... ok
+test_pypsa_generator_adapter_uses_negative_sign_and_time_bounds (test_flexible_demand.FlexibleDemandTests.test_pypsa_generator_adapter_uses_negative_sign_and_time_bounds) ... ok
+test_rejects_negative_demand_and_invalid_window (test_flexible_demand.FlexibleDemandTests.test_rejects_negative_demand_and_invalid_window) ... ok
+test_valid_block_preserves_service_floor_and_shift_budget (test_flexible_demand.FlexibleDemandTests.test_valid_block_preserves_service_floor_and_shift_budget) ... ok
+test_compare_forecast_models_writes_metrics_and_skips_optional (test_forecast_evaluation.ForecastEvaluationTests.test_compare_forecast_models_writes_metrics_and_skips_optional) ... ok
+test_allocate_national_forecast_preserves_total_load (test_forecast_pipeline.ForecastPipelineTests.test_allocate_national_forecast_preserves_total_load) ... ok
+test_build_pypsa_load_forecast_from_entsoe_years_uses_training_years (test_forecast_pipeline.ForecastPipelineTests.test_build_pypsa_load_forecast_from_entsoe_years_uses_training_years) ... ok
+test_build_pypsa_load_forecast_writes_regional_load_file (test_forecast_pipeline.ForecastPipelineTests.test_build_pypsa_load_forecast_writes_regional_load_file) ... ok
+test_emissions_intensity_constraint_binds_at_known_threshold (test_hydrogen_policy_constraints.HydrogenPolicyConstraintTests.test_emissions_intensity_constraint_binds_at_known_threshold) ... INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.io: Writing time: 0.15s
+Running HiGHS 1.14.0 (git hash: 7df0786): Copyright (c) 2026 under MIT licence terms
+LP linopy-problem-z8aa4ayy has 9 rows; 3 cols; 10 nonzeros
+Coefficient ranges:
+  Matrix  [8e-01, 1e+00]
+  Cost    [1e+01, 1e+01]
+  Bound   [0e+00, 0e+00]
+  RHS     [8e-01, 1e+01]
+Presolving model
+0 rows, 0 cols, 0 nonzeros 0s
+0 rows, 0 cols, 0 nonzeros 0s
+Presolve reductions: rows 0(-9); columns 0(-3); nonzeros 0(-10) - Reduced to empty
+Performed postsolve
+Solving the original LP from the solution after postsolve
+
+Model name          : linopy-problem-z8aa4ayy
+Model status        : Optimal
+Objective value     :  0.0000000000e+00
+P-D objective error :  0.0000000000e+00
+HiGHS run time      :          0.00
+INFO:linopy.constants: Optimization successful: 
+Status: ok
+Termination condition: optimal
+Solution: 3 primals, 9 duals
+Objective: 0.00e+00
+Solver model: available
+Solver message: Optimal
+
+INFO:pypsa.optimization.optimize:The shadow-prices of the constraints Generator-fix-p-lower, Generator-fix-p-upper, Link-fix-p-lower, Link-fix-p-upper, H2-policy-emissions-intensity were not assigned to the network.
+ok
+test_emissions_intensity_rejects_missing_factors (test_hydrogen_policy_constraints.HydrogenPolicyConstraintTests.test_emissions_intensity_rejects_missing_factors) ... ok
+test_grid_mode_has_no_green_claim_or_policy_constraints (test_hydrogen_policy_constraints.HydrogenPolicyConstraintTests.test_grid_mode_has_no_green_claim_or_policy_constraints) ... ok
+test_hourly_additionality_cannot_exceed_eligible_new_renewable_output (test_hydrogen_policy_constraints.HydrogenPolicyConstraintTests.test_hourly_additionality_cannot_exceed_eligible_new_renewable_output) ... INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.io: Writing time: 0.09s
+Running HiGHS 1.14.0 (git hash: 7df0786): Copyright (c) 2026 under MIT licence terms
+LP linopy-problem-exdkhxap has 20 rows; 8 cols; 28 nonzeros
+Coefficient ranges:
+  Matrix  [8e-01, 1e+00]
+  Cost    [1e+01, 1e+01]
+  Bound   [0e+00, 0e+00]
+  RHS     [4e-01, 1e+01]
+Presolving model
+2 rows, 0 cols, 0 nonzeros 0s
+0 rows, 0 cols, 0 nonzeros 0s
+Presolve reductions: rows 0(-20); columns 0(-8); nonzeros 0(-28) - Reduced to empty
+Performed postsolve
+Solving the original LP from the solution after postsolve
+
+Model name          : linopy-problem-exdkhxap
+Model status        : Optimal
+Objective value     :  0.0000000000e+00
+P-D objective error :  0.0000000000e+00
+HiGHS run time      :          0.00
+INFO:linopy.constants: Optimization successful: 
+Status: ok
+Termination condition: optimal
+Solution: 8 primals, 20 duals
+Objective: 0.00e+00
+Solver model: available
+Solver message: Optimal
+
+INFO:pypsa.optimization.optimize:The variable 'H2-policy-renewable-allocation' could not be mapped to the network component because the component 'H2' does not exist.
+INFO:pypsa.optimization.optimize:The shadow-prices of the constraints Generator-fix-p-lower, Generator-fix-p-upper, Link-fix-p-lower, Link-fix-p-upper, H2-policy-allocation-bounded-by-output, H2-policy-hourly-national-matching were not assigned to the network.
+ok
+test_missing_regional_rule_defaults_only_to_explicit_national_matching (test_hydrogen_policy_constraints.HydrogenPolicyConstraintTests.test_missing_regional_rule_defaults_only_to_explicit_national_matching) ... ok
+test_same_renewable_mwh_cannot_be_allocated_twice (test_hydrogen_policy_constraints.HydrogenPolicyConstraintTests.test_same_renewable_mwh_cannot_be_allocated_twice) ... INFO:linopy.model: Solve problem using Highs solver
+INFO:linopy.io: Writing time: 0.07s
+Running HiGHS 1.14.0 (git hash: 7df0786): Copyright (c) 2026 under MIT licence terms
+LP linopy-problem-tas1j59z has 12 rows; 5 cols; 19 nonzeros
+Coefficient ranges:
+  Matrix  [8e-01, 1e+00]
+  Cost    [1e+01, 1e+01]
+  Bound   [0e+00, 0e+00]
+  RHS     [1e+00, 1e+01]
+Presolving model
+Problem status detected on presolve: Infeasible
+Model name          : linopy-problem-tas1j59z
+Model status        : Infeasible
+Objective value     :  0.0000000000e+00
+HiGHS run time      :          0.00
+WARNING:linopy.constants:Optimization potentially failed: 
+Status: warning
+Termination condition: infeasible
+Solution: 0 primals, 0 duals
+Objective: nan
+Solver model: available
+Solver message: Infeasible
+
+ok
+test_annualized_cost_includes_fixed_opex_and_salvage (test_investment_costs.InvestmentCostTests.test_annualized_cost_includes_fixed_opex_and_salvage) ... ok
+test_datacenter_and_site_inputs_emit_canonical_records (test_investment_costs.InvestmentCostTests.test_datacenter_and_site_inputs_emit_canonical_records) ... ok
+test_invalid_finance_inputs_are_rejected (test_investment_costs.InvestmentCostTests.test_invalid_finance_inputs_are_rejected) ... ok
+test_nominal_requires_inflation (test_investment_costs.InvestmentCostTests.test_nominal_requires_inflation) ... ok
+test_network_report_reads_weighted_generator_capacity_and_activity (test_investment_portfolio.InvestmentPortfolioTests.test_network_report_reads_weighted_generator_capacity_and_activity) ... ok
+test_report_combines_asset_costs_and_capacity (test_investment_portfolio.InvestmentPortfolioTests.test_report_combines_asset_costs_and_capacity) ... ok
+test_report_rejects_negative_capacity (test_investment_portfolio.InvestmentPortfolioTests.test_report_rejects_negative_capacity) ... ok
+test_linked_constraints_replace_default_storage_balance (test_linked_representative_periods.LinkedRepresentativePeriodTests.test_linked_constraints_replace_default_storage_balance) ... ok
+test_linked_storage_is_disabled_without_recorded_validation (test_linked_representative_periods.LinkedRepresentativePeriodTests.test_linked_storage_is_disabled_without_recorded_validation) ... ok
+test_prepare_uses_unit_hour_storage_transitions_but_keeps_objective_weights (test_linked_representative_periods.LinkedRepresentativePeriodTests.test_prepare_uses_unit_hour_storage_transitions_but_keeps_objective_weights) ... ok
+test_representative_months_orders_months_and_keeps_calendar_weights (test_linked_representative_periods.LinkedRepresentativePeriodTests.test_representative_months_orders_months_and_keeps_calendar_weights) ... ok
+test_representative_months_rejects_non_calendar_weight (test_linked_representative_periods.LinkedRepresentativePeriodTests.test_representative_months_rejects_non_calendar_weight) ... ok
+test_15_minute_mw_to_mwh_aggregation_is_correct (test_load_processing.LoadProcessingTests.test_15_minute_mw_to_mwh_aggregation_is_correct) ... ok
+test_forecast_error_metrics_on_known_sample (test_load_processing.LoadProcessingTests.test_forecast_error_metrics_on_known_sample) ... ok
+test_loads_provenanced_real_cash_flow_assumption (test_project_finance_inputs.ProjectFinanceInputTests.test_loads_provenanced_real_cash_flow_assumption) ... ok
+test_rejects_missing_provenance (test_project_finance_inputs.ProjectFinanceInputTests.test_rejects_missing_provenance) ... ok
+test_rejects_nominal_cash_flow_without_inflation (test_project_finance_inputs.ProjectFinanceInputTests.test_rejects_nominal_cash_flow_without_inflation) ... ok
+test_rejects_unknown_cash_flow_basis (test_project_finance_inputs.ProjectFinanceInputTests.test_rejects_unknown_cash_flow_basis) ... ok
+test_build_case_can_use_clustered_base_config (test_pypsa_scenario_builder.PypsaScenarioBuilderTests.test_build_case_can_use_clustered_base_config) ... ok
+test_build_case_writes_config_and_inputs (test_pypsa_scenario_builder.PypsaScenarioBuilderTests.test_build_case_writes_config_and_inputs) ... ok
+test_monthly_representative_days_selects_288_weighted_hours (test_pypsa_scenario_builder.PypsaScenarioBuilderTests.test_monthly_representative_days_selects_288_weighted_hours) ... ok
+test_seasonal_representative_weeks_selects_weighted_weeks (test_pypsa_scenario_builder.PypsaScenarioBuilderTests.test_seasonal_representative_weeks_selects_weighted_weeks) ... ok
+test_feature_allocation_preserves_national_load_totals (test_regional_allocation.RegionalAllocationFeatureTests.test_feature_allocation_preserves_national_load_totals) ... ok
+test_monthly_tourism_changes_commercial_allocation (test_regional_allocation.RegionalAllocationFeatureTests.test_monthly_tourism_changes_commercial_allocation) ... ok
+test_season_mapping_matches_greek_planning_use (test_regional_allocation.RegionalAllocationFeatureTests.test_season_mapping_matches_greek_planning_use) ... ok
+test_seasonal_allocation_changes_with_sector_mix (test_regional_allocation.RegionalAllocationFeatureTests.test_seasonal_allocation_changes_with_sector_mix) ... ok
+test_sector_shares_sum_to_one_for_each_sector (test_regional_allocation.RegionalAllocationFeatureTests.test_sector_shares_sum_to_one_for_each_sector) ... ok
+test_cultivated_area_and_industrial_employment_keep_region_values (test_regional_features.RegionalFeaturesTests.test_cultivated_area_and_industrial_employment_keep_region_values) ... ok
+test_jsonstat_parser_expands_dimension_codes (test_regional_features.RegionalFeaturesTests.test_jsonstat_parser_expands_dimension_codes) ... ok
+test_monthly_tourism_rolls_month_codes_into_model_columns (test_regional_features.RegionalFeaturesTests.test_monthly_tourism_rolls_month_codes_into_model_columns) ... ok
+test_project_region_mapping_matches_13_pypsa_regions (test_regional_features.RegionalFeaturesTests.test_project_region_mapping_matches_13_pypsa_regions) ... ok
+test_sector_gva_rolls_nace_codes_into_model_columns (test_regional_features.RegionalFeaturesTests.test_sector_gva_rolls_nace_codes_into_model_columns) ... ok
+test_accepts_normal_year_weighting (test_scenario_artifact_contract.ScenarioArtifactContractTests.test_accepts_normal_year_weighting) ... ok
+test_classifies_288_monthly_case_as_weighted_representative (test_scenario_artifact_contract.ScenarioArtifactContractTests.test_classifies_288_monthly_case_as_weighted_representative) ... ok
+test_classifies_864_case_as_weighted_representative_with_stratified_metadata (test_scenario_artifact_contract.ScenarioArtifactContractTests.test_classifies_864_case_as_weighted_representative_with_stratified_metadata) ... ok
+test_classifies_expanded_representative_case (test_scenario_artifact_contract.ScenarioArtifactContractTests.test_classifies_expanded_representative_case) ... ok
+test_classifies_independent_full_year (test_scenario_artifact_contract.ScenarioArtifactContractTests.test_classifies_independent_full_year) ... ok
+test_classifies_linked_case (test_scenario_artifact_contract.ScenarioArtifactContractTests.test_classifies_linked_case) ... ok
+test_rejects_duplicate_snapshots (test_scenario_artifact_contract.ScenarioArtifactContractTests.test_rejects_duplicate_snapshots) ... ok
+test_rejects_non_hourly_full_year (test_scenario_artifact_contract.ScenarioArtifactContractTests.test_rejects_non_hourly_full_year) ... ok
+test_rejects_wrong_annual_weighting (test_scenario_artifact_contract.ScenarioArtifactContractTests.test_rejects_wrong_annual_weighting) ... ok
+test_artifact_hash_is_independent_of_absolute_root (test_scenario_artifact_hashing.ScenarioArtifactHashingTests.test_artifact_hash_is_independent_of_absolute_root) ... ok
+test_csv_hash_ignores_line_endings (test_scenario_artifact_hashing.ScenarioArtifactHashingTests.test_csv_hash_ignores_line_endings) ... ok
+test_input_record_contains_hash_and_source_metadata (test_scenario_artifact_hashing.ScenarioArtifactHashingTests.test_input_record_contains_hash_and_source_metadata) ... ok
+test_json_hash_normalizes_internal_absolute_paths (test_scenario_artifact_hashing.ScenarioArtifactHashingTests.test_json_hash_normalizes_internal_absolute_paths) ... ok
+test_cli_builds_versioned_manifest_for_monthly_case (test_scenario_artifact_integration.ScenarioArtifactIntegrationTests.test_cli_builds_versioned_manifest_for_monthly_case) ... ok
+test_build_manifest_contains_contract_hash_and_required_sections (test_scenario_artifact_manifest.ScenarioArtifactManifestTests.test_build_manifest_contains_contract_hash_and_required_sections) ... ok
+test_manifest_hash_excludes_volatile_creation_time (test_scenario_artifact_manifest.ScenarioArtifactManifestTests.test_manifest_hash_excludes_volatile_creation_time) ... ok
+test_manifest_rejects_missing_required_section (test_scenario_artifact_manifest.ScenarioArtifactManifestTests.test_manifest_rejects_missing_required_section) ... ok
+test_manifest_rejects_unrecorded_fallback (test_scenario_artifact_manifest.ScenarioArtifactManifestTests.test_manifest_rejects_unrecorded_fallback) ... ok
+test_direct_profile_selection_records_zero_fallback (test_scenario_artifact_provenance.ScenarioArtifactProvenanceTests.test_direct_profile_selection_records_zero_fallback) ... ok
+test_missing_profile_rows_record_hour_of_day_fallback (test_scenario_artifact_provenance.ScenarioArtifactProvenanceTests.test_missing_profile_rows_record_hour_of_day_fallback) ... ok
+test_partial_profile_fallback_records_only_missing_rows (test_scenario_artifact_provenance.ScenarioArtifactProvenanceTests.test_partial_profile_fallback_records_only_missing_rows) ... ok
+test_energy_comparison_accepts_approved_tolerance (test_scenario_artifact_validation.ScenarioArtifactValidationTests.test_energy_comparison_accepts_approved_tolerance) ... ok
+test_energy_comparison_rejects_material_difference (test_scenario_artifact_validation.ScenarioArtifactValidationTests.test_energy_comparison_rejects_material_difference) ... ok
+test_profile_bounds_report_out_of_range_values (test_scenario_artifact_validation.ScenarioArtifactValidationTests.test_profile_bounds_report_out_of_range_values) ... ok
+test_snapshot_alignment_reports_missing_rows (test_scenario_artifact_validation.ScenarioArtifactValidationTests.test_snapshot_alignment_reports_missing_rows) ... ok
+test_weighted_energy_is_computed_per_column (test_scenario_artifact_validation.ScenarioArtifactValidationTests.test_weighted_energy_is_computed_per_column) ... ok
+test_build_manifest_records_contract_and_deterministic_hash (test_scenario_contract.ScenarioContractTests.test_build_manifest_records_contract_and_deterministic_hash) ... ok
+test_build_manifest_rejects_invalid_weighted_hours (test_scenario_contract.ScenarioContractTests.test_build_manifest_rejects_invalid_weighted_hours) ... ok
+test_build_manifest_rejects_unknown_temporal_mode (test_scenario_contract.ScenarioContractTests.test_build_manifest_rejects_unknown_temporal_mode) ... ok
+test_expansion_preserves_weighted_energy_and_calendar_hours (test_seasonal_storage_chronology.SeasonalStorageChronologyTests.test_expansion_preserves_weighted_energy_and_calendar_hours) ... ok
+test_requires_land_area_instead_of_guessing_from_capacity (test_solar_portfolio.SolarPortfolioTests.test_requires_land_area_instead_of_guessing_from_capacity) ... ok
+test_selects_highest_npv_sites_under_each_regional_cap (test_solar_portfolio.SolarPortfolioTests.test_selects_highest_npv_sites_under_each_regional_cap) ... ok
+test_accepts_milp_only_when_achieved_gap_is_available_and_within_limit (test_solve_network.SolveNetworkTests.test_accepts_milp_only_when_achieved_gap_is_available_and_within_limit) ... ok
+test_accepts_only_optimal_lp_result (test_solve_network.SolveNetworkTests.test_accepts_only_optimal_lp_result) ... ok
+test_rejects_infeasible_solver_return_without_hiding_condition (test_solve_network.SolveNetworkTests.test_rejects_infeasible_solver_return_without_hiding_condition) ... ok
+test_rejects_milp_when_gap_exceeds_configured_limit (test_solve_network.SolveNetworkTests.test_rejects_milp_when_gap_exceeds_configured_limit) ... ok
+test_rejects_milp_when_gap_is_unavailable (test_solve_network.SolveNetworkTests.test_rejects_milp_when_gap_is_unavailable) ... ok
+test_rejects_solver_exception (test_solve_network.SolveNetworkTests.test_rejects_solver_exception) ... ok
+test_run_model_passes_solver_contract_and_uses_structured_result (test_solver_callers.SolverCallerTests.test_run_model_passes_solver_contract_and_uses_structured_result) ... ok
+test_scenario_b_passes_solver_contract_and_exports_only_accepted_result (test_solver_callers.SolverCallerTests.test_scenario_b_passes_solver_contract_and_exports_only_accepted_result) ... ok
+test_forbidden_candidate_cannot_satisfy_demand (test_spatial_portfolio.SpatialPortfolioTests.test_forbidden_candidate_cannot_satisfy_demand) ... ok
+test_land_cap_and_grid_upgrade_cost_are_enforced (test_spatial_portfolio.SpatialPortfolioTests.test_land_cap_and_grid_upgrade_cost_are_enforced) ... Running HiGHS 1.14.0 (git hash: 7df0786): Copyright (c) 2026 under MIT licence terms
+ok
+test_milp_selects_least_cost_site_and_capacity (test_spatial_portfolio.SpatialPortfolioTests.test_milp_selects_least_cost_site_and_capacity) ... Running HiGHS 1.14.0 (git hash: 7df0786): Copyright (c) 2026 under MIT licence terms
+ok
+test_rejects_missing_or_invalid_site_values (test_spatial_portfolio.SpatialPortfolioTests.test_rejects_missing_or_invalid_site_values) ... ok
+test_controls_reject_out_of_range_values (test_thermal_controls.ThermalControlTests.test_controls_reject_out_of_range_values) ... ok
+test_efficiency_control_reduces_input_but_preserves_service_definition (test_thermal_controls.ThermalControlTests.test_efficiency_control_reduces_input_but_preserves_service_definition) ... ok
+test_electrification_target_is_an_investment_upper_bound (test_thermal_controls.ThermalControlTests.test_electrification_target_is_an_investment_upper_bound) ... ok
+test_clipping_is_accounted_for (test_wind_profiles.CapacityFactorCalibrationTests.test_clipping_is_accounted_for) ... ok
+test_dapeep_2025_target_is_observed_capacity_factor (test_wind_profiles.CapacityFactorCalibrationTests.test_dapeep_2025_target_is_observed_capacity_factor) ... ok
+test_unclipped_scaling_is_linear (test_wind_profiles.CapacityFactorCalibrationTests.test_unclipped_scaling_is_linear) ... ok
+test_curve_bounds (test_wind_profiles.WindPowerCurveTests.test_curve_bounds) ... ok
+test_legacy_values_map_exactly_onto_standard_curve (test_wind_profiles.WindPowerCurveTests.test_legacy_values_map_exactly_onto_standard_curve) ... ok
+test_open_meteo_speeds_are_km_per_hour (test_wind_profiles.WindPowerCurveTests.test_open_meteo_speeds_are_km_per_hour) ... ok
+test_standard_cubic_curve_at_mid_speed (test_wind_profiles.WindPowerCurveTests.test_standard_cubic_curve_at_mid_speed) ... ok
+
+----------------------------------------------------------------------
+Ran 188 tests in 221.565s
+
+OK
+Scenario B: retired 100MW of lignite capacity, raised gas marginal cost 108.8 -> 144.0 EUR/MWh
+Solved and wrote Scenario B network to C:\Users\megas\AppData\Local\Temp\tmpd7bh_yan\scenario_b.nc

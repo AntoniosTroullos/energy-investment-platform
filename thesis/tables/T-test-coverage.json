@@ -1,0 +1,59 @@
+{
+  "id": "T-test-coverage",
+  "section": "2.10",
+  "caption": "Automated Test Coverage of the Two Repositories",
+  "columns": [
+    {
+      "header": "Repository",
+      "align": "left"
+    },
+    {
+      "header": "Tests executed",
+      "align": "center"
+    },
+    {
+      "header": "Passing",
+      "align": "center"
+    },
+    {
+      "header": "Failing",
+      "align": "center"
+    },
+    {
+      "header": "Runtime (s)",
+      "align": "center"
+    }
+  ],
+  "rows": [
+    [
+      "Modelling repository",
+      "188",
+      "188",
+      "0",
+      "221.565"
+    ],
+    [
+      "Platform API",
+      "191",
+      "191",
+      "0",
+      "65.106"
+    ]
+  ],
+  "notes": "Both suites were executed on 2 October 2026 and their output retained; the counts are not quoted from earlier records. A failure was present in the spatial site-selection module during the preparation of this thesis; its root cause and fix are described in Section 2.10, and the counts above are the suite's state after that fix, not before it.",
+  "source": "Source: captured test runs.",
+  "claim_ids": [
+    "R15-model-tests",
+    "R15-model-passing",
+    "R15-model-failing",
+    "R15-model-runtime",
+    "R15-platform-tests",
+    "R15-platform-passing",
+    "R15-platform-failing",
+    "R15-platform-runtime",
+    "R15-fixed-component",
+    "R15-fixed-root-cause",
+    "R15-fixed-objective-before",
+    "R15-fixed-objective-after"
+  ]
+}

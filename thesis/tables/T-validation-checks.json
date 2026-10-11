@@ -1,0 +1,75 @@
+{
+  "id": "T-validation-checks",
+  "section": "3.1.1",
+  "caption": "Acceptance Criteria and Verification Outcomes for the Coupled Model",
+  "columns": [
+    {
+      "header": "Check",
+      "align": "left"
+    },
+    {
+      "header": "Criterion",
+      "align": "left"
+    },
+    {
+      "header": "Outcome",
+      "align": "left"
+    }
+  ],
+  "rows": [
+    [
+      "Electrolyser conversion",
+      "1 MWh_e at 75 % efficiency yields 0.75 MWh_LHV",
+      "Holds (unit test)"
+    ],
+    [
+      "Heat pump conversion",
+      "COP 3 yields 3 MWh_th per MWh_e",
+      "Holds (unit test)"
+    ],
+    [
+      "Gas boiler conversion",
+      "93 % efficiency yields 0.93 MWh_th per MWh_HHV",
+      "Holds (unit test)"
+    ],
+    [
+      "Hydrogen double counting",
+      "Hydrogen used for heat is not counted twice",
+      "Holds (unit test)"
+    ],
+    [
+      "Gas emissions boundary",
+      "Combustion emissions counted once at the shared gas bus",
+      "Holds; links contribute 0.0 tCO2"
+    ],
+    [
+      "Bus balance residual",
+      "Below 1e-6 MW at every bus and snapshot",
+      "Approximately 3e-12 MW after the validator fix"
+    ],
+    [
+      "Annual weight closure",
+      "Snapshot weights sum to the hours in the year",
+      "8760.0 h across 288 snapshots"
+    ],
+    [
+      "Solver acceptance",
+      "Infeasible or non-optimal never reported as success",
+      "Accepted: true"
+    ],
+    [
+      "Input provenance",
+      "Every input carries a provenance record and a hash",
+      "9 records, 9 hashed files"
+    ]
+  ],
+  "notes": "The bus-balance criterion could not be met by any real-sized solve before 2026-09-30: the diagnostic called PyPSA's energy_balance() without an explicit round argument and so inherited a global default of five decimal places, coarser than the 1e-6 MW criterion it was testing against. Passing round=12 exposed the true residual.",
+  "source": "Source: model test suite and scenario artifacts.",
+  "claim_ids": [
+    "R8c-weight-sum",
+    "R8c-snapshots",
+    "R8c-accepted",
+    "R8c-provenance-count",
+    "R8c-input-hash-count"
+  ]
+}

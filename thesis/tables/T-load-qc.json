@@ -1,0 +1,60 @@
+{
+  "id": "T-load-qc",
+  "section": "2.2.1",
+  "caption": "National Load Series Quality Control Outcome",
+  "columns": [
+    {
+      "header": "Check",
+      "align": "left"
+    },
+    {
+      "header": "Result",
+      "align": "center"
+    },
+    {
+      "header": "Unit",
+      "align": "center"
+    }
+  ],
+  "rows": [
+    [
+      "Model-ready series length",
+      "39359",
+      "hours"
+    ],
+    [
+      "Missing timestamps",
+      "0",
+      "rows"
+    ],
+    [
+      "Duplicate timestamps",
+      "0",
+      "rows"
+    ],
+    [
+      "Missing load values",
+      "0",
+      "values"
+    ],
+    [
+      "Non-positive load values",
+      "0",
+      "values"
+    ],
+    [
+      "Rows in the anomaly audit",
+      "151",
+      "rows"
+    ]
+  ],
+  "source": "Source: model output, IPTO/ADMIE series after the quality-control and imputation procedure of Section 2.2.1.",
+  "claim_ids": [
+    "R2-rows",
+    "R2-missing_timestamp_rows",
+    "R2-duplicate_timestamps",
+    "R2-missing_load_values",
+    "R2-non_positive_load_values",
+    "R2-anomaly-rows"
+  ]
+}

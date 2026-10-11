@@ -1,0 +1,103 @@
+{
+  "id": "T-gas-stack",
+  "section": "2.8",
+  "caption": "Gas-to-Power Marginal Cost Under the Input-Side Link Convention",
+  "columns": [
+    {
+      "header": "Component",
+      "align": "left"
+    },
+    {
+      "header": "Value",
+      "align": "center"
+    },
+    {
+      "header": "Unit",
+      "align": "center"
+    },
+    {
+      "header": "Basis / source",
+      "align": "left"
+    }
+  ],
+  "rows": [
+    [
+      "Gas commodity price",
+      "42.90",
+      "EUR/MWh_HHV",
+      "TYNDP 2024 planning basis (gas_supply.csv)"
+    ],
+    [
+      "Conversion efficiency",
+      "0.5182",
+      "MWh_e/MWh_HHV",
+      "DEA 0.57 LHV / 1.1 GCV-NCV differential"
+    ],
+    [
+      "Variable O&M, output side",
+      "5.74",
+      "EUR/MWh_e",
+      "DEA Technology Data"
+    ],
+    [
+      "Emission factor",
+      "0.1836",
+      "tCO2/MWh_HHV",
+      "IPCC 2006 Vol. 2 Ch. 2 Table 2.2, HHV-converted"
+    ],
+    [
+      "CO2 price",
+      "80.0",
+      "EUR/tCO2",
+      "EU ETS, July 2026 point estimate"
+    ],
+    [
+      "CO2 cost, input side",
+      "14.688000",
+      "EUR/MWh_HHV",
+      "emission factor x CO2 price"
+    ],
+    [
+      "Variable O&M, input side",
+      "2.974468",
+      "EUR/MWh_HHV",
+      "c_in = eff x c_out"
+    ],
+    [
+      "Total link cost, input side",
+      "17.662468",
+      "EUR/MWh_HHV",
+      "sum of the two components"
+    ],
+    [
+      "Fuel component, output side",
+      "82.7866",
+      "EUR/MWh_e",
+      "commodity / efficiency"
+    ],
+    [
+      "Full marginal cost, output side",
+      "116.8708",
+      "EUR/MWh_e",
+      "(commodity + link cost) / efficiency"
+    ]
+  ],
+  "notes": "Inverting c_in = eff x c_out on the variable O&M component returns 5.7400 EUR/MWh_e, the Danish Energy Agency figure the inputs started from, with a round-trip error of 0.00e+00 EUR/MWh_e and a decomposition residual of 0.00e+00 EUR/MWh_HHV. Every value derives from input files, independently of any solved result. The same total link cost is built into the solved network (17.662468 EUR/MWh_HHV), which confirms the convention is applied consistently.",
+  "source": "Source: model input files and author's elaboration.",
+  "claim_ids": [
+    "gas-commodity-price",
+    "gas-plant-efficiency-hhv",
+    "gas-plant-vom-output",
+    "gas-plant-emission-factor",
+    "R8c-carbon-price",
+    "gas-link-carbon-input-side",
+    "gas-link-vom-input-side",
+    "gas-link-cost-input-side",
+    "gas-marginal-stack-fuel-only",
+    "gas-marginal-stack-output-side",
+    "gas-link-vom-output-side",
+    "gas-link-decomposition-residual",
+    "gas-link-vom-roundtrip-error",
+    "R8c-network-link-mc-check"
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "id": "T-gas-roundtrip",
+  "section": "3.1.1",
+  "caption": "Gas Balance Round-Trip Against the Figures the Loads Were Built From",
+  "columns": [
+    {
+      "header": "Quantity",
+      "align": "left"
+    },
+    {
+      "header": "Model result (TWh)",
+      "align": "center"
+    },
+    {
+      "header": "Published figure (TWh)",
+      "align": "center"
+    },
+    {
+      "header": "Difference (TWh)",
+      "align": "center"
+    }
+  ],
+  "rows": [
+    [
+      "Supply across the entry points",
+      "78.7499",
+      "-",
+      "-"
+    ],
+    [
+      "Domestic demand",
+      "70.1599",
+      "70.16",
+      "-0.0001"
+    ],
+    [
+      "Exports",
+      "8.5901",
+      "8.59",
+      "0.0001"
+    ],
+    [
+      "Total load",
+      "78.7499",
+      "-",
+      "-"
+    ],
+    [
+      "Supply minus load",
+      "0.000000",
+      "-",
+      "-"
+    ]
+  ],
+  "notes": "All quantities are on a higher-heating-value basis, weighted to 8760.0 hours across 864 snapshots. The published figures are the Greek gas system operator's 2025 values, and the model's loads were constructed from them. Reproducing them therefore demonstrates that network construction, the solve and weighted annual aggregation preserve the input quantities exactly; it is a conservation check on the pipeline, not an independent validation of the published figures themselves. The standalone gas model is diagnostic and its results are never added to those of the coupled model.",
+  "source": "Source: model output and DESFA published statistics as cited.",
+  "claim_ids": [
+    "R11-snapshots",
+    "R11-weight-sum",
+    "R11-imports",
+    "R11-load-greece_gas",
+    "R11-load-bulgaria_gas_export",
+    "R11-load-total",
+    "R11-residual",
+    "R11-residual-relative",
+    "R11-published-greece_gas_domestic_demand",
+    "R11-published-greece_gas_exports"
+  ]
+}

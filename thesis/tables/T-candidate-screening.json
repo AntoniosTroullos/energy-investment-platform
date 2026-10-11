@@ -1,0 +1,93 @@
+{
+  "id": "T-candidate-screening",
+  "section": "4.4",
+  "caption": "Candidate Cell Screening Statistics",
+  "columns": [
+    {
+      "header": "Measure",
+      "align": "left"
+    },
+    {
+      "header": "Value",
+      "align": "center"
+    },
+    {
+      "header": "Unit",
+      "align": "center"
+    }
+  ],
+  "rows": [
+    [
+      "Candidate cells generated",
+      "718",
+      "cells"
+    ],
+    [
+      "Mean buildable fraction",
+      "0.9122",
+      "-"
+    ],
+    [
+      "Mean distance to line km",
+      "11.22",
+      "-"
+    ],
+    [
+      "Mean distance to substation km",
+      "14.22",
+      "-"
+    ],
+    [
+      "Mean investment score",
+      "45.26",
+      "-"
+    ],
+    [
+      "Mean natura 2000 overlap fraction",
+      "0.1842",
+      "-"
+    ],
+    [
+      "Mean nearest unesco site km",
+      "55.24",
+      "-"
+    ],
+    [
+      "Mean solar score",
+      "75.38",
+      "-"
+    ],
+    [
+      "Mean wind score",
+      "68.89",
+      "-"
+    ]
+  ],
+  "notes": "The buildable polygon of each cell is the cell geometry less the union of the applicable exclusions, with areas measured in the Greek Grid projection. The resource score still derives from a placeholder three-polygon resource-zone layer, so it is reported as screening geometry rather than as a resource assessment.",
+  "source": "Source: model output.",
+  "claim_ids": [
+    "R14-cell-count",
+    "R14-buildable_fraction-mean",
+    "R14-buildable_fraction-max",
+    "R14-distance_to_line_km-mean",
+    "R14-distance_to_line_km-max",
+    "R14-distance_to_substation_km-mean",
+    "R14-distance_to_substation_km-max",
+    "R14-investment_score-mean",
+    "R14-investment_score-max",
+    "R14-natura_2000_overlap_fraction-mean",
+    "R14-natura_2000_overlap_fraction-max",
+    "R14-nearest_unesco_site_km-mean",
+    "R14-nearest_unesco_site_km-max",
+    "R14-solar_score-mean",
+    "R14-solar_score-max",
+    "R14-wind_score-mean",
+    "R14-wind_score-max",
+    "R14-capacity-cap-solar",
+    "R14-at-cap-share-solar",
+    "R14-at-cap-count-solar",
+    "R14-capacity-cap-wind",
+    "R14-at-cap-share-wind",
+    "R14-at-cap-count-wind"
+  ]
+}

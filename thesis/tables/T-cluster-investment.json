@@ -1,0 +1,153 @@
+{
+  "id": "T-cluster-investment",
+  "section": "4.3",
+  "caption": "Investment Evaluation of the Existing Clustered Fleet by Technology",
+  "columns": [
+    {
+      "header": "Technology",
+      "align": "left"
+    },
+    {
+      "header": "Clusters",
+      "align": "center"
+    },
+    {
+      "header": "Capacity (MW)",
+      "align": "center"
+    },
+    {
+      "header": "Captured price, A (EUR/MWh)",
+      "align": "center"
+    },
+    {
+      "header": "Captured price, B (EUR/MWh)",
+      "align": "center"
+    },
+    {
+      "header": "NPV-positive, A",
+      "align": "center"
+    },
+    {
+      "header": "NPV-positive, B",
+      "align": "center"
+    }
+  ],
+  "rows": [
+    [
+      "biomass",
+      "6",
+      "61.6",
+      "108.17",
+      "143.08",
+      "6",
+      "6"
+    ],
+    [
+      "hydro",
+      "8",
+      "1851.0",
+      "99.46",
+      "131.02",
+      "7",
+      "7"
+    ],
+    [
+      "solar",
+      "34",
+      "7545.0",
+      "27.31",
+      "35.47",
+      "0",
+      "15"
+    ],
+    [
+      "wind",
+      "29",
+      "5016.0",
+      "78.44",
+      "102.59",
+      "11",
+      "13"
+    ]
+  ],
+  "notes": "All four technologies are evaluated from the scenarios re-solved with the corrected, DAPEEP-calibrated wind series. The source contains 77 rows, but one hydro row has zero calibrated capacity and is excluded from financial summaries; 76 positive-capacity clusters remain. NPV-positive counts refer to those positive-capacity clusters. Captured prices are dispatch-weighted and therefore need not equal the system average.",
+  "source": "Source: model output.",
+  "claim_ids": [
+    "R13-rows",
+    "R13-lifetime_years-biomass",
+    "R13-lifetime_years-hydro",
+    "R13-lifetime_years-solar",
+    "R13-lifetime_years-wind",
+    "R13-discount_rate_pct",
+    "R13-biomass-count",
+    "R13-biomass-financial-count",
+    "R13-biomass-capacity",
+    "R13-biomass-captured-price-a",
+    "R13-biomass-npv-total-a",
+    "R13-biomass-npv-positive-a",
+    "R13-biomass-irr-defined-a",
+    "R13-biomass-irr-mean-a",
+    "R13-biomass-irr-median-a",
+    "R13-biomass-irr-max-a",
+    "R13-biomass-captured-price-b",
+    "R13-biomass-npv-total-b",
+    "R13-biomass-npv-positive-b",
+    "R13-biomass-irr-defined-b",
+    "R13-biomass-irr-mean-b",
+    "R13-biomass-irr-median-b",
+    "R13-biomass-irr-max-b",
+    "R13-hydro-count",
+    "R13-hydro-financial-count",
+    "R13-hydro-capacity",
+    "R13-hydro-captured-price-a",
+    "R13-hydro-npv-total-a",
+    "R13-hydro-npv-positive-a",
+    "R13-hydro-irr-defined-a",
+    "R13-hydro-irr-mean-a",
+    "R13-hydro-irr-median-a",
+    "R13-hydro-irr-max-a",
+    "R13-hydro-captured-price-b",
+    "R13-hydro-npv-total-b",
+    "R13-hydro-npv-positive-b",
+    "R13-hydro-irr-defined-b",
+    "R13-hydro-irr-mean-b",
+    "R13-hydro-irr-median-b",
+    "R13-hydro-irr-max-b",
+    "R13-solar-count",
+    "R13-solar-financial-count",
+    "R13-solar-capacity",
+    "R13-solar-captured-price-a",
+    "R13-solar-npv-total-a",
+    "R13-solar-npv-positive-a",
+    "R13-solar-irr-defined-a",
+    "R13-solar-irr-mean-a",
+    "R13-solar-irr-median-a",
+    "R13-solar-irr-max-a",
+    "R13-solar-captured-price-b",
+    "R13-solar-npv-total-b",
+    "R13-solar-npv-positive-b",
+    "R13-solar-irr-defined-b",
+    "R13-solar-irr-mean-b",
+    "R13-solar-irr-median-b",
+    "R13-solar-irr-max-b",
+    "R13-wind-count",
+    "R13-wind-financial-count",
+    "R13-wind-capacity",
+    "R13-wind-captured-price-a",
+    "R13-wind-npv-total-a",
+    "R13-wind-npv-positive-a",
+    "R13-wind-irr-defined-a",
+    "R13-wind-irr-mean-a",
+    "R13-wind-irr-median-a",
+    "R13-wind-irr-max-a",
+    "R13-wind-captured-price-b",
+    "R13-wind-npv-total-b",
+    "R13-wind-npv-positive-b",
+    "R13-wind-irr-defined-b",
+    "R13-wind-irr-mean-b",
+    "R13-wind-irr-median-b",
+    "R13-wind-irr-max-b",
+    "R13-citable-cluster-count",
+    "R13-clusters-gaining-b"
+  ]
+}

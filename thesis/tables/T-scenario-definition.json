@@ -1,0 +1,59 @@
+{
+  "id": "T-scenario-definition",
+  "section": "2.1",
+  "caption": "Definition of the Two Scenarios",
+  "columns": [
+    {
+      "header": "Attribute",
+      "align": "left"
+    },
+    {
+      "header": "Scenario A: Baseline",
+      "align": "left"
+    },
+    {
+      "header": "Scenario B: Post-Lignite / Spot Gas",
+      "align": "left"
+    }
+  ],
+  "rows": [
+    [
+      "Lignite capacity",
+      "As in the reconciled fleet",
+      "Retired to zero"
+    ],
+    [
+      "Basis for the lignite treatment",
+      "Current operating fleet",
+      "PPC's committed 2026 retirement"
+    ],
+    [
+      "Gas commodity price",
+      "108.80 EUR/MWh (TYNDP planning basis)",
+      "144.00 EUR/MWh (spot TTF)"
+    ],
+    [
+      "Network",
+      "Clustered reconciled fleet",
+      "Identical network, re-solved"
+    ],
+    [
+      "Snapshots",
+      "864",
+      "864"
+    ],
+    [
+      "Weighted hours",
+      "8760.0 h",
+      "8760.0 h"
+    ]
+  ],
+  "notes": "Both scenarios are structural variants grounded in cited facts rather than an assumed growth trajectory. The two changes are independent: one removes capacity, the other reprices the marginal fuel.",
+  "source": "Source: author's elaboration from the model configuration.",
+  "claim_ids": [
+    "SCA-snapshots",
+    "SCB-snapshots",
+    "SCA-weight-sum",
+    "SCB-weight-sum"
+  ]
+}

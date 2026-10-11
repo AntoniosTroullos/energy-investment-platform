@@ -1,0 +1,118 @@
+{
+  "id": "T-h2-feasibility",
+  "section": "3.8",
+  "caption": "Hydrogen Policy Targets and Available Electrolyser Capacity",
+  "columns": [
+    {
+      "header": "Item",
+      "align": "left"
+    },
+    {
+      "header": "Value",
+      "align": "center"
+    },
+    {
+      "header": "Unit",
+      "align": "center"
+    }
+  ],
+  "rows": [
+    [
+      "eu_h2_total_2030 (eu, 2030)",
+      "20.0",
+      "mt"
+    ],
+    [
+      "greece_h2_dedicated_res_capacity (greece, 2030)",
+      "3.0",
+      "gw"
+    ],
+    [
+      "greece_h2_electrolyzer_capacity_objective (greece, 2030)",
+      "231.0",
+      "mw"
+    ],
+    [
+      "greece_h2_final_energy_contribution (greece, 2030)",
+      "1.2",
+      "twh"
+    ],
+    [
+      "greece_h2_final_energy_contribution (greece, 2040)",
+      "5.6",
+      "twh"
+    ],
+    [
+      "greece_h2_final_energy_contribution (greece, 2050)",
+      "20.2",
+      "twh"
+    ],
+    [
+      "greece_h2_production_pilot_target (greece, 2030)",
+      "0.92",
+      "twh"
+    ],
+    [
+      "greece_transport_rfnbo_share (greece, 2030)",
+      "0.9",
+      "pct"
+    ],
+    [
+      "greece_transport_rfnbo_share (greece, 2040)",
+      "11.5",
+      "pct"
+    ],
+    [
+      "greece_transport_rfnbo_share (greece, 2050)",
+      "30.9",
+      "pct"
+    ],
+    [
+      "Electrolyser capacity, IEA status-filtered base case",
+      "52.12",
+      "MW"
+    ],
+    [
+      "Electrolyser sites, base case",
+      "3",
+      "sites"
+    ],
+    [
+      "Electrolyser capacity, modelled hydrogen fleet",
+      "271.55",
+      "MW"
+    ],
+    [
+      "Electrolyser sites, modelled fleet",
+      "16",
+      "sites"
+    ]
+  ],
+  "notes": "The comparison is capacity arithmetic, not an optimisation result, and it does not depend on the wind-availability errors discussed in Section 3.1.2. The base case uses the status-filtered IEA project database; the licensed register provides an upper bound.",
+  "source": "Source: policy documents as cited, and model input files.",
+  "claim_ids": [
+    "R9-target-greece_transport_rfnbo_share-2030",
+    "R9-target-greece_transport_rfnbo_share-2040",
+    "R9-target-greece_transport_rfnbo_share-2050",
+    "R9-target-greece_h2_final_energy_contribution-2030",
+    "R9-target-greece_h2_final_energy_contribution-2040",
+    "R9-target-greece_h2_final_energy_contribution-2050",
+    "R9-target-greece_h2_production_pilot_target-2030",
+    "R9-target-greece_h2_dedicated_res_capacity-2030",
+    "R9-target-greece_h2_electrolyzer_capacity_objective-2030",
+    "R9-target-eu_h2_total_2030-2030",
+    "R9-electrolyser-capacity-modelled",
+    "R9-electrolyser-count-modelled",
+    "R9-implied-utilisation",
+    "R9-output-base",
+    "R9-coverage-base-2030",
+    "R9-coverage-base-2040",
+    "R9-coverage-base-2050",
+    "R9-output-licensed",
+    "R9-coverage-licensed-2030",
+    "R9-coverage-licensed-2040",
+    "R9-coverage-licensed-2050",
+    "R9-electrolyser-capacity-r8c",
+    "R9-electrolyser-count-r8c"
+  ]
+}

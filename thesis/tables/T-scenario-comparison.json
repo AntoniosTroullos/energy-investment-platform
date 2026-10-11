@@ -1,0 +1,165 @@
+{
+  "id": "T-scenario-comparison",
+  "section": "3.5",
+  "caption": "Comparison of the Two Scenarios",
+  "columns": [
+    {
+      "header": "Metric",
+      "align": "left"
+    },
+    {
+      "header": "Scenario A",
+      "align": "center"
+    },
+    {
+      "header": "Scenario B",
+      "align": "center"
+    },
+    {
+      "header": "Relative change (%)",
+      "align": "center"
+    }
+  ],
+  "rows": [
+    [
+      "battery",
+      "3.731",
+      "3.737",
+      "0.16"
+    ],
+    [
+      "biomass",
+      "0.349",
+      "0.349",
+      "0.00"
+    ],
+    [
+      "gas",
+      "10.471",
+      "10.471",
+      "0.00"
+    ],
+    [
+      "hydro",
+      "4.960",
+      "4.960",
+      "0.00"
+    ],
+    [
+      "solar",
+      "11.082",
+      "11.076",
+      "-0.05"
+    ],
+    [
+      "wind",
+      "8.169",
+      "8.169",
+      "-0.00"
+    ],
+    [
+      "Weighted-mean shadow price (EUR/MWh)",
+      "71.41",
+      "94.01",
+      "31.65"
+    ],
+    [
+      "Load-weighted shadow price (EUR/MWh)",
+      "77.25",
+      "101.79",
+      "31.76"
+    ],
+    [
+      "Objective (bn EUR/yr)",
+      "1.2230",
+      "1.5915",
+      "30.14"
+    ]
+  ],
+  "notes": "Generation is in TWh per year unless stated otherwise. The generation rows are almost unchanged because lignite already fails to dispatch in Scenario A on cost grounds alone, so retiring it removes no output, and because repricing gas raises the marginal cost without displacing gas from the margin. The scenario difference is therefore almost entirely a cost and price effect rather than a dispatch effect. In both scenarios, wind availability is calibrated to 23.834 %, while the dispatch capacity factor is 18.59 % after curtailing 21.99 % of available wind energy.",
+  "source": "Source: model output.",
+  "claim_ids": [
+    "SCA-objective",
+    "SCA-objective-bn",
+    "SCA-snapshots",
+    "SCA-weight-sum",
+    "SCA-price-weighted-mean",
+    "SCA-price-load-weighted",
+    "SCA-demand",
+    "SCA-gen-battery",
+    "SCA-cap-battery",
+    "SCA-cf-battery",
+    "SCA-gen-biomass",
+    "SCA-cap-biomass",
+    "SCA-cf-biomass",
+    "SCA-gen-gas",
+    "SCA-cap-gas",
+    "SCA-cf-gas",
+    "SCA-gen-hydro",
+    "SCA-cap-hydro",
+    "SCA-cf-hydro",
+    "SCA-gen-lignite",
+    "SCA-cap-lignite",
+    "SCA-cf-lignite",
+    "SCA-gen-oil",
+    "SCA-cap-oil",
+    "SCA-cf-oil",
+    "SCA-gen-solar",
+    "SCA-cap-solar",
+    "SCA-cf-solar",
+    "SCA-gen-unknown",
+    "SCA-cap-unknown",
+    "SCA-cf-unknown",
+    "SCA-gen-wind",
+    "SCA-cap-wind",
+    "SCA-cf-wind",
+    "SCA-wind-availability-cf",
+    "SCA-wind-cf-ratio",
+    "SCA-wind-curtailment",
+    "SCB-objective",
+    "SCB-objective-bn",
+    "SCB-snapshots",
+    "SCB-weight-sum",
+    "SCB-price-weighted-mean",
+    "SCB-price-load-weighted",
+    "SCB-demand",
+    "SCB-gen-battery",
+    "SCB-cap-battery",
+    "SCB-cf-battery",
+    "SCB-gen-biomass",
+    "SCB-cap-biomass",
+    "SCB-cf-biomass",
+    "SCB-gen-gas",
+    "SCB-cap-gas",
+    "SCB-cf-gas",
+    "SCB-gen-hydro",
+    "SCB-cap-hydro",
+    "SCB-cf-hydro",
+    "SCB-gen-lignite",
+    "SCB-cap-lignite",
+    "SCB-gen-oil",
+    "SCB-cap-oil",
+    "SCB-cf-oil",
+    "SCB-gen-solar",
+    "SCB-cap-solar",
+    "SCB-cf-solar",
+    "SCB-gen-unknown",
+    "SCB-cap-unknown",
+    "SCB-cf-unknown",
+    "SCB-gen-wind",
+    "SCB-cap-wind",
+    "SCB-cf-wind",
+    "SCB-wind-availability-cf",
+    "SCB-wind-cf-ratio",
+    "SCB-wind-curtailment",
+    "SCAB-objective-change",
+    "SCAB-price-change",
+    "SCAB-load-price-change",
+    "SCAB-gen-change-battery",
+    "SCAB-gen-change-biomass",
+    "SCAB-gen-change-gas",
+    "SCAB-gen-change-hydro",
+    "SCAB-gen-change-solar",
+    "SCAB-gen-change-wind"
+  ]
+}

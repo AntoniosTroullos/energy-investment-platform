@@ -1,0 +1,21 @@
+{
+  "_note": "Title page metadata. Layout and wording follow the example diploma's title page, extracted from the PDF on 2026-10-01.",
+  "university": "ARISTOTLE UNIVERSITY OF THESSALONIKI",
+  "faculty": "FACULTY OF ENGINEERING",
+  "department": "CHEMICAL ENGINEERING DEPARTMENT",
+  "division_line_1": "Division of Analysis, Design and Control",
+  "division_line_2": "of Chemical Processes and Plants",
+  "_division_note": "The example title page reads 'Of Chemical Process and Plants'. The capital 'Of' mid-phrase and the singular 'Process' are corrected here, per the instruction to correct the example's errors rather than reproduce them.",
+  "title": "A Scenario-Based Optimisation Platform for Renewable Energy Investment and Multi-Carrier System Planning: A Case Study of Greece",
+  "thesis_type": "Diploma thesis",
+  "author": "Antonios Troullos",
+  "registration_number": "5725",
+  "registration_label": "Reg. Number",
+  "_registration_note": "The author gave this as A.E.M. 5725. The example title page is in English and uses 'Reg. Number: 5767', so that form is followed here.",
+  "supervisor": "Supervisor: Prof. Michael C. Georgiadis",
+  "_supervisor_note": "Confirmed by the author on 2026-10-01: Georgiadis. This matches the example diploma's title page.",
+  "city": "Thessaloniki,",
+  "month_year": "October 2026",
+  "logo": "figures/auth_logo.png",
+  "_logo_note": "Extracted from page 1 of the example diploma at 520x508 px."
+}

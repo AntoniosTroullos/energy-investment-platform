@@ -1,0 +1,15 @@
+# Numbers that are structural, or that come from a source cited in the
+# reference list rather than from a result file in either repository.
+#
+# Format: <number>  # reason
+#
+# Keep this file SHORT. Every entry here is a number the guard will not trace,
+# so each one needs a reason a reader would accept. Numbers that come from a
+# result file belong in numbers_ledger.csv via extract_numbers.py, not here.
+
+5     # the template's body-chapter count; a structural fact about this thesis
+91    # target page budget for the body text
+13    # Greek NUTS-2 regions; a published statistical classification, not a model output
+2100  # EPSG code for the Greek Grid (GGRS87) projection
+4326  # EPSG code for WGS 84
+24    # hours in a day; a definitional constant, not a model output

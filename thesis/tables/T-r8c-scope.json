@@ -1,0 +1,171 @@
+{
+  "id": "T-r8c-scope",
+  "section": "3.7.1",
+  "caption": "Scope and Boundary of the Coupled Production Run",
+  "columns": [
+    {
+      "header": "Attribute",
+      "align": "left"
+    },
+    {
+      "header": "Setting",
+      "align": "left"
+    }
+  ],
+  "rows": [
+    [
+      "Target year",
+      "2025"
+    ],
+    [
+      "Load year",
+      "2026"
+    ],
+    [
+      "Weather year",
+      "2026"
+    ],
+    [
+      "Electricity base",
+      "mid_2026_monthly_days (13-region, non-clustered, stylised fleet)"
+    ],
+    [
+      "Temporal representation",
+      "synthetic_expansion, 288 snapshots weighted to 8760.0 h"
+    ],
+    [
+      "Hydrogen target mode",
+      "final_demand, 207557.27 MWh_LHV per year"
+    ],
+    [
+      "Hydrogen policy mode",
+      "grid"
+    ],
+    [
+      "Cross-border trade",
+      "disabled"
+    ],
+    [
+      "Electrolyser investment",
+      "enabled: false"
+    ],
+    [
+      "CO2 price",
+      "80.0 EUR/tCO2"
+    ],
+    [
+      "Gas emission factor",
+      "0.1836 tCO2/MWh_HHV"
+    ],
+    [
+      "Electricity demand",
+      "49.915 TWh/yr"
+    ],
+    [
+      "Provenance records",
+      "9"
+    ],
+    [
+      "Hashed input files",
+      "9"
+    ],
+    [
+      "Solver acceptance",
+      "true"
+    ]
+  ],
+  "notes": "Re-solved 2026-10-02 against the corrected, DAPEEP-calibrated wind availability series (Section 3.1.2); results are reported in Sections 3.7.2-3.7.3.",
+  "source": "Source: scenario configuration and manifest.",
+  "claim_ids": [
+    "R8c-accepted",
+    "R8c-objective",
+    "R8c-cost-generator_variable",
+    "R8c-cost-link_variable",
+    "R8c-cost-generator_capital",
+    "R8c-cost-link_capital",
+    "R8c-emissions",
+    "R8c-emissions-links",
+    "R8c-total-demand",
+    "R8c-price-gas",
+    "R8c-price-h2",
+    "R8c-price-elec-mainland",
+    "R8c-price-elec-south-aegean",
+    "R8c-price-elec-crete",
+    "R8c-price-heat",
+    "R8c-mainland-price-spread",
+    "R8c-mainland-bus-count",
+    "R8c-cap-out-electrolysis",
+    "R8c-cap-out-gas",
+    "R8c-cap-out-gas_boiler",
+    "R8c-cap-out-gas_to_power",
+    "R8c-cap-out-heat_pump",
+    "R8c-cap-out-hydro",
+    "R8c-cap-out-hydrogen_boiler",
+    "R8c-cap-out-lignite",
+    "R8c-cap-out-solar",
+    "R8c-cap-out-wind",
+    "R8c-history-wind-mean",
+    "R8c-history-wind-min",
+    "R8c-history-wind-max",
+    "R8c-history-wind-below-005",
+    "R8c-history-solar-zero-share",
+    "R8c-history-price-mainland",
+    "R8c-history-stylised-availcf",
+    "R8c-history-stylised-ratio",
+    "R8c-scope-target_year",
+    "R8c-scope-load_year",
+    "R8c-scope-weather_year",
+    "R8c-scope-temporal_mode",
+    "R8c-scope-hydrogen_target_mode",
+    "R8c-scope-hydrogen_policy_mode",
+    "R8c-scope-trade_direction_mode",
+    "R8c-h2-target",
+    "R8c-carbon-price",
+    "R8c-gas-ef",
+    "R8c-electrolyser-investment",
+    "R8c-electricity-base-config",
+    "R8c-provenance-count",
+    "R8c-input-hash-count",
+    "R8c-expansion-wind",
+    "R8c-expansion-pct-wind",
+    "R8c-expansion-solar",
+    "R8c-expansion-pct-solar",
+    "R8c-snapshots",
+    "R8c-weight-sum",
+    "R8c-price-weighted-mean",
+    "R8c-mainland-price-min-bus",
+    "R8c-mainland-price-min-value",
+    "R8c-mainland-price-max-bus",
+    "R8c-mainland-price-max-value",
+    "R8c-marginal-hours-solar-surplus",
+    "R8c-marginal-share-solar-surplus",
+    "R8c-marginal-hours-wind",
+    "R8c-marginal-share-wind",
+    "R8c-marginal-hours-hydro",
+    "R8c-marginal-share-hydro",
+    "R8c-marginal-hours-gas",
+    "R8c-marginal-share-gas",
+    "R8c-marginal-hours-other",
+    "R8c-marginal-share-other",
+    "R8c-res-marginal-share",
+    "R8c-price-peak-observed",
+    "R8c-network-link-mc-check",
+    "R8c-load-weighted-price",
+    "R8c-electricity-demand",
+    "R8c-gen-gas",
+    "R8c-cf-gas",
+    "R8c-curtailment-gas",
+    "R8c-gen-hydro",
+    "R8c-cf-hydro",
+    "R8c-curtailment-hydro",
+    "R8c-gen-lignite",
+    "R8c-cf-lignite",
+    "R8c-curtailment-lignite",
+    "R8c-gen-solar",
+    "R8c-cf-solar",
+    "R8c-curtailment-solar",
+    "R8c-gen-wind",
+    "R8c-cf-wind",
+    "R8c-curtailment-wind"
+  ]
+}

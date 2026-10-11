@@ -1,0 +1,68 @@
+{
+  "id": "T-economic-parameters",
+  "section": "4.1",
+  "caption": "Economic Evaluation Parameters",
+  "columns": [
+    {
+      "header": "Parameter",
+      "align": "left"
+    },
+    {
+      "header": "Value",
+      "align": "center"
+    },
+    {
+      "header": "Unit",
+      "align": "center"
+    }
+  ],
+  "rows": [
+    [
+      "Discount rate, real",
+      "7.0",
+      "%"
+    ],
+    [
+      "Asset lifetime, biomass",
+      "30.0",
+      "years"
+    ],
+    [
+      "Asset lifetime, hydro",
+      "50.0",
+      "years"
+    ],
+    [
+      "Asset lifetime, solar",
+      "37.5",
+      "years"
+    ],
+    [
+      "Asset lifetime, wind",
+      "28.5",
+      "years"
+    ],
+    [
+      "Clusters evaluated",
+      "77",
+      "clusters"
+    ],
+    [
+      "Photovoltaic degradation",
+      "0.5",
+      "% per year"
+    ],
+    [
+      "Wind degradation",
+      "1.0",
+      "% per year"
+    ]
+  ],
+  "notes": "A single real discount rate is applied to every technology; technology-specific costs of capital are not modelled, which is a deliberate simplification stated in Section 4.1. Degradation rates follow the literature cited in Section 1.7. Revenue is computed as captured revenue, the sum over snapshots of dispatch times the nodal planning shadow price times the snapshot weight, rather than as average price times annual energy.",
+  "source": "Source: author's elaboration; degradation rates from the literature cited in Section 1.7.",
+  "claim_ids": [
+    "R13-discount_rate_pct",
+    "R13-lifetime_years",
+    "R13-rows"
+  ]
+}

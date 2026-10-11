@@ -1,0 +1,55 @@
+{
+  "id": "T-spatial-qa",
+  "section": "3.1.3",
+  "caption": "Spatial Constraint Verification Against the Existing Fleet",
+  "columns": [
+    {
+      "header": "Measure",
+      "align": "left"
+    },
+    {
+      "header": "Value",
+      "align": "center"
+    },
+    {
+      "header": "Unit",
+      "align": "center"
+    }
+  ],
+  "rows": [
+    [
+      "Wind and solar clusters checked",
+      "63",
+      "clusters"
+    ],
+    [
+      "Clusters not sitable under the draft framework",
+      "5",
+      "clusters"
+    ],
+    [
+      "  of which wind",
+      "1",
+      "clusters"
+    ],
+    [
+      "  of which solar",
+      "4",
+      "clusters"
+    ],
+    [
+      "Rows in the per-cluster evaluation",
+      "107",
+      "rows"
+    ]
+  ],
+  "notes": "Evaluated against the draft May 2026 Special Framework for Spatial Planning of Renewable Energy Sources, which was in public consultation and is not enacted law. A cluster flagged as not sitable is a real, operating plant that could not be sited under the draft rules if proposed today. The municipal wind coverage cap and the general settlement setback are not modelled, because the available sources disagree or give no value.",
+  "source": "Source: model output.",
+  "claim_ids": [
+    "R12-wind_and_solar_clusters_checked",
+    "R12-excluded_count",
+    "R12-excluded-solar",
+    "R12-excluded-wind",
+    "R12-rows"
+  ]
+}

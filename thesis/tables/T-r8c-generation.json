@@ -1,0 +1,88 @@
+{
+  "id": "T-r8c-generation",
+  "section": "3.7.2",
+  "caption": "Coupled Production Run: Solved Generation Mix",
+  "columns": [
+    {
+      "header": "Carrier",
+      "align": "left"
+    },
+    {
+      "header": "Capacity (MW)",
+      "align": "right"
+    },
+    {
+      "header": "Generation (TWh/yr)",
+      "align": "right"
+    },
+    {
+      "header": "Capacity factor (%)",
+      "align": "right"
+    },
+    {
+      "header": "Curtailment (%)",
+      "align": "right"
+    }
+  ],
+  "rows": [
+    [
+      "Gas",
+      "23067.00",
+      "73.475",
+      "36.36",
+      "63.64"
+    ],
+    [
+      "Wind",
+      "11300.00",
+      "22.023",
+      "22.25",
+      "14.18"
+    ],
+    [
+      "Solar",
+      "8920.00",
+      "15.606",
+      "19.97",
+      "0.58"
+    ],
+    [
+      "Hydro",
+      "2020.00",
+      "5.619",
+      "31.75",
+      "29.44"
+    ],
+    [
+      "Lignite",
+      "1900.00",
+      "0.144",
+      "0.87",
+      "99.13"
+    ]
+  ],
+  "notes": "Curtailment is the share of available energy not dispatched (installed capacity at its availability factor, less solved output); for dispatchable carriers (gas, hydro, lignite) this reflects capacity held for periods of higher demand or price, not forced renewable spill.",
+  "source": "Source: network.nc, derived live (scripts/extract_numbers.py).",
+  "claim_ids": [
+    "R8c-cap-out-gas",
+    "R8c-cap-out-wind",
+    "R8c-cap-out-solar",
+    "R8c-cap-out-hydro",
+    "R8c-cap-out-lignite",
+    "R8c-gen-gas",
+    "R8c-gen-wind",
+    "R8c-gen-solar",
+    "R8c-gen-hydro",
+    "R8c-gen-lignite",
+    "R8c-cf-gas",
+    "R8c-cf-wind",
+    "R8c-cf-solar",
+    "R8c-cf-hydro",
+    "R8c-cf-lignite",
+    "R8c-curtailment-gas",
+    "R8c-curtailment-wind",
+    "R8c-curtailment-solar",
+    "R8c-curtailment-hydro",
+    "R8c-curtailment-lignite"
+  ]
+}

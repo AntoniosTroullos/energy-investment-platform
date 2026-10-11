@@ -1,0 +1,190 @@
+{
+  "carrier": "solar",
+  "method": "one-factor-at-a-time",
+  "scenarios": {
+    "A": {
+      "base": {
+        "capacity_mw": 200.0,
+        "capacity_factor_pct": 16.7664,
+        "captured_price_eur_per_mwh": 71.5661,
+        "capex_eur": 118972000.0,
+        "lifetime_years": 37.5,
+        "discount_rate_pct": 7.0,
+        "npv_eur": 108532296.88,
+        "irr_pct": 14.8212
+      },
+      "variations": [
+        {
+          "parameter": "Captured price",
+          "reason": "plus or minus a fifth of the solved regional price",
+          "low_setting": 0.8,
+          "high_setting": 1.2,
+          "npv_low_eur": 56144283.37,
+          "npv_high_eur": 160920310.38,
+          "npv_swing_eur": 104776027.02,
+          "npv_swing_pct_of_base": 96.54,
+          "irr_low_pct": 11.1482,
+          "irr_high_pct": 18.4148,
+          "irr_swing_pp": 7.2666
+        },
+        {
+          "parameter": "Capacity factor",
+          "reason": "plus or minus a fifth of the national capacity factor",
+          "low_setting": 0.8,
+          "high_setting": 1.2,
+          "npv_low_eur": 56144283.37,
+          "npv_high_eur": 160920310.38,
+          "npv_swing_eur": 104776027.02,
+          "npv_swing_pct_of_base": 96.54,
+          "irr_low_pct": 11.1482,
+          "irr_high_pct": 18.4148,
+          "irr_swing_pp": 7.2666
+        },
+        {
+          "parameter": "Discount rate",
+          "reason": "spans the plausible real cost of capital either side of the 7 % base",
+          "low_setting": 5.0,
+          "high_setting": 9.0,
+          "npv_low_eur": 168492851.52,
+          "npv_high_eur": 67147207.53,
+          "npv_swing_eur": 101345643.99,
+          "npv_swing_pct_of_base": 93.38,
+          "irr_low_pct": 14.8212,
+          "irr_high_pct": 14.8212,
+          "irr_swing_pp": 0.0
+        },
+        {
+          "parameter": "Capital cost",
+          "reason": "plus or minus a fifth, a conventional screening range for capital cost",
+          "low_setting": 0.8,
+          "high_setting": 1.2,
+          "npv_low_eur": 139213851.01,
+          "npv_high_eur": 77850742.74,
+          "npv_swing_eur": 61363108.26,
+          "npv_swing_pct_of_base": 56.54,
+          "irr_low_pct": 19.3071,
+          "irr_high_pct": 11.7696,
+          "irr_swing_pp": 7.5375
+        },
+        {
+          "parameter": "Degradation rate",
+          "reason": "spans the published range for photovoltaic output decline",
+          "low_setting": 0.25,
+          "high_setting": 1.0,
+          "npv_low_eur": 115690791.37,
+          "npv_high_eur": 95123740.81,
+          "npv_swing_eur": 20567050.56,
+          "npv_swing_pct_of_base": 18.95,
+          "irr_low_pct": 15.1076,
+          "irr_high_pct": 14.2444,
+          "irr_swing_pp": 0.8632
+        },
+        {
+          "parameter": "Asset lifetime",
+          "reason": "either side of the 37.5-year base assumption",
+          "low_setting": 30.0,
+          "high_setting": 45.0,
+          "npv_low_eur": 97166306.76,
+          "npv_high_eur": 115064762.57,
+          "npv_swing_eur": 17898455.81,
+          "npv_swing_pct_of_base": 16.49,
+          "irr_low_pct": 14.683,
+          "irr_high_pct": 14.873,
+          "irr_swing_pp": 0.19
+        }
+      ]
+    },
+    "B": {
+      "base": {
+        "capacity_mw": 200.0,
+        "capacity_factor_pct": 16.7577,
+        "captured_price_eur_per_mwh": 94.2216,
+        "capex_eur": 118972000.0,
+        "lifetime_years": 37.5,
+        "discount_rate_pct": 7.0,
+        "npv_eur": 191275045.28,
+        "irr_pct": 20.4807
+      },
+      "variations": [
+        {
+          "parameter": "Discount rate",
+          "reason": "spans the plausible real cost of capital either side of the 7 % base",
+          "low_setting": 5.0,
+          "high_setting": 9.0,
+          "npv_low_eur": 273181549.22,
+          "npv_high_eur": 134763457.42,
+          "npv_swing_eur": 138418091.81,
+          "npv_swing_pct_of_base": 72.37,
+          "irr_low_pct": 20.4807,
+          "irr_high_pct": 20.4807,
+          "irr_swing_pp": 0.0
+        },
+        {
+          "parameter": "Captured price",
+          "reason": "plus or minus a fifth of the solved regional price",
+          "low_setting": 0.8,
+          "high_setting": 1.2,
+          "npv_low_eur": 122338482.09,
+          "npv_high_eur": 260211608.46,
+          "npv_swing_eur": 137873126.37,
+          "npv_swing_pct_of_base": 72.08,
+          "irr_low_pct": 15.7732,
+          "irr_high_pct": 25.1531,
+          "irr_swing_pp": 9.3799
+        },
+        {
+          "parameter": "Capacity factor",
+          "reason": "plus or minus a fifth of the national capacity factor",
+          "low_setting": 0.8,
+          "high_setting": 1.2,
+          "npv_low_eur": 122338482.09,
+          "npv_high_eur": 260211608.46,
+          "npv_swing_eur": 137873126.37,
+          "npv_swing_pct_of_base": 72.08,
+          "irr_low_pct": 15.7732,
+          "irr_high_pct": 25.1531,
+          "irr_swing_pp": 9.3799
+        },
+        {
+          "parameter": "Capital cost",
+          "reason": "plus or minus a fifth, a conventional screening range for capital cost",
+          "low_setting": 0.8,
+          "high_setting": 1.2,
+          "npv_low_eur": 221956599.41,
+          "npv_high_eur": 160593491.14,
+          "npv_swing_eur": 61363108.26,
+          "npv_swing_pct_of_base": 32.08,
+          "irr_low_pct": 26.319,
+          "irr_high_pct": 16.5624,
+          "irr_swing_pp": 9.7566
+        },
+        {
+          "parameter": "Degradation rate",
+          "reason": "spans the published range for photovoltaic output decline",
+          "low_setting": 0.25,
+          "high_setting": 1.0,
+          "npv_low_eur": 200694795.61,
+          "npv_high_eur": 173630937.19,
+          "npv_swing_eur": 27063858.42,
+          "npv_swing_pct_of_base": 14.15,
+          "irr_low_pct": 20.7576,
+          "irr_high_pct": 19.9248,
+          "irr_swing_pp": 0.8328
+        },
+        {
+          "parameter": "Asset lifetime",
+          "reason": "either side of the 37.5-year base assumption",
+          "low_setting": 30.0,
+          "high_setting": 45.0,
+          "npv_low_eur": 175700675.87,
+          "npv_high_eur": 200242211.0,
+          "npv_swing_eur": 24541535.12,
+          "npv_swing_pct_of_base": 12.83,
+          "irr_low_pct": 20.4307,
+          "irr_high_pct": 20.4943,
+          "irr_swing_pp": 0.0636
+        }
+      ]
+    }
+  }
+}
