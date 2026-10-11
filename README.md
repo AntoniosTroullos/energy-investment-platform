@@ -77,3 +77,28 @@ not, everything except solving still works.
 
 `npm test` runs the API `unittest` suite (some modules load the full merged plant feed and take
 about half a minute), then `tsc --noEmit` and `eslint` for the web app.
+
+## Thesis source and Word build
+
+The complete thesis source is under `thesis/`: five chapters, front matter,
+references, table specifications, figures, frozen evidence and the numerical
+claim ledger. The generated `.docx` is intentionally not committed.
+
+```bash
+python -m venv thesis/.venv-docx
+thesis/.venv-docx/Scripts/python -m pip install -r thesis/requirements.txt
+thesis/.venv-docx/Scripts/python thesis/scripts/check_numbers.py
+thesis/.venv-docx/Scripts/python thesis/scripts/claims_audit.py
+thesis/.venv-docx/Scripts/python -m unittest thesis.scripts.test_build_docx_math
+thesis/.venv-docx/Scripts/python thesis/scripts/build_docx.py
+```
+
+The builder converts LaTeX expressions in the Markdown sources to editable,
+native Word equations (OMML). It uses Microsoft's `MML2OMML.XSL`, normally
+installed with Word; set `MML2OMML_XSL` if the stylesheet is elsewhere. The
+output is written to `thesis/build/thesis_draft.docx`.
+
+The public repository contains the platform, thesis sources and frozen result
+evidence. Scenario Studio executes the optimisation through the sibling model
+repository configured by `PYPSA_PROJECT_ROOT`; that modelling repository and its
+input datasets are required to rerun the optimisations and are not hosted here.

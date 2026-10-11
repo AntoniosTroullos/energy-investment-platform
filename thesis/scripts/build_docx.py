@@ -13,32 +13,34 @@ Markdown subset consumed:
     ### 2.1.1 Title         level 3
     [[TABLE:T-id]]          table spec from thesis/tables/
     [[FIGURE:id|caption]]   figure placeholder
-    $$ ... $$               display equation
+    $$ ... $$               native Word display equation (LaTeX source)
     plain paragraphs
 
 Run with the document interpreter:
     thesis/.venv-docx/Scripts/python.exe thesis/scripts/build_docx.py
 
-Known limitation: equations are laid out as centred text in Cambria Math with a
-right-aligned number, not as native Word equation objects. The LaTeX source is
-preserved so they can be converted at final typesetting.
+Equations are converted from LaTeX to MathML and then to native Office Math
+(OMML). They therefore remain editable in Word and are not embedded as images.
 """
 
 from __future__ import annotations
 
 import csv
 import json
+import os
 import re
 import sys
 from pathlib import Path
 
+from latex2mathml.converter import convert as latex_to_mathml
+from lxml import etree
 from docx import Document
 from docx.enum.section import WD_SECTION
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_TAB_ALIGNMENT
-from docx.oxml import OxmlElement
+from docx.oxml import OxmlElement, parse_xml
 from docx.oxml.ns import qn
-from docx.shared import Cm, Pt
+from docx.shared import Cm, Pt, RGBColor
 
 THESIS = Path(__file__).resolve().parents[1]
 CHAPTERS = THESIS / "chapters"
@@ -60,6 +62,7 @@ FIGURE_RE = re.compile(r"^\[\[FIGURE:([^|\]]+)\|([^\]]*)\]\]$")
 # the figure is actually assigned, so prose and figures cannot drift and
 # no figure number is typed by hand anywhere in the chapters.
 FIGREF_RE = re.compile(r"\[\[FIGREF:([^\]]+)\]\]")
+INLINE_MATH_RE = re.compile(r"\$([^$]+)\$")
 FIGURE_NUMBERS: dict[str, int] = {}
 
 
@@ -75,6 +78,48 @@ def number_figures(paths: list[Path]) -> None:
 
 counters = {"table": 0, "figure": 0, "equation": 0}
 table_numbers: dict[str, int] = {}
+
+
+def _mml2omml_stylesheet() -> Path:
+    """Locate Microsoft's MathML-to-Office-Math transform.
+
+    Word installs this stylesheet with Office. ``MML2OMML_XSL`` permits an
+    explicit path on machines where Office is installed elsewhere.
+    """
+    candidates: list[Path] = []
+    if configured := os.environ.get("MML2OMML_XSL"):
+        candidates.append(Path(configured))
+    for variable in ("PROGRAMFILES", "PROGRAMFILES(X86)"):
+        if root := os.environ.get(variable):
+            candidates.extend(
+                [
+                    Path(root) / "Microsoft Office" / "root" / "Office16" / "MML2OMML.XSL",
+                    Path(root) / "Microsoft Office" / "Office16" / "MML2OMML.XSL",
+                ]
+            )
+    candidates.append(
+        Path(r"C:\Program Files\Microsoft Office\root\Office16\MML2OMML.XSL")
+    )
+    for candidate in candidates:
+        if candidate.is_file():
+            return candidate
+    raise RuntimeError(
+        "MML2OMML.XSL was not found. Install Microsoft Word or set "
+        "MML2OMML_XSL to the stylesheet path."
+    )
+
+
+_OMML_TRANSFORM: etree.XSLT | None = None
+
+
+def latex_to_omml(latex: str) -> OxmlElement:
+    """Convert a LaTeX expression to a native Word ``m:oMath`` element."""
+    global _OMML_TRANSFORM
+    if _OMML_TRANSFORM is None:
+        _OMML_TRANSFORM = etree.XSLT(etree.parse(str(_mml2omml_stylesheet())))
+    mathml = latex_to_mathml(latex.strip())
+    transformed = _OMML_TRANSFORM(etree.fromstring(mathml.encode("utf-8")))
+    return parse_xml(etree.tostring(transformed.getroot()))
 
 
 def style_base(document: Document) -> None:
@@ -102,7 +147,12 @@ def style_base(document: Document) -> None:
 def add_page_numbers(document: Document) -> None:
     """Page number bottom right, as the template has it."""
     for section in document.sections:
-        footer = section.footer.paragraphs[0]
+        footer_part = section.footer
+        footer_part.is_linked_to_previous = False
+        footer = footer_part.paragraphs[0]
+        for child in list(footer._p):
+            if child.tag != qn("w:pPr"):
+                footer._p.remove(child)
         footer.alignment = WD_ALIGN_PARAGRAPH.RIGHT
         run = footer.add_run()
         fld = OxmlElement("w:fldSimple")
@@ -112,11 +162,24 @@ def add_page_numbers(document: Document) -> None:
         footer.style.font.size = Pt(11)
 
 
+def request_field_updates(document: Document) -> None:
+    """Ask Word to refresh the contents and figure/table lists on opening."""
+    settings = document.settings.element
+    existing = settings.find(qn("w:updateFields"))
+    if existing is not None:
+        settings.remove(existing)
+    update = OxmlElement("w:updateFields")
+    update.set(qn("w:val"), "true")
+    settings.append(update)
+
+
 def heading(document: Document, text: str, size: int, *, caps: bool = False,
-            new_page: bool = False) -> None:
+            new_page: bool = False, toc_level: int | None = None) -> None:
     if new_page:
         document.add_page_break()
     p = document.add_paragraph()
+    if toc_level is not None:
+        p.style = document.styles[f"Heading {toc_level}"]
     p.alignment = WD_ALIGN_PARAGRAPH.LEFT
     p.paragraph_format.space_before = Pt(12)
     p.paragraph_format.space_after = Pt(10)
@@ -124,6 +187,7 @@ def heading(document: Document, text: str, size: int, *, caps: bool = False,
     run = p.add_run(text.upper() if caps else text)
     run.font.name = BODY_FONT
     run.font.size = Pt(size)
+    run.font.color.rgb = RGBColor(0, 0, 0)
     run.bold = False  # the template uses regular weight for every heading
 
 
@@ -131,7 +195,17 @@ def paragraph(document: Document, text: str) -> None:
     p = document.add_paragraph()
     # Bare markdown emphasis is stripped; the template uses italics only for
     # Latin names, which the prose does not contain.
-    p.add_run(re.sub(r"\*\*([^*]+)\*\*", r"\1", text))
+    text = re.sub(r"\*\*([^*]+)\*\*", r"\1", text)
+    text = re.sub(r"(?<!\*)\*([^*\n]+)\*(?!\*)", r"\1", text)
+    text = re.sub(r"`([^`]+)`", r"\1", text)
+    cursor = 0
+    for match in INLINE_MATH_RE.finditer(text):
+        if match.start() > cursor:
+            p.add_run(text[cursor:match.start()])
+        p._p.append(latex_to_omml(match.group(1)))
+        cursor = match.end()
+    if cursor < len(text):
+        p.add_run(text[cursor:])
 
 
 def equation(document: Document, latex: str) -> None:
@@ -143,9 +217,10 @@ def equation(document: Document, latex: str) -> None:
     tabs = p.paragraph_format.tab_stops
     tabs.add_tab_stop(Cm(7.3), WD_TAB_ALIGNMENT.CENTER)
     tabs.add_tab_stop(Cm(14.6), WD_TAB_ALIGNMENT.RIGHT)
-    run = p.add_run("\t" + latex.strip())
-    run.font.name = MATH_FONT
-    run.font.size = Pt(BODY_PT)
+    lead = p.add_run("\t")
+    lead.font.name = MATH_FONT
+    lead.font.size = Pt(BODY_PT)
+    p._p.append(latex_to_omml(latex))
     number = p.add_run(f"\t({counters['equation']})")
     number.font.name = BODY_FONT
     number.font.size = Pt(BODY_PT)
@@ -158,10 +233,35 @@ def caption(document: Document, text: str, *, above: bool) -> None:
     p.paragraph_format.space_before = Pt(6 if above else 4)
     p.paragraph_format.space_after = Pt(4 if above else 10)
     p.paragraph_format.line_spacing = 1.0
-    run = p.add_run(text)
-    run.font.name = BODY_FONT
-    run.font.size = Pt(CAPTION_PT)
-    run.italic = True
+    match = re.match(r"^(Table|Figure) (\d+): (.+)$", text)
+
+    def styled_run(value: str):
+        run = p.add_run(value)
+        run.font.name = BODY_FONT
+        run.font.size = Pt(CAPTION_PT)
+        run.italic = True
+        return run
+
+    if match:
+        label, number, body = match.groups()
+        styled_run(f"{label} ")
+        field = OxmlElement("w:fldSimple")
+        field.set(qn("w:instr"), rf"SEQ {label} \* ARABIC")
+        result = OxmlElement("w:r")
+        result_properties = OxmlElement("w:rPr")
+        result_italic = OxmlElement("w:i")
+        result_size = OxmlElement("w:sz")
+        result_size.set(qn("w:val"), str(CAPTION_PT * 2))
+        result_properties.extend((result_italic, result_size))
+        result.append(result_properties)
+        result_text = OxmlElement("w:t")
+        result_text.text = number
+        result.append(result_text)
+        field.append(result)
+        p._p.append(field)
+        styled_run(f": {body}")
+    else:
+        styled_run(text)
 
 
 def insert_table(document: Document, spec_id: str) -> None:
@@ -308,15 +408,15 @@ def render_chapter(document: Document, path: Path, first: bool,
 
         if line.startswith("### "):
             flush()
-            heading(document, line[4:].strip(), L3_PT)
+            heading(document, line[4:].strip(), L3_PT, toc_level=3)
         elif line.startswith("## "):
             flush()
-            heading(document, line[3:].strip(), L2_PT)
+            heading(document, line[3:].strip(), L2_PT, toc_level=2)
         elif line.startswith("# "):
             flush()
             heading(document, line[2:].strip(),
                     L2_PT if front_matter else CHAPTER_PT, caps=True,
-                    new_page=not first)
+                    new_page=not first, toc_level=1)
         else:
             buffer.append(line.strip())
     flush()
@@ -444,7 +544,7 @@ def build_references(document: Document) -> int:
                 if r.get("status") != "NOT_USED_corporate_accounts"]
 
     document.add_page_break()
-    heading(document, "REFERENCES", CHAPTER_PT, caps=True)
+    heading(document, "REFERENCES", CHAPTER_PT, caps=True, toc_level=1)
     for r in sorted(rows, key=sort_key):
         p = document.add_paragraph()
         p.alignment = WD_ALIGN_PARAGRAPH.LEFT
@@ -516,12 +616,13 @@ def main() -> int:
 
     style_base(document)
     add_page_numbers(document)
+    request_field_updates(document)
 
     chapters = sorted(CHAPTERS.glob("*.md"))
     if not chapters:
         sys.exit("no chapter sources found")
     for i, path in enumerate(chapters):
-        render_chapter(document, path, first=True if front else (i == 0))
+        render_chapter(document, path, first=(i == 0))
         print(f"  + {path.name}")
 
     n_refs = build_references(document)

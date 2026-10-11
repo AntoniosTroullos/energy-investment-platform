@@ -55,19 +55,19 @@ priced on a long-term planning basis. Scenario B, the alternative, applies two
 structural changes to the same network: the lignite fleet is retired, following
 the national utility's committed closure programme, and gas is repriced to a
 spot-market figure. Both changes are grounded in documented facts rather than in
-an assumed trajectory, and they are deliberately independent of one another: one
-removes capacity, the other reprices the marginal fuel. Table 1 states the two
-definitions.
+an assumed trajectory, but they are applied simultaneously: one removes capacity
+and the other reprices the marginal fuel. Table 1 states the two definitions.
 
 [[TABLE:T-scenario-definition]]
 
 As the table shows, the two scenarios share a network, a demand series and a
-temporal representation, and differ only in the two stated respects. This is a
-deliberate design choice: it means any difference in the results can be
-attributed to those two changes alone, without the confounding effects that a
-broader re-specification would introduce. The consequences of this design are
-examined in Section 3.5, where the comparison turns out to be informative in a
-way that was not anticipated.
+temporal representation, and differ only in the two stated respects. This keeps
+other assumptions from confounding the comparison, but it does not isolate the
+causal contribution of lignite retirement from that of gas repricing. Any
+difference between A and B is therefore the joint effect of the two changes. A
+factorial design with two additional counterfactual cases would be required to
+identify the contribution and interaction of each change separately. The
+consequences of the adopted comparison are examined in Section 3.5.
 
 The boundary of the analysis should be stated plainly, since several of the
 limitations discussed later follow directly from it. The model is a least-cost
@@ -231,10 +231,13 @@ Annualised fixed costs are computed from an overnight capital cost by the capita
 recovery factor, with a fixed operating and maintenance charge expressed as a
 proportion of that capital cost:
 
-$$ c^{\text{fix}} = \text{CAPEX} \cdot \text{CRF}(r, n) + \text{FOM}, \qquad
-   \text{CRF}(r, n) = \frac{r (1 + r)^n}{(1 + r)^n - 1} $$
+$$ c_g^{\mathrm{fix}} = \mathrm{CAPEX}_g\left[\mathrm{CRF}(r,n_g)+f_g^{\mathrm{FOM}}\right], \qquad
+   \mathrm{CRF}(r,n_g) = \frac{r(1+r)^{n_g}}{(1+r)^{n_g}-1} $$
 
-where $r$ is the real discount rate and $n$ the asset lifetime. A uniform real
+where $r$ is the real discount rate, $n_g$ the asset lifetime and
+$f_g^{\mathrm{FOM}}$ the annual fixed-operation-and-maintenance charge expressed
+as a fraction of overnight capital cost. Consequently,
+$c_g^{\mathrm{fix}}$ has units of EUR per unit of capacity and year. A uniform real
 discount rate of 7 % is applied to every technology. This is a simplification:
 in practice the cost of capital differs by technology and by the risk profile of
 the revenue arrangement, and modelling that variation would change the relative
@@ -332,9 +335,9 @@ the month in which that hour falls:
 $$ D_{r,t} = D_t \cdot w_{r,\,m(t)} $$
 
 Because the shares are normalised to sum to unity across regions, national energy
-is conserved exactly and by construction:
+is conserved exactly and by construction at every snapshot:
 
-$$ \sum_r D_{r,t} = D_t \qquad \text{for every } t $$
+$$ \sum_r D_{r,t} = D_t $$
 
 This conservation property is asserted by the formulation and verified by test,
 rather than being checked only on the particular series used here.
@@ -373,9 +376,14 @@ which the machine is shut down. Between cut-in and rated, aerodynamic power rise
 with the cube of wind speed, so the correct interpolation is cubic in the speed
 itself:
 
-$$ \bar p^{\,\text{wind}}_{t} =
-   \frac{v_t^{3} - v_{\text{in}}^{3}}{v_{\text{r}}^{3} - v_{\text{in}}^{3}},
-   \qquad v_{\text{in}} \le v_t < v_{\text{r}} $$
+$$ \bar p^{\,\mathrm{wind}}_{t} =
+\begin{cases}
+0, & v_t < v_{\mathrm{in}}, \\
+\dfrac{v_t^{3}-v_{\mathrm{in}}^{3}}{v_{\mathrm{r}}^{3}-v_{\mathrm{in}}^{3}},
+& v_{\mathrm{in}} \le v_t < v_{\mathrm{r}}, \\
+1, & v_{\mathrm{r}} \le v_t < v_{\mathrm{out}}, \\
+0, & v_t \ge v_{\mathrm{out}} .
+\end{cases} $$
 
 with the numerator offset equal to 27 and the denominator equal to 1701.
 
@@ -496,22 +504,49 @@ $$ \sum_{g \in n} p_{g,t} \;+\; \sum_{s \in n} \left(p^{\text{dis}}_{s,t} - p^{\
    \;+\; \sum_{l} K_{n,l}\, f_{l,t} \;=\; D_{n,t} $$
 
 where $K_{n,l}$ is the incidence of line $l$ at node $n$. Flows are represented by
-a linearised direct-current approximation and bounded by the line rating,
-$|f_{l,t}| \le F_l$. Generation is bounded by the availability factor of
-Section 2.4 applied to installed capacity, $0 \le p_{g,t} \le \bar p_{g,t} P_g$,
-where $P_g$ is a decision variable for extendable technologies and a parameter
-otherwise. Storage carries a state of charge that evolves with charge and
-discharge efficiencies and is constrained to return to its starting value over
-the modelled period, so that the solution cannot be subsidised by storage energy
-created out of nothing.
+a linearised direct-current approximation. For a line joining its origin and
+destination nodes, the flow and thermal limit are
 
-The objective combines annualised capacity cost with weighted variable cost:
+$$ f_{l,t}=b_l\left(\theta_{o(l),t}-\theta_{d(l),t}\right), \qquad
+   -F_l \le f_{l,t} \le F_l $$
 
-$$ \min \; \sum_g c^{\text{fix}}_g P_g \;+\; \sum_s c^{\text{fix}}_s P_s
-   \;+\; \sum_t \omega_t \sum_g m_g\, p_{g,t} $$
+where $b_l$ is line susceptance and $\theta$ is the nodal voltage angle. One
+angle is fixed as the reference in every connected component. Generation is
+bounded by the availability factor of Section 2.4 applied to installed capacity:
 
-with $c^{\text{fix}}$ from the capital recovery factor of Section 2.2.4, $m_g$ the
-marginal cost, and $\omega_t$ the snapshot weight of Section 2.6. The dual
+$$ 0 \le p_{g,t} \le \bar p_{g,t}P_g $$
+
+Here $P_g$ is a decision variable for extendable technologies and a parameter
+otherwise. Storage energy evolves with elapsed snapshot duration
+$\Delta t_t$, charge and discharge efficiencies, and standing loss:
+
+$$ e_{s,t}=(1-\ell_s)^{\Delta t_t}e_{s,t-1}
+   +\Delta t_t\left(\eta_s^{\mathrm{ch}}p_{s,t}^{\mathrm{ch}}
+   -\frac{p_{s,t}^{\mathrm{dis}}}{\eta_s^{\mathrm{dis}}}\right) $$
+
+$$ 0 \le e_{s,t} \le E_s, \qquad e_{s,0}=e_{s,T} $$
+
+The cyclic condition prevents the solution from being subsidised by energy
+created before the modelled horizon or left unaccounted for after it.
+
+The general objective combines annualised generation, storage and network
+capacity costs with snapshot-weighted operating costs:
+
+$$ \min\, C=C^{\mathrm{cap}}+C^{\mathrm{op}} $$
+
+$$ C^{\mathrm{cap}}=\sum_g c_g^{P}P_g
+   +\sum_s\left(c_s^{P}P_s+c_s^{E}E_s\right)
+   +\sum_l c_l^{F}F_l+\sum_k c_k^{F}F_k $$
+
+$$ C^{\mathrm{op}}=\sum_t\omega_t\left(\sum_g m_gp_{g,t}
+   +\sum_k m_kf_{k,t}
+   +\sum_s m_s^{\mathrm{dis}}p_{s,t}^{\mathrm{dis}}\right) $$
+
+where the annualised coefficients $c$ follow the capital-recovery convention of
+Section 2.2.4, $m$ denotes marginal operating cost, $k$ indexes non-negative
+conversion links, and $\omega_t$ is the
+snapshot weight of Section 2.6. Terms disappear when the corresponding capacity
+is fixed or its marginal cost is zero. The dual
 variable of the nodal balance constraint is the planning shadow price at that
 node, and it is reported under that name throughout.
 
@@ -550,10 +585,12 @@ roughly a tenth; hydrogen is conventionally quoted on a lower heating value
 basis. Mixing them silently produces errors of the same order as the policy
 effects the model is built to study.
 
-Conversions between carriers are represented by links. A link draws $f$ from its
-input carrier and delivers $q = \eta f$ to its output carrier. The convention
+Conversions between carriers are represented by links. A link $k$ draws $f$
+from its input carrier and delivers $q = \eta f$ to its output carrier. The convention
 adopted here is that a link's capacity and its costs are expressed on the
 **input** side:
+
+$$ q_{k,t}=\eta_k f_{k,t} $$
 
 $$ 0 \le f \le F^{\text{in}}, \qquad F^{\text{in}} = F^{\text{out}}/\eta,
    \qquad c^{\text{in}} = \eta\, c^{\text{out}} $$
@@ -562,6 +599,18 @@ Either convention is defensible; what is not defensible is using both without
 saying so. Fixing the input side means that a capacity limit expressed in the
 units of the fuel consumed is directly comparable with the supply available at
 that bus.
+
+The electricity balance above then generalises to every carrier bus $b$. Define
+$a_{b,k}=-1$ at the input bus of conversion link $k$,
+$a_{b,k}=\eta_k$ at its output bus, and zero otherwise. Retaining $K_{b,l}$ for
+passive network branches, the carrier-conserving balance is
+
+$$ \sum_{g\in b}p_{g,t}
+   +\sum_{s\in b}\left(p_{s,t}^{\mathrm{dis}}-p_{s,t}^{\mathrm{ch}}\right)
+   +\sum_l K_{b,l}f_{l,t}+\sum_k a_{b,k}f_{k,t}=d_{b,t} $$
+
+This notation makes conversion losses explicit: one unit is withdrawn from the
+input bus and only $\eta_k$ units are injected at the output bus.
 
 The conversion efficiencies are as follows. Electrolysis delivers 0.7 MWh of
 hydrogen on a lower heating value basis per MWh of electricity. A heat pump
