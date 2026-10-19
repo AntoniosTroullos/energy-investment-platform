@@ -1,6 +1,0 @@
-name,capacity_mw_hhv,price_eur_per_mwh_hhv,price_basis,source_id
-Sidirokastro Entry Point,882.4,42.9,gas_HHV_commodity,MODEL/pypsa-greece/src/gas_market.py (DESFA design capacities; TYNDP 2024 commodity price)
-Kipi Entry Point,1000.0,42.9,gas_HHV_commodity,MODEL/pypsa-greece/src/gas_market.py (DESFA design capacities; TYNDP 2024 commodity price)
-Nea Mesimvria Entry Point,5916.7,42.9,gas_HHV_commodity,MODEL/pypsa-greece/src/gas_market.py (DESFA design capacities; TYNDP 2024 commodity price)
-Agia Triada Entry Point,6142.1,42.9,gas_HHV_commodity,MODEL/pypsa-greece/src/gas_market.py (DESFA design capacities; TYNDP 2024 commodity price)
-Amfitriti Entry Point,9125.8,42.9,gas_HHV_commodity,MODEL/pypsa-greece/src/gas_market.py (DESFA design capacities; TYNDP 2024 commodity price)
