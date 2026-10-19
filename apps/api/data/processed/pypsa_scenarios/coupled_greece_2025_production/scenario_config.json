@@ -1,0 +1,187 @@
+{
+  "scenario_id": "coupled_greece_2025_production",
+  "output_dir": "C:\\Users\\megas\\PycharmProjects\\pythonProject1\\data\\processed\\pypsa_scenarios\\coupled_greece_2025_production",
+  "overwrite_existing_artifacts": true,
+  "scenario_kind": "production",
+  "target_year": 2025,
+  "temporal_mode": "synthetic_expansion",
+  "hydrogen_target_mode": "final_demand",
+  "hydrogen_policy_mode": "grid",
+  "trade_direction_mode": "disabled",
+  "annual_hydrogen_target_mwh": 207557.26752,
+  "load_year": 2026,
+  "weather_year": 2026,
+  "snapshots_file": "C:\\Users\\megas\\PycharmProjects\\pythonProject1\\data\\processed\\pypsa_scenarios\\coupled_greece_2025_production\\inputs\\snapshots.csv",
+  "demand_boundary": {
+    "incremental_heat_excluded_from_electricity": true,
+    "residual_gas_included_sectors": [
+      "industry_cng"
+    ],
+    "residual_gas_excluded_sectors": [
+      "power",
+      "incremental_heat"
+    ]
+  },
+  "temporal_provenance": {
+    "source": "pypsa-greece generate_seasonal_snapshots.py monthly representative-day selection, weighted to 8760h/yr",
+    "source_url": null,
+    "publication_or_retrieval_date": "2026-09-30",
+    "geography": "Greece (national, 13-region model)",
+    "original_unit": "hour, weighted representative day",
+    "internal_unit": "hour",
+    "transformation": "12 real-weather monthly representative days (24h each), each weighted so annual weights sum to 8760h. Declared as synthetic_expansion, not a genuine observed hourly year and not a validated reduced chronology (no quantitative validation against a genuine 8760h reference has been performed for this case).",
+    "evidence_class": "derived"
+  },
+  "provenance": [
+    {
+      "source": "Greece NECP 2024 final update; ELSTAT 2023 SILC; DESFA 2025 consumption data (via eu_greece_energy_targets.csv)",
+      "source_url": null,
+      "publication_or_retrieval_date": "2026-09-30",
+      "geography": "Greece (national)",
+      "original_unit": "pct / TWh",
+      "internal_unit": "MWh_th",
+      "transformation": "total_heating_demand_today_twh() bridges ELSTAT's 2023 gas-heating population share and DESFA's 2025 gas-for-heating TWh estimate into one national heating total (heating_demand.py); distributed to snapshots with the real Eurostat-HDD shape and regionalised with the real Eurostat sector/seasonal proxy allocation (regional_allocation.py).",
+      "evidence_class": "derived"
+    },
+    {
+      "source": "DESFA public import-point documentation; ENTSO-E/ENTSOG TYNDP 2024 planning-basis gas price (via technology_costs.csv gas row)",
+      "source_url": null,
+      "publication_or_retrieval_date": "2026-09-30",
+      "geography": "Greece (5 real DESFA entry points)",
+      "original_unit": "Nm3/h and GWh/day (per point); EUR/MWh_th",
+      "internal_unit": "MWh_gas_HHV",
+      "transformation": "gas_market.py's real per-point capacity conversions; one national TYNDP commodity price applied uniformly (no point-specific price data exists).",
+      "evidence_class": "sourced"
+    },
+    {
+      "source": "Danish Energy Agency Technology Data (technology_costs.csv gas row, LHV basis) converted to HHV with the standard ~10% natural-gas GCV/NCV differential",
+      "source_url": null,
+      "publication_or_retrieval_date": "2026-09-30",
+      "geography": "EU average (not Greece-specific)",
+      "original_unit": "pct LHV efficiency; EUR/MWh_el VOM",
+      "internal_unit": "MWh_gas_HHV in / MWh_el out",
+      "transformation": "efficiency_HHV = 0.57 / 1.1 = 0.5182; VOM unchanged (5.74 EUR/MWh_el).",
+      "evidence_class": "derived"
+    },
+    {
+      "source": "IPCC 2006 Guidelines for National GHG Inventories, Vol.2 Ch.2 Table 2.2 (default natural gas CO2 factor, NCV basis)",
+      "source_url": null,
+      "publication_or_retrieval_date": "2026-09-30",
+      "geography": "global default (not Greece-specific)",
+      "original_unit": "tCO2/TJ (NCV)",
+      "internal_unit": "tCO2/MWh_gas_HHV",
+      "transformation": "56.1 tCO2/TJ * 3.6 / 1000 = 0.20196 tCO2/MWh (LHV); / 1.1 = 0.1836 tCO2/MWh (HHV).",
+      "evidence_class": "derived"
+    },
+    {
+      "source": "EU ETS carbon price, July 2026 point estimate (via technology_costs.csv gas/lignite rows; Trading Economics/IndexBox/carboncredits.com)",
+      "source_url": null,
+      "publication_or_retrieval_date": "2026-09-30",
+      "geography": "EU (not Greece-specific)",
+      "original_unit": "EUR/tCO2",
+      "internal_unit": "EUR/tCO2",
+      "transformation": "Reused unchanged.",
+      "evidence_class": "sourced"
+    },
+    {
+      "source": "IEA Hydrogen Production Projects Database (Operational / FID-Construction Greek projects)",
+      "source_url": null,
+      "publication_or_retrieval_date": "2026-09-30",
+      "geography": "Greece (3 real fixed electrolyzer sites)",
+      "original_unit": "MW electrical",
+      "internal_unit": "MW electrical",
+      "transformation": "hydrogen_market.py's IEA-only fixed-fleet filter; mapped to electricity region by point-in-polygon (coupled_inputs.map_electrolyzer_projects_to_regions).",
+      "evidence_class": "sourced"
+    },
+    {
+      "source": "Greece NECP 2024 final update (2030 electrolyzer capacity objective 231 MW and 2030 H2 production pilot target 0.92 TWh, divided to an implied utilization factor)",
+      "source_url": null,
+      "publication_or_retrieval_date": "2026-09-30",
+      "geography": "Greece (national)",
+      "original_unit": "MW, TWh",
+      "internal_unit": "fraction (capacity factor)",
+      "transformation": "hydrogen_target_mwh = real fixed fleet capacity_mw * NECP-implied utilization (0.4546) * 8760h. This demonstration run sizes non-heating H2 final demand at the real fleet's realistic output under the NECP's own implied utilization, not an independently invented target.",
+      "evidence_class": "scenario_assumption"
+    },
+    {
+      "source": "Non-binding heat-technology candidate envelope: 3.0x each region's own peak real incremental heat demand",
+      "source_url": null,
+      "publication_or_retrieval_date": "2026-09-30",
+      "geography": "Greece (13 electricity regions)",
+      "original_unit": "MW (derived from the regional heat-load table)",
+      "internal_unit": "MW",
+      "transformation": "Not an independently sourced technology-deployment-potential figure -- a scenario_assumption sizing envelope so the LP is never artificially capacity-constrained.",
+      "evidence_class": "scenario_assumption"
+    }
+  ],
+  "system": {
+    "carbon_price_eur_per_tonne": 80.0,
+    "gas_emission_factor_tco2_per_mwh_hhv": 0.1836,
+    "electrolyzer_investment": {
+      "enabled": false
+    }
+  },
+  "production_inputs": {
+    "electricity_config": "C:\\Users\\megas\\PycharmProjects\\pythonProject1\\data\\processed\\pypsa_scenarios\\mid_2026_monthly_days\\config.yaml",
+    "incremental_heat_load": "C:\\Users\\megas\\PycharmProjects\\pythonProject1\\data\\processed\\pypsa_scenarios\\coupled_greece_2025_production\\inputs\\incremental_heat_load.csv",
+    "gas_supply": "C:\\Users\\megas\\PycharmProjects\\pythonProject1\\data\\processed\\pypsa_scenarios\\coupled_greece_2025_production\\inputs\\gas_supply.csv",
+    "gas_plant_parameters": "C:\\Users\\megas\\PycharmProjects\\pythonProject1\\data\\processed\\pypsa_scenarios\\coupled_greece_2025_production\\inputs\\gas_plant_parameters.csv",
+    "residual_gas_load": "C:\\Users\\megas\\PycharmProjects\\pythonProject1\\data\\processed\\pypsa_scenarios\\coupled_greece_2025_production\\inputs\\residual_gas_load.csv",
+    "electrolyzer_sites": "C:\\Users\\megas\\PycharmProjects\\pythonProject1\\data\\processed\\pypsa_scenarios\\coupled_greece_2025_production\\inputs\\electrolyzer_sites.csv",
+    "hydrogen_load": "C:\\Users\\megas\\PycharmProjects\\pythonProject1\\data\\processed\\pypsa_scenarios\\coupled_greece_2025_production\\inputs\\hydrogen_load.csv",
+    "heat_investment": {
+      "heat_pump_output_max_mw": {
+        "Attica": 21701.0,
+        "Central_Greece": 3499.85,
+        "Central_Macedonia": 8991.43,
+        "Crete": 3271.46,
+        "Eastern_Macedonia_Thrace": 2881.47,
+        "Epirus": 1671.2,
+        "Ionian_Islands": 1084.2,
+        "North_Aegean": 1004.31,
+        "Peloponnese": 3262.89,
+        "South_Aegean": 1809.87,
+        "Thessaly": 3654.92,
+        "Western_Greece": 3077.46,
+        "Western_Macedonia": 1473.15
+      },
+      "gas_boiler_output_max_mw": {
+        "Attica": 21701.0,
+        "Central_Greece": 3499.85,
+        "Central_Macedonia": 8991.43,
+        "Crete": 3271.46,
+        "Eastern_Macedonia_Thrace": 2881.47,
+        "Epirus": 1671.2,
+        "Ionian_Islands": 1084.2,
+        "North_Aegean": 1004.31,
+        "Peloponnese": 3262.89,
+        "South_Aegean": 1809.87,
+        "Thessaly": 3654.92,
+        "Western_Greece": 3077.46,
+        "Western_Macedonia": 1473.15
+      },
+      "hydrogen_boiler_output_max_mw": {
+        "Attica": 21701.0,
+        "Central_Greece": 3499.85,
+        "Central_Macedonia": 8991.43,
+        "Crete": 3271.46,
+        "Eastern_Macedonia_Thrace": 2881.47,
+        "Epirus": 1671.2,
+        "Ionian_Islands": 1084.2,
+        "North_Aegean": 1004.31,
+        "Peloponnese": 3262.89,
+        "South_Aegean": 1809.87,
+        "Thessaly": 3654.92,
+        "Western_Greece": 3077.46,
+        "Western_Macedonia": 1473.15
+      }
+    }
+  },
+  "solver": {
+    "name": "highs",
+    "options": {
+      "primal_feasibility_tolerance": 1e-10,
+      "dual_feasibility_tolerance": 1e-10
+    }
+  }
+}

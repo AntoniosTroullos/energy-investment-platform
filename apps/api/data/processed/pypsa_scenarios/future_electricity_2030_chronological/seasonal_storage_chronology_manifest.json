@@ -1,0 +1,328 @@
+{
+  "method": "exact_calendar_expansion_of_monthly_representative_days",
+  "year": 2030,
+  "source_weighted_hours": 8760.0,
+  "expanded_hours": 8760,
+  "monthly_days": {
+    "1": 31,
+    "2": 28,
+    "3": 31,
+    "4": 30,
+    "5": 31,
+    "6": 30,
+    "7": 31,
+    "8": 31,
+    "9": 30,
+    "10": 31,
+    "11": 30,
+    "12": 31
+  },
+  "energy_validation": {
+    "load.csv": -6.984919309616089e-10,
+    "solar_pu_regional.csv": 6.821210263296962e-13,
+    "wind_pu_regional.csv": -2.7711166694643907e-13,
+    "hydro_pu.csv": -9.094947017729282e-13
+  },
+  "energy_validation_details": {
+    "load.csv": {
+      "passed": true,
+      "columns": {
+        "Attica": {
+          "source": 18382407.26658818,
+          "target": 18382407.26658818,
+          "difference": 0.0,
+          "tolerance": 0.018382407266588182,
+          "passed": true
+        },
+        "Central_Greece": {
+          "source": 3059209.7059067683,
+          "target": 3059209.7059067683,
+          "difference": 0.0,
+          "tolerance": 0.0030592097059067686,
+          "passed": true
+        },
+        "Central_Macedonia": {
+          "source": 8049164.816070242,
+          "target": 8049164.816070241,
+          "difference": -9.313225746154785e-10,
+          "tolerance": 0.008049164816070242,
+          "passed": true
+        },
+        "Crete": {
+          "source": 3485445.8865694683,
+          "target": 3485445.8865694692,
+          "difference": 9.313225746154785e-10,
+          "tolerance": 0.0034854458865694687,
+          "passed": true
+        },
+        "Eastern_Macedonia_Thrace": {
+          "source": 2569272.5947328983,
+          "target": 2569272.594732898,
+          "difference": -4.656612873077393e-10,
+          "tolerance": 0.0025692725947328984,
+          "passed": true
+        },
+        "Epirus": {
+          "source": 1460762.2570443347,
+          "target": 1460762.2570443344,
+          "difference": -2.3283064365386963e-10,
+          "tolerance": 0.0014607622570443348,
+          "passed": true
+        },
+        "Ionian_Islands": {
+          "source": 1292680.345511402,
+          "target": 1292680.345511402,
+          "difference": 0.0,
+          "tolerance": 0.001292680345511402,
+          "passed": true
+        },
+        "North_Aegean": {
+          "source": 922798.1907467255,
+          "target": 922798.1907467255,
+          "difference": 0.0,
+          "tolerance": 0.0009227981907467256,
+          "passed": true
+        },
+        "Peloponnese": {
+          "source": 2958614.7535254844,
+          "target": 2958614.753525484,
+          "difference": -4.656612873077393e-10,
+          "tolerance": 0.0029586147535254847,
+          "passed": true
+        },
+        "South_Aegean": {
+          "source": 2335868.318028592,
+          "target": 2335868.318028592,
+          "difference": 0.0,
+          "tolerance": 0.0023358683180285922,
+          "passed": true
+        },
+        "Thessaly": {
+          "source": 3298689.7203750927,
+          "target": 3298689.720375093,
+          "difference": 4.656612873077393e-10,
+          "tolerance": 0.003298689720375093,
+          "passed": true
+        },
+        "Western_Greece": {
+          "source": 2737890.681078286,
+          "target": 2737890.681078286,
+          "difference": 0.0,
+          "tolerance": 0.002737890681078286,
+          "passed": true
+        },
+        "Western_Macedonia": {
+          "source": 1341274.0029237047,
+          "target": 1341274.0029237047,
+          "difference": 0.0,
+          "tolerance": 0.0013412740029237048,
+          "passed": true
+        }
+      }
+    },
+    "solar_pu_regional.csv": {
+      "passed": true,
+      "columns": {
+        "Attica": {
+          "source": 1816.2399999999998,
+          "target": 1816.2400000000002,
+          "difference": 4.547473508864641e-13,
+          "tolerance": 1.81624e-06,
+          "passed": true
+        },
+        "Central_Greece": {
+          "source": 1713.938611111111,
+          "target": 1713.938611111111,
+          "difference": 0.0,
+          "tolerance": 1.713938611111111e-06,
+          "passed": true
+        },
+        "Central_Macedonia": {
+          "source": 1670.6049999999998,
+          "target": 1670.605,
+          "difference": 2.2737367544323206e-13,
+          "tolerance": 1.6706049999999999e-06,
+          "passed": true
+        },
+        "Crete": {
+          "source": 1873.4131944444443,
+          "target": 1873.4131944444443,
+          "difference": 0.0,
+          "tolerance": 1.8734131944444445e-06,
+          "passed": true
+        },
+        "Eastern_Macedonia_Thrace": {
+          "source": 1612.4888888888886,
+          "target": 1612.4888888888886,
+          "difference": 0.0,
+          "tolerance": 1.6124888888888886e-06,
+          "passed": true
+        },
+        "Epirus": {
+          "source": 1687.7295833333333,
+          "target": 1687.729583333333,
+          "difference": -2.2737367544323206e-13,
+          "tolerance": 1.6877295833333333e-06,
+          "passed": true
+        },
+        "Ionian_Islands": {
+          "source": 1789.148888888889,
+          "target": 1789.148888888889,
+          "difference": 0.0,
+          "tolerance": 1.789148888888889e-06,
+          "passed": true
+        },
+        "North_Aegean": {
+          "source": 1893.7112499999998,
+          "target": 1893.71125,
+          "difference": 2.2737367544323206e-13,
+          "tolerance": 1.89371125e-06,
+          "passed": true
+        },
+        "Peloponnese": {
+          "source": 1839.681111111111,
+          "target": 1839.681111111111,
+          "difference": 0.0,
+          "tolerance": 1.8396811111111112e-06,
+          "passed": true
+        },
+        "South_Aegean": {
+          "source": 1957.383472222222,
+          "target": 1957.3834722222223,
+          "difference": 2.2737367544323206e-13,
+          "tolerance": 1.9573834722222223e-06,
+          "passed": true
+        },
+        "Thessaly": {
+          "source": 1717.6291666666666,
+          "target": 1717.6291666666664,
+          "difference": -2.2737367544323206e-13,
+          "tolerance": 1.7176291666666668e-06,
+          "passed": true
+        },
+        "Western_Greece": {
+          "source": 1820.9140277777774,
+          "target": 1820.9140277777774,
+          "difference": 0.0,
+          "tolerance": 1.8209140277777776e-06,
+          "passed": true
+        },
+        "Western_Macedonia": {
+          "source": 1704.6412499999997,
+          "target": 1704.6412499999997,
+          "difference": 0.0,
+          "tolerance": 1.7046412499999999e-06,
+          "passed": true
+        }
+      }
+    },
+    "wind_pu_regional.csv": {
+      "passed": true,
+      "columns": {
+        "Attica": {
+          "source": 581.4059164230347,
+          "target": 581.4059164230348,
+          "difference": 1.1368683772161603e-13,
+          "tolerance": 1e-06,
+          "passed": true
+        },
+        "Central_Greece": {
+          "source": 112.04977687662398,
+          "target": 112.04977687662398,
+          "difference": 0.0,
+          "tolerance": 1e-06,
+          "passed": true
+        },
+        "Central_Macedonia": {
+          "source": 185.6216453155842,
+          "target": 185.62164531558423,
+          "difference": 2.842170943040401e-14,
+          "tolerance": 1e-06,
+          "passed": true
+        },
+        "Crete": {
+          "source": 72.57498541798716,
+          "target": 72.57498541798718,
+          "difference": 1.4210854715202004e-14,
+          "tolerance": 1e-06,
+          "passed": true
+        },
+        "Eastern_Macedonia_Thrace": {
+          "source": 368.083545439264,
+          "target": 368.083545439264,
+          "difference": 0.0,
+          "tolerance": 1e-06,
+          "passed": true
+        },
+        "Epirus": {
+          "source": 15.267155314185569,
+          "target": 15.267155314185569,
+          "difference": 0.0,
+          "tolerance": 1e-06,
+          "passed": true
+        },
+        "Ionian_Islands": {
+          "source": 1487.982760620449,
+          "target": 1487.982760620449,
+          "difference": 0.0,
+          "tolerance": 1.487982760620449e-06,
+          "passed": true
+        },
+        "North_Aegean": {
+          "source": 1178.5059085260373,
+          "target": 1178.5059085260373,
+          "difference": 0.0,
+          "tolerance": 1.1785059085260374e-06,
+          "passed": true
+        },
+        "Peloponnese": {
+          "source": 31.777725136572528,
+          "target": 31.77772513657252,
+          "difference": -7.105427357601002e-15,
+          "tolerance": 1e-06,
+          "passed": true
+        },
+        "South_Aegean": {
+          "source": 3425.8069575547634,
+          "target": 3425.806957554763,
+          "difference": -4.547473508864641e-13,
+          "tolerance": 3.4258069575547634e-06,
+          "passed": true
+        },
+        "Thessaly": {
+          "source": 165.9946364144772,
+          "target": 165.99463641447727,
+          "difference": 5.684341886080802e-14,
+          "tolerance": 1e-06,
+          "passed": true
+        },
+        "Western_Greece": {
+          "source": 287.44723061021904,
+          "target": 287.44723061021904,
+          "difference": 0.0,
+          "tolerance": 1e-06,
+          "passed": true
+        },
+        "Western_Macedonia": {
+          "source": 130.85051082581955,
+          "target": 130.85051082581953,
+          "difference": -2.842170943040401e-14,
+          "tolerance": 1e-06,
+          "passed": true
+        }
+      }
+    },
+    "hydro_pu.csv": {
+      "passed": true,
+      "columns": {
+        "pu": {
+          "source": 3941.9999999999995,
+          "target": 3941.9999999999986,
+          "difference": -9.094947017729282e-13,
+          "tolerance": 3.942e-06,
+          "passed": true
+        }
+      }
+    }
+  }
+}

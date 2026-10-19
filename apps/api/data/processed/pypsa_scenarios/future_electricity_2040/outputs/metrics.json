@@ -1,0 +1,195 @@
+{
+  "installed_capacity_by_carrier_mw": {
+    "gas": 12040.0,
+    "hydro": 2020.0,
+    "lignite": 1900.0,
+    "solar": 8920.0,
+    "wind": 7970.0
+  },
+  "peak_load_by_bus_mw": {
+    "Attica": 3478.5,
+    "Central_Greece": 577.0,
+    "Central_Macedonia": 1599.6,
+    "Crete": 759.8,
+    "Eastern_Macedonia_Thrace": 504.7,
+    "Epirus": 279.5,
+    "Ionian_Islands": 330.9,
+    "North_Aegean": 189.0,
+    "Peloponnese": 576.9,
+    "South_Aegean": 568.6,
+    "Thessaly": 644.4,
+    "Western_Greece": 530.7,
+    "Western_Macedonia": 259.0
+  },
+  "total_load_by_bus_mwh": {
+    "Attica": 20209404.3,
+    "Central_Greece": 3363033.7,
+    "Central_Macedonia": 8846661.9,
+    "Crete": 3827733.3,
+    "Eastern_Macedonia_Thrace": 2823996.0,
+    "Epirus": 1605764.8,
+    "Ionian_Islands": 1418400.1,
+    "North_Aegean": 1014056.6,
+    "Peloponnese": 3251864.7,
+    "South_Aegean": 2562960.5,
+    "Thessaly": 3625599.4,
+    "Western_Greece": 3009484.0,
+    "Western_Macedonia": 1474221.3
+  },
+  "optimized_capacity_by_carrier_mw": {
+    "gas": 12040.0,
+    "hydro": 2020.0,
+    "lignite": 1900.0,
+    "solar": 13472.0,
+    "wind": 9020.0
+  },
+  "generation_by_carrier_mwh": {
+    "gas": 22582965.0,
+    "hydro": 6129547.3,
+    "lignite": 0.0,
+    "solar": 22011356.4,
+    "wind": 6333872.3
+  },
+  "generation_by_bus_mwh": {
+    "Attica": 9148154.8,
+    "Central_Greece": 4696821.8,
+    "Central_Macedonia": 5368682.4,
+    "Crete": 4838238.8,
+    "Eastern_Macedonia_Thrace": 3752418.5,
+    "Epirus": 2001809.3,
+    "Ionian_Islands": 1087252.8,
+    "North_Aegean": 2168086.0,
+    "Peloponnese": 7033588.9,
+    "South_Aegean": 7402151.6,
+    "Thessaly": 3857481.0,
+    "Western_Greece": 2719770.9,
+    "Western_Macedonia": 2983284.5
+  },
+  "average_marginal_price_by_bus": {
+    "Attica": 81.62,
+    "Central_Macedonia": 81.62,
+    "Western_Macedonia": 81.62,
+    "Eastern_Macedonia_Thrace": 81.62,
+    "Epirus": 81.62,
+    "Thessaly": 81.62,
+    "Western_Greece": 81.62,
+    "Central_Greece": 81.62,
+    "Ionian_Islands": 81.62,
+    "Peloponnese": 81.62,
+    "North_Aegean": 81.62,
+    "South_Aegean": 81.49,
+    "Crete": 81.56
+  },
+  "capacity_factor_by_generator": {
+    "Attica_solar": 0.189,
+    "Attica_wind": 0.058,
+    "Attica_gas": 0.167,
+    "Attica_hydro": 0.344,
+    "Central_Macedonia_solar": 0.138,
+    "Central_Macedonia_wind": 0.017,
+    "Central_Macedonia_gas": 0.254,
+    "Central_Macedonia_hydro": 0.343,
+    "Western_Macedonia_solar": 0.139,
+    "Western_Macedonia_wind": 0.013,
+    "Western_Macedonia_gas": 0.216,
+    "Western_Macedonia_hydro": 0.342,
+    "Western_Macedonia_lignite": 0.0,
+    "Eastern_Macedonia_Thrace_solar": 0.184,
+    "Eastern_Macedonia_Thrace_wind": 0.037,
+    "Eastern_Macedonia_Thrace_gas": 0.193,
+    "Eastern_Macedonia_Thrace_hydro": 0.347,
+    "Epirus_solar": 0.193,
+    "Epirus_wind": 0.001,
+    "Epirus_hydro": 0.348,
+    "Thessaly_solar": 0.191,
+    "Thessaly_wind": 0.018,
+    "Thessaly_gas": 0.229,
+    "Thessaly_hydro": 0.346,
+    "Western_Greece_solar": 0.203,
+    "Western_Greece_wind": 0.027,
+    "Western_Greece_hydro": 0.345,
+    "Central_Greece_solar": 0.194,
+    "Central_Greece_wind": 0.009,
+    "Central_Greece_gas": 0.245,
+    "Central_Greece_hydro": 0.347,
+    "Ionian_Islands_solar": 0.204,
+    "Ionian_Islands_wind": 0.139,
+    "Ionian_Islands_gas": 0.257,
+    "Peloponnese_solar": 0.161,
+    "Peloponnese_wind": 0.003,
+    "Peloponnese_gas": 0.255,
+    "Peloponnese_hydro": 0.346,
+    "Peloponnese_lignite": 0.0,
+    "North_Aegean_solar": 0.216,
+    "North_Aegean_wind": 0.112,
+    "North_Aegean_gas": 0.256,
+    "South_Aegean_solar": 0.221,
+    "South_Aegean_wind": 0.323,
+    "South_Aegean_gas": 0.208,
+    "Crete_solar": 0.211,
+    "Crete_wind": 0.007,
+    "Crete_gas": 0.216,
+    "Crete_hydro": 0.342
+  },
+  "curtailment_by_carrier_mwh": {
+    "hydro": 1855108.7,
+    "solar": 2243210.8,
+    "wind": 1282125.0
+  },
+  "technology_summary": {
+    "gas": {
+      "installed_capacity_mw": 12040.0,
+      "optimized_capacity_mw": 12040.0,
+      "generation_mwh": 22582965.0,
+      "capacity_factor": 0.214
+    },
+    "hydro": {
+      "installed_capacity_mw": 2020.0,
+      "optimized_capacity_mw": 2020.0,
+      "generation_mwh": 6129547.3,
+      "capacity_factor": 0.345
+    },
+    "lignite": {
+      "installed_capacity_mw": 1900.0,
+      "optimized_capacity_mw": 1900.0,
+      "generation_mwh": 0.0,
+      "capacity_factor": 0.0
+    },
+    "solar": {
+      "installed_capacity_mw": 8920.0,
+      "optimized_capacity_mw": 13472.0,
+      "generation_mwh": 22011356.4,
+      "capacity_factor": 0.186
+    },
+    "wind": {
+      "installed_capacity_mw": 7970.0,
+      "optimized_capacity_mw": 9020.0,
+      "generation_mwh": 6333872.3,
+      "capacity_factor": 0.08
+    }
+  },
+  "storage_discharge_by_unit_mwh": {
+    "Attica_battery": 29934.0,
+    "Central_Macedonia_battery": 14953.3,
+    "Western_Macedonia_battery": 15673.2,
+    "Peloponnese_battery": 12849.8,
+    "Crete_battery": 10681.0,
+    "South_Aegean_battery": 6392.2
+  },
+  "storage_charge_by_unit_mwh": {
+    "Attica_battery": 37720.4,
+    "Central_Macedonia_battery": 18899.7,
+    "Western_Macedonia_battery": 20624.5,
+    "Peloponnese_battery": 16199.7,
+    "Crete_battery": 13499.8,
+    "South_Aegean_battery": 8099.9
+  },
+  "storage_final_state_of_charge_mwh": {
+    "Attica_battery": -0.0,
+    "Central_Macedonia_battery": -0.0,
+    "Western_Macedonia_battery": -0.0,
+    "Peloponnese_battery": -0.0,
+    "Crete_battery": -0.0,
+    "South_Aegean_battery": -0.0
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "contract_name": "pypsa-greece-scenario-artifact",
+  "contract_version": "1.0.0",
+  "artifact_id": "clustered_mid_2026_monthly_days",
+  "created_at_utc": "2026-10-02T18:45:39.721236+00:00",
+  "scenario": {
+    "name": "clustered_mid_2026_monthly_days",
+    "target_year": 2026,
+    "purpose": "capacity_expansion",
+    "representation_type": "weighted_representative_year",
+    "snapshot_count": 288,
+    "calendar_hours": 8760,
+    "period_structure": "12_monthly_representative_days_12x24",
+    "chronological": false
+  },
+  "time": {
+    "resolution": "1h",
+    "timezone": "UTC",
+    "snapshot_count": 288,
+    "weighted_hours": 8760.0,
+    "calendar_hours": 8760,
+    "chronological": false,
+    "period_structure": "12_monthly_representative_days_12x24",
+    "weight_semantics": "hours_represented_by_snapshot"
+  },
+  "inputs": [
+    {
+      "path": "config.yaml",
+      "bytes": 1737,
+      "sha256": "c881103776acc8ef58d078b82a8e31a0441d8c33404f45e9a07d5dcbaf3beb0d",
+      "role": "config",
+      "source_class": "derived"
+    },
+    {
+      "path": "inputs/snapshots.csv",
+      "bytes": 6352,
+      "sha256": "af53c58b36fc10b98d22d622fe81c71cf2d57fb5d616df265dff04bfafc1942d",
+      "role": "snapshots",
+      "source_class": "derived"
+    },
+    {
+      "path": "inputs/hydro_pu.csv",
+      "bytes": 10668,
+      "sha256": "961b34fb4aeba44a3905cf470bb17ba22bbfa7770248e9f5ee92675c689b4862",
+      "role": "profile",
+      "source_class": "derived"
+    },
+    {
+      "path": "inputs/solar_pu_clustered.csv",
+      "bytes": 184858,
+      "sha256": "7453a3e25412e240c72908ae98b540356ec259f8bf43ab4128ac8cf6d9530ff1",
+      "role": "profile",
+      "source_class": "derived"
+    },
+    {
+      "path": "inputs/wind_pu_clustered.csv",
+      "bytes": 244599,
+      "sha256": "b69e8b6729e09bea3b64430ddf3242658fd95b52564ed7be96cd226a49955f55",
+      "role": "profile",
+      "source_class": "derived"
+    },
+    {
+      "path": "inputs/load.csv",
+      "bytes": 73698,
+      "sha256": "e6589f221e82921cb7ecef9cbc59215e0199a80775e548a1128e2a7c2a7605ba",
+      "role": "load",
+      "source_class": "derived"
+    }
+  ],
+  "transformations": [
+    {
+      "algorithm": "monthly_representative_days",
+      "version": "1.0",
+      "parameters": {}
+    }
+  ],
+  "fallbacks": [],
+  "model": {
+    "base_config": "C:\\Users\\megas\\PycharmProjects\\pythonProject1\\data\\processed\\pypsa_scenarios\\clustered_mid_2026_monthly_days\\config.yaml"
+  },
+  "solver": {
+    "status": "solved",
+    "message": "Solver returned status=ok, termination_condition=optimal."
+  },
+  "validation": {
+    "weighted_hours": 8760.0,
+    "structural_issues": []
+  },
+  "outputs": [
+    {
+      "path": "scenario_result.json",
+      "bytes": 16655,
+      "sha256": "5ca8efdc8d5636d9da83ae19bdc4f521bd0a3d05e4ac8abee4517ae972dd91f8",
+      "role": "output",
+      "source_class": "derived"
+    }
+  ],
+  "warnings": [
+    "Re-solved 2026-10-02 against the corrected/calibrated wind availability series."
+  ],
+  "artifact_content_hash": "4f84f841a3108b9c0a72e135fe7952d70c1062bdca4ce140eba18ccaa6214ffd",
+  "manifest_hash": "9108e5d71360b3b7bc1735a3b23487b9a665e0bed49534d1ea3ebd4192132af5"
+}

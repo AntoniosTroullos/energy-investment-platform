@@ -16,6 +16,12 @@ nothing changes unless an override is set:
                          linopy, highspy and xgboost all importable together)
     API_CORS_ORIGINS     comma-separated browser origins allowed to call the API
                          (default: the local Next.js dev server on :3000)
+
+On a machine without the sibling project (e.g. a deployed server), scenario
+results fall back to the read-only snapshot bundled at
+apps/api/data/processed/pypsa_scenarios. That snapshot has no live solver
+behind it, so routes that trigger a new solve still fail there -- only
+previously-computed results are servable from it.
 """
 
 from __future__ import annotations
@@ -64,13 +70,19 @@ def load_settings(environ: Mapping[str, str] | None = None) -> Settings:
         pypsa_greece_root / ".venv314" / _VENV_PYTHON_RELATIVE
     )
 
+    scenario_root = project_root / "data" / "processed" / "pypsa_scenarios"
+    if not scenario_root.exists():
+        bundled_scenario_root = Path(__file__).resolve().parent.parent / "data" / "processed" / "pypsa_scenarios"
+        if bundled_scenario_root.exists():
+            scenario_root = bundled_scenario_root
+
     return Settings(
         pypsa_project_root=project_root,
         pypsa_greece_root=pypsa_greece_root,
         pypsa_python=pypsa_python,
         run_multiyear_script=project_root / "scripts" / "run_multiyear_electricity.py",
         run_coupled_script=project_root / "scripts" / "build_and_solve_coupled_year.py",
-        scenario_root=project_root / "data" / "processed" / "pypsa_scenarios",
+        scenario_root=scenario_root,
         cors_origins=_parse_origins(env.get(ENV_CORS_ORIGINS)),
     )
 

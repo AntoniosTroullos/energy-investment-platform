@@ -1,0 +1,28 @@
+project_name: PyPSA Greece (real-generator clustered)
+snapshots:
+  start: 2026-01-01 00:00
+  periods: 24
+  freq: h
+planning:
+  representative_days_per_year: 1
+  cyclic_storage: true
+paths:
+  buses: data/static/buses_clustered.csv
+  generators: data/static/generators_clustered.csv
+  storage_units: data/static/storage_units_clustered.csv
+  lines: data/static/lines_clustered.csv
+  snapshots: ../data/processed/pypsa_scenarios/clustered_long_2026_seasonal_weeks/inputs/snapshots.csv
+  load: ../data/processed/pypsa_scenarios/clustered_long_2026_seasonal_weeks/inputs/load.csv
+  solar_pu: ../data/processed/pypsa_scenarios/clustered_long_2026_seasonal_weeks/inputs/solar_pu_clustered.csv
+  wind_pu: ../data/processed/pypsa_scenarios/clustered_long_2026_seasonal_weeks/inputs/wind_pu_clustered.csv
+  hydro_pu: ../data/processed/pypsa_scenarios/clustered_long_2026_seasonal_weeks/inputs/hydro_pu.csv
+solver:
+  name: highs
+output:
+  network_file: ../data/processed/pypsa_scenarios/clustered_long_2026_seasonal_weeks/outputs/network.nc
+  summary_file: ../data/processed/pypsa_scenarios/clustered_long_2026_seasonal_weeks/outputs/summary.txt
+  storage_timeseries_file: ../data/processed/pypsa_scenarios/clustered_long_2026_seasonal_weeks/outputs/storage_timeseries.csv
+  metrics_file: ../data/processed/pypsa_scenarios/clustered_long_2026_seasonal_weeks/outputs/metrics.json
+  generation_by_carrier_file: ../data/processed/pypsa_scenarios/clustered_long_2026_seasonal_weeks/outputs/generation_by_carrier.csv
+  regional_prices_file: ../data/processed/pypsa_scenarios/clustered_long_2026_seasonal_weeks/outputs/regional_prices.csv
+  capacity_factors_file: ../data/processed/pypsa_scenarios/clustered_long_2026_seasonal_weeks/outputs/capacity_factors.csv

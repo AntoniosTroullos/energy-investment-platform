@@ -1,0 +1,77 @@
+{
+  "accepted": true,
+  "scenario_id": "coupled_greece_2025_production",
+  "objective_eur_per_year": 4254905347.112387,
+  "metrics": {
+    "hydrogen_policy_label": "grid_electrolysis",
+    "emissions_factor_method": null,
+    "planning_shadow_price_eur_per_mwh_by_bus": {
+      "Attica": 79.55075097582701,
+      "Central_Macedonia": 79.55075097582701,
+      "Western_Macedonia": 79.55075097582701,
+      "Eastern_Macedonia_Thrace": 79.55075097582701,
+      "Epirus": 79.55075097582701,
+      "Thessaly": 79.55075097582701,
+      "Western_Greece": 79.55075097582701,
+      "Central_Greece": 79.55075097582701,
+      "Ionian_Islands": 79.55075097582701,
+      "Peloponnese": 79.55075097582701,
+      "North_Aegean": 74.05309534638177,
+      "South_Aegean": 70.27094569962203,
+      "Crete": 80.53624622458852,
+      "Greece_Gas": 43.58820039074189,
+      "Greece_H2": 118.7255553305812,
+      "Attica_Heat": 28.504414069866815,
+      "Central_Macedonia_Heat": 28.504414069866815,
+      "Western_Macedonia_Heat": 28.504414069866815,
+      "Eastern_Macedonia_Thrace_Heat": 28.504414069866815,
+      "Epirus_Heat": 28.504414069866815,
+      "Thessaly_Heat": 28.504414069866815,
+      "Western_Greece_Heat": 28.504414069866815,
+      "Central_Greece_Heat": 28.504414069866815,
+      "Ionian_Islands_Heat": 28.504414069866815,
+      "Peloponnese_Heat": 28.504414069866815,
+      "North_Aegean_Heat": 28.000171831702048,
+      "South_Aegean_Heat": 27.395532344158593,
+      "Crete_Heat": 28.504414069866815
+    },
+    "capacity_input_mw_by_carrier": {
+      "gas": 23067.0,
+      "hydro": 2020.0,
+      "lignite": 1900.0,
+      "solar": 8920.0,
+      "wind": 11300.0,
+      "electrolysis": 52.12,
+      "gas_boiler": 20397.091103415947,
+      "gas_to_power": 23234.27248166731,
+      "heat_pump": 48.977358835551556,
+      "hydrogen_boiler": 12.790248
+    },
+    "capacity_output_mw_by_carrier": {
+      "gas": 23067.0,
+      "hydro": 2020.0,
+      "lignite": 1900.0,
+      "solar": 8920.0,
+      "wind": 11300.0,
+      "electrolysis": 36.484,
+      "gas_boiler": 18969.29472617683,
+      "gas_to_power": 12040.0,
+      "heat_pump": 146.93207650665465,
+      "hydrogen_boiler": 11.5112232
+    },
+    "cost_ledger_eur": {
+      "generator_variable": 3283981673.033404,
+      "link_variable": 242809275.87031528,
+      "generator_capital": 451548000.0,
+      "link_capital": 276566398.2086589
+    },
+    "emissions_ledger_tco2": {
+      "generators": 13490058.359810624,
+      "links": 0.0
+    },
+    "total_cost_eur": 4254905347.112378,
+    "total_emissions_tco2": 13490058.359810624,
+    "total_demand_mwh": 106954818.6392166
+  },
+  "investment_cost_report_file": null
+}

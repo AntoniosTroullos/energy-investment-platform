@@ -1,0 +1,12 @@
+generator,efficiency_hhv,variable_om_eur_per_mwh_el,emission_factor_tco2_per_mwh_hhv,source_id
+Attica_gas,0.5182,5.74,0.1836,"DEA Technology Data (technology_costs.csv gas row) + IPCC 2006 Guidelines Vol.2 Ch.2 Table 2.2, HHV-converted"
+Central_Macedonia_gas,0.5182,5.74,0.1836,"DEA Technology Data (technology_costs.csv gas row) + IPCC 2006 Guidelines Vol.2 Ch.2 Table 2.2, HHV-converted"
+Western_Macedonia_gas,0.5182,5.74,0.1836,"DEA Technology Data (technology_costs.csv gas row) + IPCC 2006 Guidelines Vol.2 Ch.2 Table 2.2, HHV-converted"
+Eastern_Macedonia_Thrace_gas,0.5182,5.74,0.1836,"DEA Technology Data (technology_costs.csv gas row) + IPCC 2006 Guidelines Vol.2 Ch.2 Table 2.2, HHV-converted"
+Thessaly_gas,0.5182,5.74,0.1836,"DEA Technology Data (technology_costs.csv gas row) + IPCC 2006 Guidelines Vol.2 Ch.2 Table 2.2, HHV-converted"
+Central_Greece_gas,0.5182,5.74,0.1836,"DEA Technology Data (technology_costs.csv gas row) + IPCC 2006 Guidelines Vol.2 Ch.2 Table 2.2, HHV-converted"
+Ionian_Islands_gas,0.5182,5.74,0.1836,"DEA Technology Data (technology_costs.csv gas row) + IPCC 2006 Guidelines Vol.2 Ch.2 Table 2.2, HHV-converted"
+Peloponnese_gas,0.5182,5.74,0.1836,"DEA Technology Data (technology_costs.csv gas row) + IPCC 2006 Guidelines Vol.2 Ch.2 Table 2.2, HHV-converted"
+North_Aegean_gas,0.5182,5.74,0.1836,"DEA Technology Data (technology_costs.csv gas row) + IPCC 2006 Guidelines Vol.2 Ch.2 Table 2.2, HHV-converted"
+South_Aegean_gas,0.5182,5.74,0.1836,"DEA Technology Data (technology_costs.csv gas row) + IPCC 2006 Guidelines Vol.2 Ch.2 Table 2.2, HHV-converted"
+Crete_gas,0.5182,5.74,0.1836,"DEA Technology Data (technology_costs.csv gas row) + IPCC 2006 Guidelines Vol.2 Ch.2 Table 2.2, HHV-converted"

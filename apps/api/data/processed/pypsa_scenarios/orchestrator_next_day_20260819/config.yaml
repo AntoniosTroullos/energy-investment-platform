@@ -1,0 +1,28 @@
+project_name: PyPSA Greece
+snapshots:
+  start: 2026-01-01 00:00
+  periods: 24
+  freq: h
+planning:
+  representative_days_per_year: 1
+  cyclic_storage: true
+paths:
+  buses: data/static/buses.csv
+  generators: data/static/generators.csv
+  storage_units: data/static/storage_units.csv
+  lines: data/static/lines.csv
+  snapshots: ../data/processed/pypsa_scenarios/orchestrator_next_day_20260819/inputs/snapshots.csv
+  load: ../data/processed/pypsa_scenarios/orchestrator_next_day_20260819/inputs/load.csv
+  solar_pu: ../data/processed/pypsa_scenarios/orchestrator_next_day_20260819/inputs/solar_pu_regional.csv
+  wind_pu: ../data/processed/pypsa_scenarios/orchestrator_next_day_20260819/inputs/wind_pu_regional.csv
+  hydro_pu: ../data/processed/pypsa_scenarios/orchestrator_next_day_20260819/inputs/hydro_pu.csv
+solver:
+  name: highs
+output:
+  network_file: ../data/processed/pypsa_scenarios/orchestrator_next_day_20260819/outputs/network.nc
+  summary_file: ../data/processed/pypsa_scenarios/orchestrator_next_day_20260819/outputs/summary.txt
+  storage_timeseries_file: ../data/processed/pypsa_scenarios/orchestrator_next_day_20260819/outputs/storage_timeseries.csv
+  metrics_file: ../data/processed/pypsa_scenarios/orchestrator_next_day_20260819/outputs/metrics.json
+  generation_by_carrier_file: ../data/processed/pypsa_scenarios/orchestrator_next_day_20260819/outputs/generation_by_carrier.csv
+  regional_prices_file: ../data/processed/pypsa_scenarios/orchestrator_next_day_20260819/outputs/regional_prices.csv
+  capacity_factors_file: ../data/processed/pypsa_scenarios/orchestrator_next_day_20260819/outputs/capacity_factors.csv

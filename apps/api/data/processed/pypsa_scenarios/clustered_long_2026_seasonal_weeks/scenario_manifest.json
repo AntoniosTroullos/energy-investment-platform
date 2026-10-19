@@ -1,0 +1,103 @@
+{
+  "contract_name": "pypsa-greece-scenario-artifact",
+  "contract_version": "1.0.0",
+  "artifact_id": "clustered_long_2026_seasonal_weeks",
+  "created_at_utc": "2026-10-02T18:46:44.976927+00:00",
+  "scenario": {
+    "name": "clustered_long_2026_seasonal_weeks",
+    "target_year": 2026,
+    "purpose": "capacity_expansion",
+    "representation_type": "weighted_representative_year",
+    "snapshot_count": 672,
+    "calendar_hours": 8760,
+    "period_structure": "custom",
+    "chronological": false
+  },
+  "time": {
+    "resolution": "1h",
+    "timezone": "UTC",
+    "snapshot_count": 672,
+    "weighted_hours": 8760.0,
+    "calendar_hours": 8760,
+    "chronological": false,
+    "period_structure": "custom",
+    "weight_semantics": "hours_represented_by_snapshot"
+  },
+  "inputs": [
+    {
+      "path": "config.yaml",
+      "bytes": 1773,
+      "sha256": "41d9d536a389d784e5233ccb1dc0ff5c0e91a45d8c2b4c046999f08e73e03fc3",
+      "role": "config",
+      "source_class": "derived"
+    },
+    {
+      "path": "inputs/snapshots.csv",
+      "bytes": 21856,
+      "sha256": "d0c46d71bc4f55b32cc4f0fc1a52217ce3b5dad5a1ad9d0f4dbb84fbbc68c4d9",
+      "role": "snapshots",
+      "source_class": "derived"
+    },
+    {
+      "path": "inputs/hydro_pu.csv",
+      "bytes": 24876,
+      "sha256": "f62927cec844cf736539e93552b4dd6822ba829be40191533e2d7a952711b7d7",
+      "role": "profile",
+      "source_class": "derived"
+    },
+    {
+      "path": "inputs/solar_pu_clustered.csv",
+      "bytes": 429706,
+      "sha256": "4fea1c70f6f12e41cdf02ff974593868cfb7ab2e06c69faed85b5498ede86a97",
+      "role": "profile",
+      "source_class": "derived"
+    },
+    {
+      "path": "inputs/wind_pu_clustered.csv",
+      "bytes": 569367,
+      "sha256": "7cef128cb7bd1790cd80cd7a9006598782c102b1591516d835c662e527af072e",
+      "role": "profile",
+      "source_class": "derived"
+    },
+    {
+      "path": "inputs/load.csv",
+      "bytes": 171913,
+      "sha256": "b37556513cd414a7c1240c115e23de302f46783729ef8ed300207594969adb16",
+      "role": "load",
+      "source_class": "derived"
+    }
+  ],
+  "transformations": [
+    {
+      "algorithm": "seasonal_representative_weeks",
+      "version": "1.0",
+      "parameters": {}
+    }
+  ],
+  "fallbacks": [],
+  "model": {
+    "base_config": "C:\\Users\\megas\\PycharmProjects\\pythonProject1\\data\\processed\\pypsa_scenarios\\clustered_long_2026_seasonal_weeks\\config.yaml"
+  },
+  "solver": {
+    "status": "solved",
+    "message": "Solver returned status=ok, termination_condition=optimal."
+  },
+  "validation": {
+    "weighted_hours": 8760.0,
+    "structural_issues": []
+  },
+  "outputs": [
+    {
+      "path": "scenario_result.json",
+      "bytes": 16669,
+      "sha256": "d67576726c3de4b6343d28ae29cf7a3e884716a69c88aaa3c4362771b5e857ae",
+      "role": "output",
+      "source_class": "derived"
+    }
+  ],
+  "warnings": [
+    "Re-solved 2026-10-02 against the corrected/calibrated wind availability series."
+  ],
+  "artifact_content_hash": "f3c0583fae413a63332b2035ded449ea0434e65f86ee7811c96ae36007bfced7",
+  "manifest_hash": "8f7a742274171e8a07385a4e2b5eff8a48d7fa4b1e57bcfe8f46366b1e8120e4"
+}
