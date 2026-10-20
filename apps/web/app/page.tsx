@@ -695,47 +695,43 @@ export default function Home() {
     setInfrastructureLoadErrorMessage("");
 
     try {
-      const [
-        plantsFeatureCollection,
-        substationsFeatureCollection,
-        linesFeatureCollection,
-        gasPipelinesFeatureCollection,
-        gasImportPointsFeatureCollection,
-        hydrogenPipelinesFeatureCollection,
-        hydrogenProjectsFeatureCollection,
-        natura2000FeatureCollection,
-      ] =
-        (await Promise.all([
-          loadGeoJsonLayerWithRetry(PLANTS_API_URL, "Power plants"),
-          loadGeoJsonLayerWithRetry(SUBSTATIONS_API_URL, "Substations"),
-          loadGeoJsonLayerWithRetry(
-            TRANSMISSION_LINES_API_URL,
-            "Transmission lines",
-          ),
-          loadGeoJsonLayerWithRetry(GAS_PIPELINES_API_URL, "Gas pipelines"),
-          loadGeoJsonLayerWithRetry(
-            GAS_IMPORT_POINTS_API_URL,
-            "Gas import points",
-          ),
-          loadGeoJsonLayerWithRetry(
-            HYDROGEN_PIPELINES_API_URL,
-            "Hydrogen pipelines",
-          ),
-          loadGeoJsonLayerWithRetry(
-            HYDROGEN_PROJECTS_API_URL,
-            "Hydrogen projects",
-          ),
-          loadGeoJsonLayerWithRetry(NATURA_2000_API_URL, "Natura 2000"),
-        ])) as [
-          GeoJSON.FeatureCollection,
-          GeoJSON.FeatureCollection,
-          GeoJSON.FeatureCollection,
-          GeoJSON.FeatureCollection,
-          GeoJSON.FeatureCollection,
-          GeoJSON.FeatureCollection,
-          GeoJSON.FeatureCollection,
-          GeoJSON.FeatureCollection,
-        ];
+      // Loaded sequentially rather than via Promise.all: firing all eight
+      // GeoJSON requests at once overwhelms the deployed backend (each
+      // request individually succeeds; the burst of concurrent requests
+      // does not), and Promise.all's fail-fast behaviour meant any single
+      // slow/failed layer blanked out all the others too.
+      const plantsFeatureCollection = await loadGeoJsonLayerWithRetry(
+        PLANTS_API_URL,
+        "Power plants",
+      );
+      const substationsFeatureCollection = await loadGeoJsonLayerWithRetry(
+        SUBSTATIONS_API_URL,
+        "Substations",
+      );
+      const linesFeatureCollection = await loadGeoJsonLayerWithRetry(
+        TRANSMISSION_LINES_API_URL,
+        "Transmission lines",
+      );
+      const gasPipelinesFeatureCollection = await loadGeoJsonLayerWithRetry(
+        GAS_PIPELINES_API_URL,
+        "Gas pipelines",
+      );
+      const gasImportPointsFeatureCollection = await loadGeoJsonLayerWithRetry(
+        GAS_IMPORT_POINTS_API_URL,
+        "Gas import points",
+      );
+      const hydrogenPipelinesFeatureCollection = await loadGeoJsonLayerWithRetry(
+        HYDROGEN_PIPELINES_API_URL,
+        "Hydrogen pipelines",
+      );
+      const hydrogenProjectsFeatureCollection = await loadGeoJsonLayerWithRetry(
+        HYDROGEN_PROJECTS_API_URL,
+        "Hydrogen projects",
+      );
+      const natura2000FeatureCollection = await loadGeoJsonLayerWithRetry(
+        NATURA_2000_API_URL,
+        "Natura 2000",
+      );
 
       setAllPlantAssets(
         buildSelections(plantsFeatureCollection, "plant").filter(
