@@ -2,6 +2,7 @@ from functools import lru_cache
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.gzip import GZipMiddleware
 
 from .biomass_phase1 import (
     get_biomass_phase1_candidates,
@@ -85,6 +86,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+# Several GeoJSON endpoints (natura-2000, plants, etc.) serve large payloads;
+# compression keeps them under the deployed platform's response size limit.
+app.add_middleware(GZipMiddleware, minimum_size=1024)
 
 
 @app.get("/health")
