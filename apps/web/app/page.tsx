@@ -695,12 +695,18 @@ export default function Home() {
     setInfrastructureLoadErrorMessage("");
 
     try {
-      // A plain Promise.all over all eight GeoJSON requests overwhelmed the
-      // deployed backend (each request individually succeeds; the burst of
-      // eight concurrent requests does not), and fully sequential loading
-      // fixed that but made the page noticeably slow (~15-20s). This loads
-      // with bounded concurrency instead -- a few requests in flight at
-      // once, never all eight -- as a middle ground between the two.
+      // Natura 2000 is excluded from this batch and fetched separately,
+      // below: it's off by default (showNatura2000 starts false) and isn't
+      // needed for the initial map paint, but it's also the single slowest
+      // layer (~11s, 17.7MB decompressed) -- bundling it in made every load
+      // wait on it even though nothing visible depended on it yet.
+      //
+      // A plain Promise.all over all requests overwhelmed the deployed
+      // backend (each request individually succeeds; the burst of
+      // concurrent requests does not), and fully sequential loading fixed
+      // that but made the page noticeably slow. This loads with bounded
+      // concurrency instead -- a few requests in flight at once -- as a
+      // middle ground between the two.
       const layerResults = await loadWithConcurrency(
         [
           { key: "plants", url: PLANTS_API_URL, label: "Power plants" },
@@ -710,7 +716,6 @@ export default function Home() {
           { key: "gasImportPoints", url: GAS_IMPORT_POINTS_API_URL, label: "Gas import points" },
           { key: "hydrogenPipelines", url: HYDROGEN_PIPELINES_API_URL, label: "Hydrogen pipelines" },
           { key: "hydrogenProjects", url: HYDROGEN_PROJECTS_API_URL, label: "Hydrogen projects" },
-          { key: "natura2000", url: NATURA_2000_API_URL, label: "Natura 2000" },
         ],
         3,
       );
@@ -722,7 +727,13 @@ export default function Home() {
       const gasImportPointsFeatureCollection = layerResults.gasImportPoints;
       const hydrogenPipelinesFeatureCollection = layerResults.hydrogenPipelines;
       const hydrogenProjectsFeatureCollection = layerResults.hydrogenProjects;
-      const natura2000FeatureCollection = layerResults.natura2000;
+
+      // Fire-and-forget: updates natura2000Data whenever it lands, without
+      // delaying the infrastructure load or failing it if this one layer
+      // errors out.
+      void loadGeoJsonLayerWithRetry(NATURA_2000_API_URL, "Natura 2000")
+        .then(setNatura2000Data)
+        .catch(() => {});
 
       setAllPlantAssets(
         buildSelections(plantsFeatureCollection, "plant").filter(
@@ -749,7 +760,6 @@ export default function Home() {
       setHydrogenProjectAssets(
         buildSelections(hydrogenProjectsFeatureCollection, "hydrogenProject"),
       );
-      setNatura2000Data(natura2000FeatureCollection);
       setInfrastructureLoadState("success");
     } catch (error) {
       setInfrastructureLoadState("error");
