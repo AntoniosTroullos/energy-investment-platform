@@ -695,43 +695,34 @@ export default function Home() {
     setInfrastructureLoadErrorMessage("");
 
     try {
-      // Loaded sequentially rather than via Promise.all: firing all eight
-      // GeoJSON requests at once overwhelms the deployed backend (each
-      // request individually succeeds; the burst of concurrent requests
-      // does not), and Promise.all's fail-fast behaviour meant any single
-      // slow/failed layer blanked out all the others too.
-      const plantsFeatureCollection = await loadGeoJsonLayerWithRetry(
-        PLANTS_API_URL,
-        "Power plants",
+      // A plain Promise.all over all eight GeoJSON requests overwhelmed the
+      // deployed backend (each request individually succeeds; the burst of
+      // eight concurrent requests does not), and fully sequential loading
+      // fixed that but made the page noticeably slow (~15-20s). This loads
+      // with bounded concurrency instead -- a few requests in flight at
+      // once, never all eight -- as a middle ground between the two.
+      const layerResults = await loadWithConcurrency(
+        [
+          { key: "plants", url: PLANTS_API_URL, label: "Power plants" },
+          { key: "substations", url: SUBSTATIONS_API_URL, label: "Substations" },
+          { key: "lines", url: TRANSMISSION_LINES_API_URL, label: "Transmission lines" },
+          { key: "gasPipelines", url: GAS_PIPELINES_API_URL, label: "Gas pipelines" },
+          { key: "gasImportPoints", url: GAS_IMPORT_POINTS_API_URL, label: "Gas import points" },
+          { key: "hydrogenPipelines", url: HYDROGEN_PIPELINES_API_URL, label: "Hydrogen pipelines" },
+          { key: "hydrogenProjects", url: HYDROGEN_PROJECTS_API_URL, label: "Hydrogen projects" },
+          { key: "natura2000", url: NATURA_2000_API_URL, label: "Natura 2000" },
+        ],
+        3,
       );
-      const substationsFeatureCollection = await loadGeoJsonLayerWithRetry(
-        SUBSTATIONS_API_URL,
-        "Substations",
-      );
-      const linesFeatureCollection = await loadGeoJsonLayerWithRetry(
-        TRANSMISSION_LINES_API_URL,
-        "Transmission lines",
-      );
-      const gasPipelinesFeatureCollection = await loadGeoJsonLayerWithRetry(
-        GAS_PIPELINES_API_URL,
-        "Gas pipelines",
-      );
-      const gasImportPointsFeatureCollection = await loadGeoJsonLayerWithRetry(
-        GAS_IMPORT_POINTS_API_URL,
-        "Gas import points",
-      );
-      const hydrogenPipelinesFeatureCollection = await loadGeoJsonLayerWithRetry(
-        HYDROGEN_PIPELINES_API_URL,
-        "Hydrogen pipelines",
-      );
-      const hydrogenProjectsFeatureCollection = await loadGeoJsonLayerWithRetry(
-        HYDROGEN_PROJECTS_API_URL,
-        "Hydrogen projects",
-      );
-      const natura2000FeatureCollection = await loadGeoJsonLayerWithRetry(
-        NATURA_2000_API_URL,
-        "Natura 2000",
-      );
+
+      const plantsFeatureCollection = layerResults.plants;
+      const substationsFeatureCollection = layerResults.substations;
+      const linesFeatureCollection = layerResults.lines;
+      const gasPipelinesFeatureCollection = layerResults.gasPipelines;
+      const gasImportPointsFeatureCollection = layerResults.gasImportPoints;
+      const hydrogenPipelinesFeatureCollection = layerResults.hydrogenPipelines;
+      const hydrogenProjectsFeatureCollection = layerResults.hydrogenProjects;
+      const natura2000FeatureCollection = layerResults.natura2000;
 
       setAllPlantAssets(
         buildSelections(plantsFeatureCollection, "plant").filter(
@@ -874,6 +865,36 @@ export default function Home() {
       setScenarioRegionsData(emptyFeatureCollection);
     }
   }
+}
+
+async function loadWithConcurrency<K extends string>(
+  tasks: { key: K; url: string; label: string }[],
+  limit: number,
+): Promise<Record<K, GeoJSON.FeatureCollection>> {
+  const results = {} as Record<K, GeoJSON.FeatureCollection>;
+  let firstError: unknown = null;
+  let nextIndex = 0;
+
+  async function worker() {
+    while (true) {
+      const i = nextIndex;
+      nextIndex += 1;
+      if (i >= tasks.length) return;
+      const task = tasks[i];
+      try {
+        results[task.key] = await loadGeoJsonLayerWithRetry(task.url, task.label);
+      } catch (error) {
+        if (firstError === null) firstError = error;
+      }
+    }
+  }
+
+  await Promise.all(
+    Array.from({ length: Math.min(limit, tasks.length) }, () => worker()),
+  );
+
+  if (firstError !== null) throw firstError;
+  return results;
 }
 
 async function loadGeoJsonLayerWithRetry(
