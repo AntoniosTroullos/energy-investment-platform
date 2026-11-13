@@ -363,7 +363,7 @@ export default function ScenarioWizardPanel() {
         {step === "parameters" && (
           <div className="space-y-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Start from a preset</p>
+              <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Start from a preset</p>
               <div className="mt-2 grid grid-cols-1 gap-2">
                 {SCENARIO_PRESETS.map((preset) => (
                   <button
@@ -615,7 +615,7 @@ export default function ScenarioWizardPanel() {
               electricityResult && (
                 <div>
                   <div className="rounded-xl border border-white/10 bg-zinc-950/90 p-4 text-sm text-zinc-100">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+                    <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
                       Latest Result — {electricityResult.target_year}
                     </p>
                     <p className="mt-2 text-xs text-zinc-400">
@@ -633,7 +633,7 @@ export default function ScenarioWizardPanel() {
           </div>
         ) : (
           <div className="rounded-xl border border-dashed border-white/10 p-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">What will run</p>
+            <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">What will run</p>
             <p className="mt-3 text-sm text-zinc-300">{summarySentence()}</p>
             <p className="mt-6 text-sm text-zinc-500">
               Step through Model → Parameters → Advanced → Review, then hit Solve to see results here.

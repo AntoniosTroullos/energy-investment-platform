@@ -42,7 +42,7 @@ function ChartCard({ title, unit, children }: { title: string; unit: string; chi
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 p-4">
       <div className="flex items-baseline justify-between">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">{title}</p>
+        <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">{title}</p>
         <p className="text-[10px] text-zinc-600">{unit}</p>
       </div>
       <div className="mt-3 h-48">{children}</div>

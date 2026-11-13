@@ -64,7 +64,7 @@ export default function ScenarioPresetsPanel({
 }: ScenarioPresetsPanelProps) {
   return (
     <section className="mt-8">
-      <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+      <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
         Scenario Presets
       </h2>
       <div className="mt-4 space-y-3">
@@ -201,7 +201,7 @@ export default function ScenarioPresetsPanel({
             <div className="mt-4 rounded-lg border border-white/10 bg-zinc-950/90 p-4">
               <label
                 htmlFor="scenario-import"
-                className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500"
+                className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500"
               >
                 Paste Scenario JSON
               </label>
@@ -234,7 +234,7 @@ export default function ScenarioPresetsPanel({
 
           {scenarioEvaluation ? (
             <div className="mt-4 rounded-lg border border-white/10 bg-zinc-950/90 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+              <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
                 Scenario Evaluation
               </p>
 
@@ -327,7 +327,7 @@ export default function ScenarioPresetsPanel({
 
           {!scenarioEvaluation && evaluationRequestState === "loading" ? (
             <div className="mt-4 rounded-lg border border-white/10 bg-zinc-950/90 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+              <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
                 Scenario Evaluation
               </p>
               <div className="mt-4 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3 py-3">
@@ -340,7 +340,7 @@ export default function ScenarioPresetsPanel({
 
           {!scenarioEvaluation && evaluationRequestState === "error" ? (
             <div className="mt-4 rounded-lg border border-white/10 bg-zinc-950/90 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+              <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
                 Scenario Evaluation
               </p>
               <div className="mt-4 rounded-lg border border-rose-500/20 bg-rose-500/10 px-3 py-3">

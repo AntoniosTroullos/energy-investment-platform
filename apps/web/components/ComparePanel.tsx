@@ -25,7 +25,7 @@ export default function ComparePanel({
   return (
     <section className="mt-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+        <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
           Compare
         </h2>
         {comparedAssets.length > 0 ? (
@@ -41,7 +41,7 @@ export default function ComparePanel({
 
       {recommendation ? (
         <div className="mt-4 rounded-xl border border-white/10 bg-white/5 p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+          <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
             Recommendation Summary
           </p>
           <div className="mt-4 space-y-3 text-sm text-zinc-100">

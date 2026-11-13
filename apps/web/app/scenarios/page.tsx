@@ -56,7 +56,7 @@ export default function ScenarioStudioPage() {
   return (
     <main className="mx-auto max-w-6xl px-6 py-10 text-zinc-100">
       <div className="border-b border-white/10 pb-6">
-        <p className="text-2xl font-semibold tracking-tight">Scenario Studio</p>
+        <p className="font-display text-2xl font-semibold tracking-tight text-zinc-50">Scenario Studio</p>
         <p className="mt-2 text-sm text-zinc-400">
           Configure and solve Greece&rsquo;s real energy models, and screen candidate investment
           sites — full-size results, away from the map.
@@ -64,7 +64,7 @@ export default function ScenarioStudioPage() {
       </div>
 
       <section className="mt-10">
-        <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+        <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
           Investment Screening Scenario
         </h2>
         <p className="mt-2 text-xs text-zinc-500">
@@ -104,7 +104,7 @@ export default function ScenarioStudioPage() {
       </section>
 
       <section className="mt-12">
-        <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+        <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
           PyPSA Model Scenarios
         </h2>
         <p className="mt-2 text-xs text-zinc-500">

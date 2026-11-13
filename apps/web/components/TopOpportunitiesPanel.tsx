@@ -14,7 +14,7 @@ export default function TopOpportunitiesPanel({
   return (
     <section className="mt-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+        <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
           Top Opportunities
         </h2>
         <span className="text-xs text-zinc-500">

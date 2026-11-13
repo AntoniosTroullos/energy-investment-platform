@@ -100,7 +100,7 @@ export default function ScenarioComparisonPanel({ refreshSignal }: ScenarioCompa
   return (
     <section className="mt-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+        <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
           Scenario Comparison
         </h2>
         <div className="flex items-center gap-4">
@@ -152,7 +152,7 @@ export default function ScenarioComparisonPanel({ refreshSignal }: ScenarioCompa
         <div className="mt-4 space-y-4">
           <div className="rounded-xl border border-white/10 bg-white/5 p-4">
             <div className="flex items-baseline justify-between">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+              <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
                 Objective Cost
               </p>
               <p className="text-[10px] text-zinc-600">Billion € / year</p>
@@ -189,7 +189,7 @@ export default function ScenarioComparisonPanel({ refreshSignal }: ScenarioCompa
 
           <div className="rounded-xl border border-white/10 bg-white/5 p-4">
             <div className="flex items-baseline justify-between">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+              <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
                 Generation Mix
               </p>
               <p className="text-[10px] text-zinc-600">GWh / year</p>

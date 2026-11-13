@@ -60,7 +60,7 @@ export default function ScenarioResultsSourcePanel({
   return (
     <section className="mt-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+        <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
           Scenario Results
         </h2>
         <button

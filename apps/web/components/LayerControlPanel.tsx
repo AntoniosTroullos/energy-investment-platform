@@ -94,18 +94,18 @@ export default function LayerControlPanel({
 
   return (
     <section className="mt-8">
-      <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+      <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
         Layers
       </h2>
 
-      <div className="mt-4 space-y-4">
+      <div className="mt-4 space-y-3">
         {visibleGroups.map((group) => {
           const isOpen = openSections[group.id];
 
           return (
             <div
               key={group.id}
-              className="rounded-xl border border-white/10 bg-white/5"
+              className="overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] transition-colors hover:border-white/15"
             >
               <button
                 type="button"
@@ -119,34 +119,39 @@ export default function LayerControlPanel({
               >
                 <div>
                   <p className="text-sm font-medium text-zinc-100">
-                    {group.title} ({group.count})
+                    {group.title}
+                    <span className="ml-1.5 text-zinc-500">({group.count})</span>
                   </p>
                   <p className="mt-1 text-xs text-zinc-500">
                     {isOpen ? "Hide layers" : "Show layers"}
                   </p>
                 </div>
-                <span className="text-lg leading-none text-zinc-500">
-                  {isOpen ? "-" : "+"}
+                <span
+                  className={`flex h-6 w-6 items-center justify-center rounded-full border border-white/10 text-sm leading-none text-zinc-400 transition-transform ${
+                    isOpen ? "rotate-45" : ""
+                  }`}
+                >
+                  +
                 </span>
               </button>
 
               {isOpen ? (
-                <div className="border-t border-white/10 px-4 py-4">
+                <div className="border-t border-white/10 bg-black/20 px-4 py-4">
                   {group.items ? (
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                       {group.items.map((layer) => {
                         const [checked, setChecked] = visibilityState[layer.key];
 
                         return (
                           <label
                             key={layer.key}
-                            className="flex items-center gap-3 rounded-lg border border-white/10 bg-zinc-950/60 px-3 py-2 text-sm text-zinc-200"
+                            className="flex cursor-pointer items-center gap-3 rounded-lg border border-white/10 bg-zinc-950/60 px-3 py-2 text-sm text-zinc-200 transition-colors hover:border-white/20 hover:bg-zinc-900"
                           >
                             <input
                               type="checkbox"
                               checked={checked}
                               onChange={(event) => setChecked(event.target.checked)}
-                              className="h-4 w-4 rounded border-white/20 bg-zinc-800 text-emerald-400 focus:ring-emerald-400"
+                              className="h-4 w-4 accent-emerald-500"
                             />
                             <span>{layer.label}</span>
                           </label>

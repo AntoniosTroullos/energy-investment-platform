@@ -437,7 +437,7 @@ export default function Home() {
   }, [searchableInfrastructureAssets, query]);
 
   return (
-    <main className="flex h-[calc(100vh-3.5rem)] w-full overflow-hidden bg-zinc-950 text-zinc-100">
+    <main className="flex h-[calc(100vh-4rem)] w-full overflow-hidden bg-zinc-950 text-zinc-100">
       <aside className="flex h-full w-80 shrink-0 flex-col overflow-y-auto border-r border-white/10 bg-zinc-900 px-6 py-8">
         {(candidateLoadState === "error" || infrastructureLoadState === "error") && (
           <div className="mb-4 rounded-lg border border-rose-500/20 bg-rose-500/10 px-3 py-3 text-xs text-rose-300">

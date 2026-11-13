@@ -94,7 +94,7 @@ export default function CoupledScenarioResultsView({ result }: CoupledScenarioRe
       {balanceRows.length > 0 && (
         <div className="rounded-xl border border-white/10 bg-white/5 p-4">
           <div className="flex items-baseline justify-between">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Hydrogen Balance</p>
+            <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Hydrogen Balance</p>
             <p className="text-[10px] text-zinc-600">GWh / year</p>
           </div>
           <div className="mt-3 h-48">
@@ -124,7 +124,7 @@ export default function CoupledScenarioResultsView({ result }: CoupledScenarioRe
       {heatTechRows.length > 0 && (
         <div className="rounded-xl border border-white/10 bg-white/5 p-4">
           <div className="flex items-baseline justify-between">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+            <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
               Heat Technology Capacity
             </p>
             <p className="text-[10px] text-zinc-600">MW, by region</p>

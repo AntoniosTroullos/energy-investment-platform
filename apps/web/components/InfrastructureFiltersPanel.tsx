@@ -52,7 +52,7 @@ export default function InfrastructureFiltersPanel({
 }: InfrastructureFiltersPanelProps) {
   return (
     <section className="mt-8">
-      <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+      <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
         Infrastructure Filters
       </h2>
       <div className="mt-4 space-y-4">
@@ -156,7 +156,7 @@ export default function InfrastructureFiltersPanel({
         </label>
 
         <div className="rounded-xl border border-white/10 bg-zinc-950/90 p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+          <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
             In View
           </p>
           <div className="mt-4 space-y-2 text-sm text-zinc-100">

@@ -23,7 +23,7 @@ export default function ClimatePanel({
 
   return (
     <section className="mt-8">
-      <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+      <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
         Climate Filter
       </h2>
 
@@ -62,7 +62,7 @@ export default function ClimatePanel({
         {isPlant && climate ? (
           <div className="mt-4 space-y-4">
             <div className="rounded-lg border border-white/10 bg-zinc-950/70 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+              <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
                 Live Conditions
               </p>
               <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">

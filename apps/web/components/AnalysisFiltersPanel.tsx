@@ -13,7 +13,7 @@ export default function AnalysisFiltersPanel({
 }: AnalysisFiltersPanelProps) {
   return (
     <section className="mt-8">
-      <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+      <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
         Analysis Filters
       </h2>
       <div className="mt-4 space-y-4">

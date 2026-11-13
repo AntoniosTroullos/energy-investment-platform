@@ -31,7 +31,7 @@ export default function AssetDetailsDrawer({
     <aside className="flex w-96 shrink-0 flex-col border-l border-white/10 bg-zinc-900 px-6 py-6">
       <div className="flex items-start justify-between border-b border-white/10 pb-5">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+          <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
             Asset Details
           </p>
           <h2 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-100">
@@ -74,7 +74,7 @@ export default function AssetDetailsDrawer({
 
       <div className="mt-6 space-y-4 overflow-y-auto">
         <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+          <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
             {asset.assetType === "cell" ? "Summary" : "Infrastructure Summary"}
           </p>
           <dl className="mt-4 space-y-3">
@@ -88,7 +88,7 @@ export default function AssetDetailsDrawer({
         </div>
 
         <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+          <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
             Properties
           </p>
           <dl className="mt-4 space-y-3">
@@ -105,7 +105,7 @@ export default function AssetDetailsDrawer({
 
         {scoreExplanation ? (
           <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+            <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
               Score Explanation
             </p>
 

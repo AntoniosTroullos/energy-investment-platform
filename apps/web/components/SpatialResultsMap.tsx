@@ -118,7 +118,7 @@ export default function SpatialResultsMap({ regions, corridors, metricId, mode }
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 p-4">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+        <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
           {metric.label}
           {mode === "delta" ? " — change" : ""}
         </p>

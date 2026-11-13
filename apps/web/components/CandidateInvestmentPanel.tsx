@@ -242,7 +242,7 @@ export default function CandidateInvestmentPanel({ scenario }: CandidateInvestme
 
   return (
     <section className="mt-8 rounded-xl border border-white/10 bg-white/5 p-4">
-      <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+      <h3 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
         Real Investment Economics
       </h3>
       <p className="mt-2 text-xs text-zinc-500">

@@ -24,7 +24,7 @@ export default function MarketPanel({
 }: MarketPanelProps) {
   return (
     <section className="mt-8">
-      <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+      <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
         Market Signal
       </h2>
 
@@ -65,7 +65,7 @@ export default function MarketPanel({
               <div className="rounded-lg border border-white/10 bg-zinc-950/70 p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+                    <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
                       Greece Market
                     </p>
                     <p className="mt-2 text-sm leading-6 text-zinc-100">
@@ -98,7 +98,7 @@ export default function MarketPanel({
 
                 {marketSignal.flows.length > 0 ? (
                   <div className="mt-4 border-t border-white/10 pt-4">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+                    <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
                       Cross-border Flows
                     </p>
                     <div className="mt-3 max-h-36 space-y-2 overflow-y-auto">

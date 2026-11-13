@@ -53,7 +53,7 @@ function DisclaimerFooter({ hasAssumptions = false }: { hasAssumptions?: boolean
 function AssumptionsSection({ assumptions }: { assumptions: Record<string, string> }) {
   return (
     <div className="mt-8">
-      <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Assumptions &amp; Caveats</h2>
+      <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Assumptions &amp; Caveats</h2>
       <ul className="mt-2 list-disc space-y-2 pl-5 text-xs leading-5 text-zinc-700">
         {Object.values(assumptions).map((note, index) => (
           <li key={index}>{note}</li>
@@ -164,7 +164,7 @@ function PortfolioMemo({ response, generatedAt }: { response: PortfolioAnalysisR
 
       <div className="mt-8 grid grid-cols-2 gap-8">
         <div>
-          <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">By Technology</h2>
+          <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">By Technology</h2>
           <table className="mt-2 w-full text-left text-xs">
             <thead className="text-zinc-500">
               <tr>
@@ -185,7 +185,7 @@ function PortfolioMemo({ response, generatedAt }: { response: PortfolioAnalysisR
           </table>
         </div>
         <div>
-          <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">By Region</h2>
+          <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">By Region</h2>
           <table className="mt-2 w-full text-left text-xs">
             <thead className="text-zinc-500">
               <tr>
@@ -216,7 +216,7 @@ function PortfolioMemo({ response, generatedAt }: { response: PortfolioAnalysisR
       )}
 
       <div className="mt-8">
-        <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Candidates</h2>
+        <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Candidates</h2>
         <table className="mt-2 w-full text-left text-xs">
           <thead className="text-zinc-500">
             <tr>
@@ -312,7 +312,7 @@ function CompareMemo({ scenarios, generatedAt }: { scenarios: ScenarioListItem[]
       </table>
 
       <div className="mt-8">
-        <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Generation Mix (GWh/yr)</h2>
+        <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Generation Mix (GWh/yr)</h2>
         <table className="mt-2 w-full text-left text-xs">
           <thead className="text-zinc-500">
             <tr>

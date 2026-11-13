@@ -13,7 +13,7 @@ export default function ScenarioControlsPanel({
 }: ScenarioControlsPanelProps) {
   return (
     <section className="mt-8">
-      <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+      <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
         Scenario Controls
       </h2>
       <div className="mt-4 space-y-4">
@@ -135,7 +135,7 @@ export default function ScenarioControlsPanel({
         </label>
 
         <div className="rounded-xl border border-white/10 bg-zinc-950/90 p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+          <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
             Current Scenario
           </p>
           <div className="mt-4 space-y-2 text-sm text-zinc-100">
@@ -158,7 +158,7 @@ export default function ScenarioControlsPanel({
         </div>
 
         <details className="rounded-xl border border-white/10 bg-white/5 p-4">
-          <summary className="cursor-pointer text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+          <summary className="font-display cursor-pointer text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
             Scenario Debug
           </summary>
           <pre className="mt-4 overflow-x-auto whitespace-pre-wrap break-words rounded-lg border border-white/10 bg-zinc-950/90 p-4 font-mono text-[11px] leading-5 text-zinc-300">
