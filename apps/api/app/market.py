@@ -15,6 +15,19 @@ from .models import (
 IPTO_FILE_API_URL = "https://www.admie.gr/getOperationMarketFilewRange"
 GREECE_ZONE = "GR"
 
+# IPTO's own ISP file only carries the balancing ("energy up"/imbalance)
+# price, not the day-ahead wholesale price a trader would mean by "the
+# price." Energy-Charts (Fraunhofer ISE) re-publishes ENTSO-E's day-ahead
+# price for Greece on a documented, no-auth API -- used here as a clearly
+# separate, clearly-labelled field, best-effort (a failure here must never
+# break the IPTO-sourced flow/balancing data above it).
+ENERGY_CHARTS_API_URL = "https://api.energy-charts.info/v2/price_current"
+ENERGY_CHARTS_LICENSE_NOTE = (
+    "Energy-Charts (Fraunhofer ISE) data is licensed for private/internal use; "
+    "confirm this use is acceptable before relying on it publicly. See "
+    "https://api.energy-charts.info for terms."
+)
+
 
 def get_greece_market_signal() -> GreeceMarketSignalResponse:
     try:
@@ -38,18 +51,53 @@ def get_greece_market_signal() -> GreeceMarketSignalResponse:
     total_import = round(sum(flow.powerMw for flow in flows if flow.direction == "import"), 1)
     total_export = round(sum(flow.powerMw for flow in flows if flow.direction == "export"), 1)
     net_import = round(total_import - total_export, 1)
+    day_ahead_price = fetch_day_ahead_price()
 
     return GreeceMarketSignalResponse(
         source="IPTO/ADMIE public file API",
         zone=GREECE_ZONE,
         status="success",
         currentPrice=current_price,
+        dayAheadPrice=day_ahead_price,
+        dayAheadPriceSource="Energy-Charts (Fraunhofer ISE), via ENTSO-E" if day_ahead_price else None,
+        dayAheadPriceLicenseNote=ENERGY_CHARTS_LICENSE_NOTE if day_ahead_price else None,
         totalImportMw=total_import,
         totalExportMw=total_export,
         netImportMw=net_import,
         flows=flows,
         summary=build_market_summary(current_price, total_import, total_export, net_import),
     )
+
+
+def fetch_day_ahead_price() -> MarketPriceSignal | None:
+    """Best-effort: the day-ahead price is a supplementary field, so any
+    failure here (network, schema change) returns None rather than raising,
+    which would otherwise take down the whole market signal response."""
+    query = parse.urlencode({"bzn": GREECE_ZONE})
+    url = f"{ENERGY_CHARTS_API_URL}?{query}"
+
+    try:
+        with request.urlopen(url, timeout=10) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+
+        data_points = payload.get("data") or []
+        if not data_points:
+            return None
+
+        latest = data_points[-1]
+        value = latest.get("values", {}).get("day_ahead_price")
+        timestamp = latest.get("timestamp")
+        if value is None:
+            return None
+
+        return MarketPriceSignal(
+            valueEurMwh=round(float(value), 2),
+            datetime=timestamp,
+            temporalGranularity="15_minutes",
+            label="Day-ahead wholesale price",
+        )
+    except (error.URLError, json.JSONDecodeError, KeyError, TypeError, ValueError):
+        return None
 
 
 def find_latest_ipto_file(file_category: str, days_back: int) -> dict:

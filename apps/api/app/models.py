@@ -94,6 +94,9 @@ class GreeceMarketSignalResponse(BaseModel):
     zone: str
     status: str
     currentPrice: MarketPriceSignal
+    dayAheadPrice: MarketPriceSignal | None = None
+    dayAheadPriceSource: str | None = None
+    dayAheadPriceLicenseNote: str | None = None
     totalImportMw: float
     totalExportMw: float
     netImportMw: float

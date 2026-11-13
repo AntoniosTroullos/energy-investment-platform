@@ -12,6 +12,14 @@ export type GreeceMarketSignalResponse = {
     temporalGranularity: string | null;
     label: string;
   };
+  dayAheadPrice: {
+    valueEurMwh: number | null;
+    datetime: string | null;
+    temporalGranularity: string | null;
+    label: string;
+  } | null;
+  dayAheadPriceSource: string | null;
+  dayAheadPriceLicenseNote: string | null;
   totalImportMw: number;
   totalExportMw: number;
   netImportMw: number;

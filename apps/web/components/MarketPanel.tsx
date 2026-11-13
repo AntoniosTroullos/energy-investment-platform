@@ -78,6 +78,12 @@ export default function MarketPanel({
                 </div>
 
                 <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                  {marketSignal.dayAheadPrice ? (
+                    <Metric
+                      label={marketSignal.dayAheadPrice.label}
+                      value={formatPrice(marketSignal.dayAheadPrice.valueEurMwh)}
+                    />
+                  ) : null}
                   <Metric
                     label={marketSignal.currentPrice.label}
                     value={formatPrice(marketSignal.currentPrice.valueEurMwh)}
@@ -95,6 +101,13 @@ export default function MarketPanel({
                     value={`${marketSignal.totalExportMw} MW`}
                   />
                 </dl>
+
+                {marketSignal.dayAheadPrice ? (
+                  <p className="mt-3 text-[11px] leading-4 text-zinc-500">
+                    Day-ahead price: {marketSignal.dayAheadPriceSource}.{" "}
+                    {marketSignal.dayAheadPriceLicenseNote}
+                  </p>
+                ) : null}
 
                 {marketSignal.flows.length > 0 ? (
                   <div className="mt-4 border-t border-white/10 pt-4">
