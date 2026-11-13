@@ -3,23 +3,23 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import CandidateInvestmentPanel from "../../components/CandidateInvestmentPanel";
-import ScenarioComparisonPanel from "../../components/ScenarioComparisonPanel";
-import ScenarioControlsPanel from "../../components/ScenarioControlsPanel";
-import ScenarioPresetsPanel from "../../components/ScenarioPresetsPanel";
-import ScenarioWizardPanel from "../../components/ScenarioWizardPanel";
-import SpatialResultsPanel from "../../components/SpatialResultsPanel";
-import { apiUrl } from "../../lib/config";
-import { useScenarioConfig } from "../../lib/scenario/ScenarioConfigContext";
-import { customScenarioStorageKey, defaultScenario } from "../../lib/scenario/scenario.defaults";
-import type { ScenarioEvaluationResponse } from "../../lib/scenario/scenario.api";
-import type { Scenario } from "../../lib/scenario/scenario.types";
+import CandidateInvestmentPanel from "../../../components/CandidateInvestmentPanel";
+import ScenarioComparisonPanel from "../../../components/ScenarioComparisonPanel";
+import ScenarioControlsPanel from "../../../components/ScenarioControlsPanel";
+import ScenarioPresetsPanel from "../../../components/ScenarioPresetsPanel";
+import ScenarioWizardPanel from "../../../components/ScenarioWizardPanel";
+import SpatialResultsPanel from "../../../components/SpatialResultsPanel";
+import { apiUrl } from "../../../lib/config";
+import { useScenarioConfig } from "../../../lib/scenario/ScenarioConfigContext";
+import { customScenarioStorageKey, defaultScenario } from "../../../lib/scenario/scenario.defaults";
+import type { ScenarioEvaluationResponse } from "../../../lib/scenario/scenario.api";
+import type { Scenario } from "../../../lib/scenario/scenario.types";
 import {
   formatScenarioJson,
   getActivePresetName,
   isScenario,
   sanitizeScenario,
-} from "../../lib/scenario/scenario.utils";
+} from "../../../lib/scenario/scenario.utils";
 
 const SCENARIO_EVALUATION_API_URL = apiUrl("/scenario/evaluate");
 
@@ -149,7 +149,7 @@ export default function ScenarioStudioPage() {
   // page: record the id, then navigate there (the map picks it up on arrival).
   function handleEvaluationCandidateFocus(candidateId: string) {
     setPendingMapFocusCandidateId(candidateId);
-    router.push("/");
+    router.push("/map");
   }
 
   function handleUpdateScenario(updates: Partial<Scenario>) {

@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { getCandidateInvestmentAnalysis, getPortfolioAnalysis } from "../../../lib/candidateInvestment/candidateInvestment.api";
+import { getCandidateInvestmentAnalysis, getPortfolioAnalysis } from "../../../../lib/candidateInvestment/candidateInvestment.api";
 import type {
   CandidateInvestmentAnalysis,
   PortfolioAnalysisResponse,
-} from "../../../lib/candidateInvestment/candidateInvestment.types";
-import { apiUrl } from "../../../lib/config";
-import { getScenarioList } from "../../../lib/pypsaScenario/pypsaScenario.api";
-import type { ScenarioListItem } from "../../../lib/pypsaScenario/pypsaScenario.types";
+} from "../../../../lib/candidateInvestment/candidateInvestment.types";
+import { apiUrl } from "../../../../lib/config";
+import { getScenarioList } from "../../../../lib/pypsaScenario/pypsaScenario.api";
+import type { ScenarioListItem } from "../../../../lib/pypsaScenario/pypsaScenario.types";
 
 // A dedicated, print-styled page rather than a modal -- opened in a new tab
 // via a plain <a target="_blank">, so print CSS never has to fight the rest
