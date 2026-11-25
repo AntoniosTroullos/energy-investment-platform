@@ -10,6 +10,7 @@ from .biomass_phase1 import (
     get_biomass_phase1_summary,
 )
 from .climate import get_asset_climate
+from .hourly_market import HourlyMarket, available_cases, get_hourly_market
 from .evaluation import (
     evaluate_scenario,
     get_candidate_feature_collection,
@@ -119,8 +120,14 @@ def candidates_investment_analysis(case_name: str) -> CandidateInvestmentAnalysi
 
     region_ids = get_candidate_region_ids()
     costs = investment_analysis.load_technology_costs()
+    # The hourly layer is optional by design: a case solved since the last
+    # extraction run has none, and the analysis degrades to annual averages
+    # rather than failing (each candidate's price_basis records which it got).
+    hourly = get_hourly_market(case_name)
     analyses = [
-        investment_analysis.evaluate_candidate_investment(cell, region_ids.get(cell.id), result.metrics, costs)
+        investment_analysis.evaluate_candidate_investment(
+            cell, region_ids.get(cell.id), result.metrics, costs, hourly
+        )
         for cell in load_candidate_cells()
     ]
     return CandidateInvestmentAnalysisResponse(
@@ -143,6 +150,7 @@ def candidates_portfolio_analysis(request: PortfolioAnalysisRequest) -> Portfoli
 
     region_ids = get_candidate_region_ids()
     costs = investment_analysis.load_technology_costs()
+    hourly = get_hourly_market(request.case_name)
     cells_by_id = {cell.id: cell for cell in load_candidate_cells()}
 
     summaries: list[PortfolioCandidateSummary] = []
@@ -159,7 +167,7 @@ def candidates_portfolio_analysis(request: PortfolioAnalysisRequest) -> Portfoli
 
         region_id = region_ids.get(candidate_id)
         analysis, flows = investment_analysis.evaluate_candidate_with_cash_flows(
-            cell, region_id, result.metrics, costs
+            cell, region_id, result.metrics, costs, hourly
         )
         summaries.append(
             PortfolioCandidateSummary(
@@ -487,6 +495,32 @@ def scenarios_result(case_name: str) -> ElectricityScenarioResult:
         return get_scenario_result(case_name)
     except FileNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@app.get("/scenarios/hourly-market/cases")
+def scenarios_hourly_market_cases() -> dict:
+    """Which cases have an extracted hourly layer. The frontend asks this once
+    so it can tell a user why a case shows capture prices and another does not,
+    instead of silently showing two different kinds of number side by side."""
+    return {"cases": available_cases()}
+
+
+@app.get("/scenarios/{case_name}/hourly-market", response_model=HourlyMarket)
+def scenarios_hourly_market(case_name: str) -> HourlyMarket:
+    """The hour-by-hour market position of a solved case: capture prices per
+    technology per region, the price-duration shape, and corridor utilisation.
+    See app/hourly_market.py for why an annual average cannot answer the same
+    questions."""
+    market = get_hourly_market(case_name)
+    if market is None:
+        raise HTTPException(
+            status_code=404,
+            detail=(
+                f"No hourly market layer for '{case_name}'. Extract it with "
+                "pipeline/extract_hourly_market.py (needs the solver environment)."
+            ),
+        )
+    return market
 
 
 @app.get("/scenarios/{case_name}/map/regions")

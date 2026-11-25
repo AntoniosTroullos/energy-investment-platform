@@ -164,6 +164,18 @@ class CandidateInvestmentAnalysis(BaseModel):
     capex_eur: float | None = None
     annual_generation_year0_mwh: float | None = None
     captured_price_eur_per_mwh: float | None = None
+    # The region's flat average price across all hours and technologies, kept
+    # beside the capture price so the gap between them -- the cannibalisation
+    # this technology suffers at this location -- is visible, not implied.
+    reference_price_eur_per_mwh: float | None = None
+    capture_rate_pct: float | None = None
+    capacity_factor_pct: float | None = None
+    # "hourly_capture" (the technology's own capture price at this region) or
+    # "regional_average" (the older flat-average fallback, for a scenario with
+    # no extracted hourly layer).
+    price_basis: str | None = None
+    # "regional_hourly" or "national_average".
+    capacity_factor_basis: str | None = None
     lcoe_eur_per_mwh: float | None = None
     npv_eur: float | None = None
     irr_pct: float | None = None
