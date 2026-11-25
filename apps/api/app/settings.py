@@ -22,6 +22,11 @@ results fall back to the read-only snapshot bundled at
 apps/api/data/processed/pypsa_scenarios. That snapshot has no live solver
 behind it, so routes that trigger a new solve still fail there -- only
 previously-computed results are servable from it.
+
+The fallback applies to the DEFAULT project root only. If PYPSA_PROJECT_ROOT
+names a root, that root is used whether or not it holds any scenarios: an
+override that can be silently replaced by a different directory is not an
+override, and it hid an empty or mistyped root behind the bundled cases.
 """
 
 from __future__ import annotations
@@ -62,17 +67,22 @@ def load_settings(environ: Mapping[str, str] | None = None) -> Settings:
     exercise every override without touching the real environment."""
     env = os.environ if environ is None else environ
 
-    project_root = _path_from_env(env, ENV_PYPSA_PROJECT_ROOT) or (
-        Path.home() / "PycharmProjects" / "pythonProject1"
-    )
+    configured_root = _path_from_env(env, ENV_PYPSA_PROJECT_ROOT)
+    project_root = configured_root or (Path.home() / "PycharmProjects" / "pythonProject1")
     pypsa_greece_root = project_root / "pypsa-greece"
     pypsa_python = _path_from_env(env, ENV_PYPSA_PYTHON) or (
         pypsa_greece_root / ".venv314" / _VENV_PYTHON_RELATIVE
     )
 
     scenario_root = project_root / "data" / "processed" / "pypsa_scenarios"
-    if not scenario_root.exists():
-        bundled_scenario_root = Path(__file__).resolve().parent.parent / "data" / "processed" / "pypsa_scenarios"
+    # The bundled snapshot stands in for the sibling project where there isn't
+    # one -- a deployed server, say. It is a fallback for the DEFAULT root
+    # only: when PYPSA_PROJECT_ROOT names a project, that is the project, even
+    # if it holds no scenarios yet. Substituting a different directory under an
+    # explicit override defeats the override, and silently served the bundled
+    # cases to anyone (tests included) who pointed the API somewhere empty.
+    if configured_root is None and not scenario_root.exists():
+        bundled_scenario_root = bundled_scenario_dir()
         if bundled_scenario_root.exists():
             scenario_root = bundled_scenario_root
 
@@ -85,6 +95,11 @@ def load_settings(environ: Mapping[str, str] | None = None) -> Settings:
         scenario_root=scenario_root,
         cors_origins=_parse_origins(env.get(ENV_CORS_ORIGINS)),
     )
+
+
+def bundled_scenario_dir() -> Path:
+    """The read-only scenario snapshot that ships with this repo."""
+    return Path(__file__).resolve().parent.parent / "data" / "processed" / "pypsa_scenarios"
 
 
 def _path_from_env(env: Mapping[str, str], name: str) -> Path | None:

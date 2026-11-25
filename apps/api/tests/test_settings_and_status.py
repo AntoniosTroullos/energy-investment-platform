@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from app.settings import DEFAULT_CORS_ORIGINS, load_settings
+from app.settings import DEFAULT_CORS_ORIGINS, bundled_scenario_dir, load_settings
 from app.system_status import check_bridge, list_solved_electricity_years
 
 
@@ -30,6 +30,27 @@ class LoadSettingsTests(unittest.TestCase):
         self.assertEqual(settings.pypsa_project_root, root)
         self.assertEqual(settings.scenario_root, root / "data" / "processed" / "pypsa_scenarios")
         self.assertEqual(settings.run_coupled_script, root / "scripts" / "build_and_solve_coupled_year.py")
+
+    def test_an_explicit_root_is_used_even_when_it_holds_no_scenarios(self):
+        # The bundled snapshot is a fallback for the DEFAULT root only. Under
+        # an explicit override it must not be substituted: that hid an empty or
+        # mistyped root behind the shipped cases, so the API answered with
+        # scenarios the configured project does not have.
+        with tempfile.TemporaryDirectory() as tmpdir:
+            empty_root = Path(tmpdir) / "empty-project"
+            settings = load_settings({"PYPSA_PROJECT_ROOT": str(empty_root)})
+
+        self.assertEqual(settings.scenario_root, empty_root / "data" / "processed" / "pypsa_scenarios")
+        self.assertNotEqual(settings.scenario_root, bundled_scenario_dir())
+
+    def test_the_default_root_still_falls_back_to_the_bundled_snapshot(self):
+        # A deployed server has no sibling project and must still serve the
+        # snapshot that ships with the repo.
+        settings = load_settings({"PYPSA_PROJECT_ROOT": ""})
+
+        default_scenarios = settings.pypsa_project_root / "data" / "processed" / "pypsa_scenarios"
+        expected = default_scenarios if default_scenarios.exists() else bundled_scenario_dir()
+        self.assertEqual(settings.scenario_root, expected)
 
     def test_python_override_is_independent_of_project_root(self):
         custom_python = str(Path("custom") / "python.exe")
