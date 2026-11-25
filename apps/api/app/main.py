@@ -37,7 +37,11 @@ from .generators import (
     is_point_feature_in_greece,
 )
 from .market import get_greece_market_signal
-from .network_topology import get_candidate_region_ids, get_network_topology_geojson
+from .network_topology import (
+    corridor_provenance,
+    get_candidate_region_ids,
+    get_network_topology_geojson,
+)
 from .models import (
     CandidateInvestmentAnalysisResponse,
     ClimateAssetResponse,
@@ -495,6 +499,14 @@ def scenarios_result(case_name: str) -> ElectricityScenarioResult:
         return get_scenario_result(case_name)
     except FileNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@app.get("/scenarios/network-topology/provenance")
+def scenarios_network_topology_provenance() -> dict:
+    """What the modelled 13-region network is made of, and how much of it the
+    real transmission layer corroborates -- corridor by corridor, so "stylised"
+    is a measurement a reader can check rather than a disclaimer in prose."""
+    return corridor_provenance()
 
 
 @app.get("/scenarios/hourly-market/cases")
