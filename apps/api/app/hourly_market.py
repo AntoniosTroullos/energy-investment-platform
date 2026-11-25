@@ -91,6 +91,11 @@ class NationalMarketPosition(BaseModel):
     price_duration_eur_per_mwh: PriceDuration = Field(default_factory=PriceDuration)
     near_zero_price_hours: float | None = None
     carriers: dict[str, CarrierMarketPosition] = Field(default_factory=dict)
+    # Each variable carrier's availability by hour of day (0-23), as a fraction
+    # of installed capacity. The bridge between this solved model and a live
+    # price feed: applied to a real day-ahead curve it says what a plant of
+    # that technology would have earned in the actual market.
+    hour_of_day_availability_pu: dict[str, list[float]] = Field(default_factory=dict)
 
 
 class Corridor(BaseModel):
@@ -219,6 +224,12 @@ class HourlyMarket(BaseModel):
         if capture is None or not reference:
             return None
         return 100.0 * capture / reference
+
+    def hour_of_day_shape(self, carrier: str) -> list[float] | None:
+        shape = self.national.hour_of_day_availability_pu.get(carrier)
+        if not shape or len(shape) != 24 or sum(shape) <= 0:
+            return None
+        return shape
 
     def region_price(self, region_id: str | None) -> float | None:
         if region_id is None:

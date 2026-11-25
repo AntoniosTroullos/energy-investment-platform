@@ -465,7 +465,46 @@ def _national_stats(
         },
         "near_zero_price_hours": _round(float(np.sum(weights[zero_mask])), 1),
         "carriers": _national_carrier_stats(network, weights, generator_region, prices),
+        "hour_of_day_availability_pu": _hour_of_day_availability(network, weights),
     }
+
+
+def _hour_of_day_availability(network: pypsa.Network, weights: np.ndarray) -> dict[str, list[float]]:
+    """Each variable carrier's national availability by hour of day, 0-23, as a
+    fraction of installed capacity and weighted by capacity.
+
+    Twenty-four numbers per carrier, and they carry the one thing a live market
+    feed cannot supply: WHEN this technology produces. Applied to a real
+    day-ahead price curve they say what a solar or wind plant would have earned
+    in the actual market today, which is the live-market counterpart of the
+    capture prices computed here against the model's own prices."""
+    hours = np.array([stamp.hour for stamp in network.snapshots], dtype=int)
+    shapes: dict[str, list[float]] = {}
+
+    for carrier in sorted({str(c) for c in network.generators.carrier.unique()}):
+        if carrier not in VARIABLE_CARRIERS:
+            continue
+        members = [
+            str(name)
+            for name in network.generators.index
+            if str(network.generators.at[name, "carrier"]) == carrier
+            and float(network.generators.at[name, "p_nom_opt"]) > 0
+        ]
+        if not members:
+            continue
+
+        capacity = float(sum(float(network.generators.at[name, "p_nom_opt"]) for name in members))
+        potential = np.zeros(len(weights), dtype=float)
+        for name in members:
+            potential += float(network.generators.at[name, "p_nom_opt"]) * availability_profile(network, name)
+        per_unit = potential / capacity
+
+        by_hour: list[float] = []
+        for hour in range(24):
+            mask = hours == hour
+            by_hour.append(round(float(weighted_mean(per_unit[mask], weights[mask]) or 0.0), 4) if mask.any() else 0.0)
+        shapes[carrier] = by_hour
+    return shapes
 
 
 def _national_carrier_stats(

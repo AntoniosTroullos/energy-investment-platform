@@ -89,6 +89,46 @@ class MarketPriceSignal(BaseModel):
     label: str = "Current operational price"
 
 
+class DayAheadPricePoint(BaseModel):
+    timestamp: str
+    priceEurMwh: float
+
+
+class DayAheadCaptureProxy(BaseModel):
+    """What a price-taking plant of one technology would have earned over the
+    fetched curve, from the model's hour-of-day production shape applied to
+    real prices. A proxy on two counts, both stated in `basis`: the shape is a
+    modelled annual average by hour rather than today's weather, and it is
+    national rather than site-specific."""
+
+    carrier: str
+    capturePriceEurMwh: float
+    flatMeanEurMwh: float
+    captureRatePct: float | None = None
+    basis: str
+
+
+class DayAheadCurveSummary(BaseModel):
+    source: str
+    # False for a source whose own terms forbid passing the data on (the
+    # Energy-Charts fallback). The licence text is returned verbatim, not
+    # paraphrased, so a caller can act on it.
+    redistributionAllowed: bool
+    licenseNote: str | None = None
+    unit: str = "EUR/MWh"
+    pointCount: int
+    fromUtc: str
+    toUtc: str
+    meanEurMwh: float
+    minEurMwh: float
+    maxEurMwh: float
+    medianEurMwh: float
+    spreadEurMwh: float
+    negativePricePoints: int
+    points: list[DayAheadPricePoint]
+    capture: list[DayAheadCaptureProxy] = Field(default_factory=list)
+
+
 class GreeceMarketSignalResponse(BaseModel):
     source: str
     zone: str
@@ -97,6 +137,9 @@ class GreeceMarketSignalResponse(BaseModel):
     dayAheadPrice: MarketPriceSignal | None = None
     dayAheadPriceSource: str | None = None
     dayAheadPriceLicenseNote: str | None = None
+    # The whole curve, not just its latest point: what a technology earns
+    # depends on when it produces, which a single reading cannot express.
+    dayAheadCurve: DayAheadCurveSummary | None = None
     totalImportMw: float
     totalExportMw: float
     netImportMw: float

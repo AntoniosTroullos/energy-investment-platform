@@ -5,7 +5,12 @@ from datetime import date, timedelta
 from xml.etree import ElementTree
 from urllib import error, parse, request
 
+from . import day_ahead
+from .hourly_market import get_hourly_market
 from .models import (
+    DayAheadCaptureProxy,
+    DayAheadCurveSummary,
+    DayAheadPricePoint,
     GreeceMarketSignalResponse,
     MarketFlowItem,
     MarketPriceSignal,
@@ -27,6 +32,13 @@ ENERGY_CHARTS_LICENSE_NOTE = (
     "confirm this use is acceptable before relying on it publicly. See "
     "https://api.energy-charts.info for terms."
 )
+
+
+# The solved case whose hour-of-day production shape is used to turn the real
+# day-ahead curve into per-technology capture prices. The clustered real-fleet
+# 2026 case: the one of the solved cases built on Greece's actual generator
+# fleet rather than a stylised one.
+CAPTURE_SHAPE_CASE = "clustered_mid_2026_monthly_days"
 
 
 def get_greece_market_signal() -> GreeceMarketSignalResponse:
@@ -52,6 +64,7 @@ def get_greece_market_signal() -> GreeceMarketSignalResponse:
     total_export = round(sum(flow.powerMw for flow in flows if flow.direction == "export"), 1)
     net_import = round(total_import - total_export, 1)
     day_ahead_price = fetch_day_ahead_price()
+    curve = build_day_ahead_curve_summary()
 
     return GreeceMarketSignalResponse(
         source="IPTO/ADMIE public file API",
@@ -61,11 +74,72 @@ def get_greece_market_signal() -> GreeceMarketSignalResponse:
         dayAheadPrice=day_ahead_price,
         dayAheadPriceSource="Energy-Charts (Fraunhofer ISE), via ENTSO-E" if day_ahead_price else None,
         dayAheadPriceLicenseNote=ENERGY_CHARTS_LICENSE_NOTE if day_ahead_price else None,
+        dayAheadCurve=curve,
         totalImportMw=total_import,
         totalExportMw=total_export,
         netImportMw=net_import,
         flows=flows,
         summary=build_market_summary(current_price, total_import, total_export, net_import),
+    )
+
+
+def build_day_ahead_curve_summary() -> DayAheadCurveSummary | None:
+    """The day-ahead curve with its statistics and the per-technology capture
+    prices it implies. Best-effort like the point reading above: a price feed
+    failing must never take down the IPTO-sourced flow data beside it."""
+    curve = day_ahead.fetch_day_ahead_curve()
+    if curve is None:
+        return None
+
+    statistics = day_ahead.curve_statistics(curve)
+    if not statistics:
+        return None
+
+    captures: list[DayAheadCaptureProxy] = []
+    market = get_hourly_market(CAPTURE_SHAPE_CASE)
+    if market is not None:
+        for carrier in ("solar", "wind"):
+            shape = market.hour_of_day_shape(carrier)
+            if shape is None:
+                continue
+            proxy = day_ahead.capture_proxy(curve, shape)
+            if proxy is None:
+                continue
+            captures.append(
+                DayAheadCaptureProxy(
+                    carrier=carrier,
+                    capturePriceEurMwh=proxy["capture_price_eur_per_mwh"],
+                    flatMeanEurMwh=proxy["flat_mean_eur_per_mwh"],
+                    captureRatePct=proxy["capture_rate_pct"],
+                    basis=(
+                        f"Real day-ahead prices weighted by the {CAPTURE_SHAPE_CASE} scenario's national "
+                        f"{carrier} availability by hour of Greek local time. The shape is a modelled "
+                        "annual average, not today's weather, and national, not site-specific; the "
+                        "prices are real and cover only the window fetched, so this is a short-run "
+                        "market reading, not an annual capture rate."
+                    ),
+                )
+            )
+
+    return DayAheadCurveSummary(
+        source=curve.source,
+        redistributionAllowed=curve.redistribution_allowed,
+        licenseNote=curve.licence_note,
+        unit=curve.unit,
+        pointCount=statistics["point_count"],
+        fromUtc=statistics["from_utc"],
+        toUtc=statistics["to_utc"],
+        meanEurMwh=statistics["mean_eur_per_mwh"],
+        minEurMwh=statistics["min_eur_per_mwh"],
+        maxEurMwh=statistics["max_eur_per_mwh"],
+        medianEurMwh=statistics["median_eur_per_mwh"],
+        spreadEurMwh=statistics["spread_eur_per_mwh"],
+        negativePricePoints=statistics["negative_price_points"],
+        points=[
+            DayAheadPricePoint(timestamp=point.timestamp, priceEurMwh=point.price_eur_per_mwh)
+            for point in curve.points
+        ],
+        capture=captures,
     )
 
 

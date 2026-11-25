@@ -58,6 +58,13 @@ Everything has a working default; set these only to override.
 | `API_CORS_ORIGINS` | API | comma-separated browser origins allowed to call the API | `http://localhost:3000,http://127.0.0.1:3000` |
 | `NEXT_PUBLIC_API_BASE_URL` | web | where the browser finds the API (restart `next dev` after changing) | `http://127.0.0.1:8000` |
 | `API_PYTHON` | scripts | interpreter for `apps/api` | `apps/api/.venv` |
+| `ENTSOE_API_TOKEN` | API | ENTSO-E Transparency token for the day-ahead price curve | unset |
+
+Without `ENTSOE_API_TOKEN` the day-ahead curve falls back to Energy-Charts
+(Fraunhofer ISE), whose own terms restrict the data to private and internal use.
+The API returns that licence text verbatim and marks the curve as not
+redistributable, so set a token for any public-facing deployment (free to
+register at the ENTSO-E Transparency Platform).
 
 The API resolves its settings in `apps/api/app/settings.py`; the web app reads its URL in
 `apps/web/lib/config.ts`. Copy `apps/web/.env.example` to `apps/web/.env.local` to persist a web override.
