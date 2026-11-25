@@ -37,6 +37,7 @@ from .generators import (
     is_point_feature_in_greece,
 )
 from .market import get_greece_market_signal
+from .overview import DEFAULT_OVERVIEW_CASE, build_overview
 from .network_topology import (
     corridor_provenance,
     get_candidate_region_ids,
@@ -497,6 +498,27 @@ def scenarios_status(case_name: str) -> ScenarioStatusResponse:
 def scenarios_result(case_name: str) -> ElectricityScenarioResult:
     try:
         return get_scenario_result(case_name)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@lru_cache(maxsize=4)
+def _cached_overview(case_name: str) -> dict:
+    """Assembling the overview reads the whole generator registry and prices
+    every candidate cell -- tens of seconds cold, milliseconds after. Cached
+    per case, like the other derived layers in this module."""
+    return build_overview(get_scenario_result(case_name), case_name=case_name)
+
+
+@app.get("/overview")
+def overview(case_name: str = DEFAULT_OVERVIEW_CASE) -> dict:
+    """Everything the national overview dashboard renders, in one call: the
+    operating fleet, modelled prices and capture rates, network stress and
+    verification, the project pipeline, and the ranked investment
+    opportunities. No live third-party calls -- the market feed is its own
+    endpoint so a slow upstream never delays this one."""
+    try:
+        return _cached_overview(case_name)
     except FileNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 

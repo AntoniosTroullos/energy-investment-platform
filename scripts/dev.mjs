@@ -232,7 +232,10 @@ async function reportBridge() {
 async function warmSlowLayers() {
   const started = Date.now();
   await Promise.all(
-    ["/substations", "/transmission-lines", "/plants"].map((route) =>
+    // /overview also goes here: assembling it reads the whole generator
+    // registry and prices every candidate cell, so a cold dashboard load would
+    // otherwise sit for the best part of a minute.
+    ["/substations", "/transmission-lines", "/plants", "/overview"].map((route) =>
       fetch(`${apiUrl}${route}`, { signal: AbortSignal.timeout(180_000) }).then((r) => r.arrayBuffer()).catch(() => undefined),
     ),
   );

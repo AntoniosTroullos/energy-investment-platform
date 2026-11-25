@@ -69,7 +69,7 @@ export default function LandingPage() {
               className="mt-8 flex flex-col gap-4"
               onSubmit={(event) => {
                 event.preventDefault();
-                router.push("/map");
+                router.push("/overview");
               }}
             >
               <label className="flex flex-col gap-1.5">
@@ -120,7 +120,7 @@ export default function LandingPage() {
 
             <button
               type="button"
-              onClick={() => router.push("/map")}
+              onClick={() => router.push("/overview")}
               className="mt-4 w-full rounded-lg border border-white/10 px-4 py-2.5 text-sm font-medium text-zinc-300 transition hover:border-emerald-500/30 hover:bg-white/5 hover:text-zinc-100"
             >
               Continue as Guest
