@@ -12,6 +12,14 @@ export type CandidateInvestmentAnalysis = {
   capex_eur: number | null;
   annual_generation_year0_mwh: number | null;
   captured_price_eur_per_mwh: number | null;
+  // The region's flat average price, kept beside the capture price so the gap
+  // between them -- what this technology loses by producing when its own kind
+  // is abundant -- is visible rather than implied.
+  reference_price_eur_per_mwh: number | null;
+  capture_rate_pct: number | null;
+  capacity_factor_pct: number | null;
+  price_basis: string | null;
+  capacity_factor_basis: string | null;
   lcoe_eur_per_mwh: number | null;
   npv_eur: number | null;
   irr_pct: number | null;
