@@ -1,0 +1,232 @@
+{
+  "schema_version": 1,
+  "source": "OpenStreetMap via Overpass (power=plant polygons with plant:output:electricity)",
+  "measured_at_utc": "2026-11-25T16:51:50+00:00",
+  "method": "Footprint area measured in EGSA87 (EPSG:2100); density = tagged capacity / footprint. Each carrier has its own minimum footprint and headline statistic (see `carriers[*].min_area_km2` / `headline_statistic`): solar polygons are drawn fence lines, so the median of them describes a typical plant; wind footprints are convex hulls over mapped turbines, which under-state small farms, so wind is measured from farms of at least 2 km^2 and reported as the capacity-weighted aggregate. Plants below 0.01 km^2 excluded as rooftop/car-park installations, and densities outside a plausibility band excluded as tagging errors (counts in `rejected`). Solar polygons are panel fields, wind polygons are farm boundaries, so both figures are array densities including internal spacing -- the right denominator for turning buildable land into installable MW.",
+  "min_area_km2": 0.01,
+  "plausibility_band_mw_per_km2": {
+    "solar": [
+      5.0,
+      250.0
+    ],
+    "wind": [
+      0.5,
+      60.0
+    ]
+  },
+  "carriers": {
+    "solar": {
+      "plant_count": 38,
+      "headline_mw_per_km2": 55.45,
+      "headline_statistic": "median",
+      "min_area_km2": 0.01,
+      "footprint_methods": {
+        "polygon": 38
+      },
+      "median_mw_per_km2": 55.45,
+      "mean_mw_per_km2": 60.98,
+      "p25_mw_per_km2": 44.4,
+      "p75_mw_per_km2": 72.61,
+      "min_mw_per_km2": 14.0,
+      "max_mw_per_km2": 146.71,
+      "total_capacity_mw": 569.0,
+      "total_area_km2": 8.541,
+      "aggregate_mw_per_km2": 66.62,
+      "largest_plants": [
+        {
+          "osm_id": "way/1292960841",
+          "name": "Karavasta Solar",
+          "capacity_mw": 140.0,
+          "area_km2": 2.197122,
+          "density_mw_per_km2": 63.7197,
+          "footprint_method": "polygon"
+        },
+        {
+          "osm_id": "relation/20640138",
+          "name": "Sunny Side",
+          "capacity_mw": 120.0,
+          "area_km2": 1.2544,
+          "density_mw_per_km2": 95.6632,
+          "footprint_method": "polygon"
+        },
+        {
+          "osm_id": "way/564938535",
+          "name": "\u00d6zkoyuncu Madencilik Bal\u0131kesir G\u00fcne\u015f Enerji Santrali",
+          "capacity_mw": 40.0,
+          "area_km2": 0.571941,
+          "density_mw_per_km2": 69.9372,
+          "footprint_method": "polygon"
+        },
+        {
+          "osm_id": "way/36682593",
+          "name": "\u039c\u03b5\u03b3\u03b1\u03bb\u03b1 \u039a\u03b1\u03bb\u03c5\u03b2\u03b9\u03b1",
+          "capacity_mw": 38.0,
+          "area_km2": 0.705478,
+          "density_mw_per_km2": 53.8642,
+          "footprint_method": "polygon"
+        },
+        {
+          "osm_id": "way/552227989",
+          "name": "Margariti solar farm",
+          "capacity_mw": 35.0,
+          "area_km2": 0.257214,
+          "density_mw_per_km2": 136.0735,
+          "footprint_method": "polygon"
+        },
+        {
+          "osm_id": "way/925241400",
+          "name": "G\u00fcne\u015f Enerji Santrali",
+          "capacity_mw": 35.0,
+          "area_km2": 0.38042,
+          "density_mw_per_km2": 92.0035,
+          "footprint_method": "polygon"
+        },
+        {
+          "osm_id": "relation/16935747",
+          "name": "\u039c\u03b9\u03ba\u03c1\u03bf\u03b2\u03bf\u03cd\u03bd\u03b9",
+          "capacity_mw": 20.0,
+          "area_km2": 0.268373,
+          "density_mw_per_km2": 74.5232,
+          "footprint_method": "polygon"
+        },
+        {
+          "osm_id": "relation/16481673",
+          "name": "Akhisar Duras\u0131l G\u00fcne\u015f Enerji Santrali",
+          "capacity_mw": 19.75,
+          "area_km2": 0.304509,
+          "density_mw_per_km2": 64.8585,
+          "footprint_method": "polygon"
+        },
+        {
+          "osm_id": "way/780915146",
+          "name": "G\u00f6lmarmara G\u00fcne\u015f Enerji Santrali",
+          "capacity_mw": 12.0,
+          "area_km2": 0.263443,
+          "density_mw_per_km2": 45.5506,
+          "footprint_method": "polygon"
+        },
+        {
+          "osm_id": "way/1126924905",
+          "name": "Margariti Solar Farm",
+          "capacity_mw": 10.0,
+          "area_km2": 0.107586,
+          "density_mw_per_km2": 92.9488,
+          "footprint_method": "polygon"
+        }
+      ],
+      "rejected": {
+        "no_capacity_tag": 8972,
+        "no_usable_geometry": 0,
+        "below_min_area": 21,
+        "implausible_density": 3
+      }
+    },
+    "wind": {
+      "plant_count": 30,
+      "headline_mw_per_km2": 6.02,
+      "headline_statistic": "aggregate",
+      "min_area_km2": 2.0,
+      "footprint_methods": {
+        "polygon": 1,
+        "turbine_hull": 29
+      },
+      "median_mw_per_km2": 11.23,
+      "mean_mw_per_km2": 11.6,
+      "p25_mw_per_km2": 7.55,
+      "p75_mw_per_km2": 14.28,
+      "min_mw_per_km2": 2.01,
+      "max_mw_per_km2": 30.8,
+      "total_capacity_mw": 1883.0,
+      "total_area_km2": 312.954,
+      "aggregate_mw_per_km2": 6.02,
+      "largest_plants": [
+        {
+          "osm_id": "relation/11291571",
+          "name": "Soma 4 R\u00fczgar Enerji Santrali",
+          "capacity_mw": 304.1,
+          "area_km2": 95.414239,
+          "density_mw_per_km2": 3.1872,
+          "footprint_method": "turbine_hull"
+        },
+        {
+          "osm_id": "relation/17347617",
+          "name": "\u0130stanbul RES R\u00fczg\u00e2r T\u00fcrbini",
+          "capacity_mw": 200.0,
+          "area_km2": 16.381614,
+          "density_mw_per_km2": 12.2088,
+          "footprint_method": "turbine_hull"
+        },
+        {
+          "osm_id": "relation/14577648",
+          "name": "Soma R\u00fczgar Enerji Santrali",
+          "capacity_mw": 120.0,
+          "area_km2": 59.845752,
+          "density_mw_per_km2": 2.0052,
+          "footprint_method": "turbine_hull"
+        },
+        {
+          "osm_id": "relation/13379779",
+          "name": "\u00c7atalca R\u00fczgar Enerji Santrali",
+          "capacity_mw": 93.0,
+          "area_km2": 4.879265,
+          "density_mw_per_km2": 19.0602,
+          "footprint_method": "turbine_hull"
+        },
+        {
+          "osm_id": "relation/14577639",
+          "name": "Edincik RES",
+          "capacity_mw": 77.4,
+          "area_km2": 6.184886,
+          "density_mw_per_km2": 12.5144,
+          "footprint_method": "turbine_hull"
+        },
+        {
+          "osm_id": "relation/14075164",
+          "name": "Agios Georgios Wind Farm",
+          "capacity_mw": 73.2,
+          "area_km2": 2.37696,
+          "density_mw_per_km2": 30.7956,
+          "footprint_method": "turbine_hull"
+        },
+        {
+          "osm_id": "relation/14577640",
+          "name": "Susurluk RES",
+          "capacity_mw": 72.5,
+          "area_km2": 5.086416,
+          "density_mw_per_km2": 14.2537,
+          "footprint_method": "turbine_hull"
+        },
+        {
+          "osm_id": "relation/14577629",
+          "name": "Fatma RES",
+          "capacity_mw": 70.0,
+          "area_km2": 8.119704,
+          "density_mw_per_km2": 8.621,
+          "footprint_method": "turbine_hull"
+        },
+        {
+          "osm_id": "relation/14577635",
+          "name": "Silivri RES",
+          "capacity_mw": 63.0,
+          "area_km2": 12.44015,
+          "density_mw_per_km2": 5.0642,
+          "footprint_method": "turbine_hull"
+        },
+        {
+          "osm_id": "relation/14588243",
+          "name": "\u0130\u00e7da\u015f Biga RES",
+          "capacity_mw": 60.0,
+          "area_km2": 29.277542,
+          "density_mw_per_km2": 2.0494,
+          "footprint_method": "turbine_hull"
+        }
+      ],
+      "rejected": {
+        "no_capacity_tag": 56,
+        "no_usable_geometry": 13,
+        "below_min_area": 118,
+        "implausible_density": 0
+      }
+    }
+  }
+}

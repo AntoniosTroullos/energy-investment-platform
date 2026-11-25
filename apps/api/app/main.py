@@ -134,7 +134,7 @@ def candidates_investment_analysis(case_name: str) -> CandidateInvestmentAnalysi
         case_name=case_name,
         target_year=result.target_year,
         analyses=analyses,
-        assumptions=investment_analysis.ASSUMPTIONS_NOTE,
+        assumptions=investment_analysis.assumptions_note(),
     )
 
 
@@ -214,7 +214,7 @@ def candidates_portfolio_analysis(request: PortfolioAnalysisRequest) -> Portfoli
         region_breakdown=region_breakdown,
         concentration_flags=flags,
         assumptions={
-            **investment_analysis.ASSUMPTIONS_NOTE,
+            **investment_analysis.assumptions_note(),
             "portfolio_combination": (
                 "Portfolio IRR/payback are computed from each included candidate's own annual cash flows "
                 "summed together (zero-padded to the longest lifetime), NOT an average of individual IRRs -- "

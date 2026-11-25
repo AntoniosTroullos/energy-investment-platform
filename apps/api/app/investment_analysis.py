@@ -43,6 +43,7 @@ from shapely.geometry import shape
 from shapely.ops import transform
 
 from .hourly_market import HourlyMarket
+from .power_density import get_power_density
 from .models import (
     CandidateCell,
     CandidateInvestmentAnalysis,
@@ -54,14 +55,12 @@ from .settings import settings as default_settings
 
 TECHNOLOGY_COSTS_RELATIVE_PATH = Path("data") / "static" / "technology_costs.csv"
 
-# Utility-scale power density, MW of nameplate capacity per km^2 of buildable
-# land. External literature range (solar: commonly-cited utility-PV figures
-# in the ~30-45 MW/km^2 range; onshore wind: commonly-cited array-density
-# figures in the ~5-8 MW/km^2 range, driven by turbine spacing, not raw
-# footprint) -- NOT Greece-specific, NOT independently re-verified in this
-# pass. Treat with at least as much caution as technology_costs.csv's own
-# self-flagged weaker rows (oil, biomass).
-POWER_DENSITY_MW_PER_KM2 = {"solar": 40.0, "wind": 6.0}
+# Utility-scale power density now comes from app/power_density.py, which
+# prefers a measurement of Greece's own built fleet (plant footprints from
+# OpenStreetMap divided into their tagged capacities, see
+# pipeline/calibrate_power_density.py) and falls back to the external
+# literature range below when too few plants carry both. The fallback values
+# are kept there, not here, so there is exactly one place that decides.
 
 # A candidate cell's grid square (~0.1deg, ~11km x ~9km -- see
 # pipeline/generate_candidates.py) is a screening area, not a real single
@@ -91,17 +90,24 @@ _TO_EGSA87 = pyproj.Transformer.from_crs("EPSG:4326", "EPSG:2100", always_xy=Tru
 
 HOURS_PER_YEAR = 8760.0
 
-ASSUMPTIONS_NOTE = {
-    "power_density": (
-        "Assumed capacity = buildable land area x buildable_fraction x an external "
-        f"literature power-density figure ({POWER_DENSITY_MW_PER_KM2['solar']:.0f} MW/km^2 solar, "
-        f"{POWER_DENSITY_MW_PER_KM2['wind']:.0f} MW/km^2 onshore wind) -- not Greece-specific, "
-        "not independently re-verified -- capped at a typical single utility-scale project size "
-        f"({MAX_SINGLE_PROJECT_CAPACITY_MW['solar']:.0f} MW solar, {MAX_SINGLE_PROJECT_CAPACITY_MW['wind']:.0f} MW "
-        "onshore wind) since a candidate cell is a screening area, not a real project footprint. "
-        "IRR/LCOE/payback are unaffected by this cap; capex/NPV describe that capped single project, "
-        "not the cell's full buildable potential."
-    ),
+def _power_density_note() -> str:
+    parts = []
+    for carrier in ("solar", "wind"):
+        density = get_power_density(carrier)
+        if density is not None:
+            parts.append(f"{carrier}: {density.describe()}")
+    return (
+        "Assumed capacity = buildable land area x buildable_fraction x power density -- "
+        + "; ".join(parts)
+        + ". Capped at a typical single utility-scale project size "
+        f"({MAX_SINGLE_PROJECT_CAPACITY_MW['solar']:.0f} MW solar, "
+        f"{MAX_SINGLE_PROJECT_CAPACITY_MW['wind']:.0f} MW onshore wind) since a candidate cell is a "
+        "screening area, not a real project footprint. IRR/LCOE/payback are unaffected by this cap; "
+        "capex/NPV describe that capped single project, not the cell's full buildable potential."
+    )
+
+
+_STATIC_ASSUMPTIONS = {
     "capacity_factor": (
         "Annual generation uses the candidate's own region's availability capacity factor for "
         "the technology, measured hour by hour on the solved network. A region with none of that "
@@ -122,6 +128,12 @@ ASSUMPTIONS_NOTE = {
         "from pypsa-greece's technology_costs.csv (real, cited)."
     ),
 }
+
+
+def assumptions_note() -> dict[str, str]:
+    """Built per call rather than at import, because the power-density wording
+    reports what the latest calibration actually measured."""
+    return {"power_density": _power_density_note(), **_STATIC_ASSUMPTIONS}
 
 
 @dataclass(frozen=True)
@@ -192,11 +204,11 @@ def cell_area_km2(cell: CandidateCell) -> float:
 
 
 def assumed_capacity_mw(cell: CandidateCell, carrier: str) -> float | None:
-    power_density = POWER_DENSITY_MW_PER_KM2.get(carrier)
+    density = get_power_density(carrier)
     max_capacity = MAX_SINGLE_PROJECT_CAPACITY_MW.get(carrier)
-    if power_density is None or max_capacity is None or cell.buildable_fraction is None:
+    if density is None or max_capacity is None or cell.buildable_fraction is None:
         return None
-    full_buildout = cell_area_km2(cell) * cell.buildable_fraction * power_density
+    full_buildout = cell_area_km2(cell) * cell.buildable_fraction * density.mw_per_km2
     return min(full_buildout, max_capacity)
 
 

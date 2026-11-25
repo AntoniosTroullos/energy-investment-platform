@@ -31,3 +31,6 @@ next-env.d.ts
 # Regenerable downloads (recreate with scripts/download_ipto_system_load.py)
 data/raw/
 data/interim/
+
+# Regenerable Overpass response cache (recreate with pipeline/calibrate_power_density.py)
+apps/api/data/raw/osm/
