@@ -67,6 +67,41 @@ class ClimateEfficiencyEstimate(BaseModel):
     summary: str
 
 
+class SiteYieldPoint(BaseModel):
+    timestamp: str
+    outputPerUnit: float
+
+
+class SiteCaptureInMarket(BaseModel):
+    """This site's own capture price in the real Greek day-ahead market: its
+    modelled hourly output weighted against real prices over the hours the two
+    series overlap."""
+
+    capturePriceEurMwh: float
+    flatMeanEurMwh: float
+    captureRatePct: float | None = None
+    matchedHours: int
+    priceSource: str
+    redistributionAllowed: bool
+
+
+class SiteYieldEstimate(BaseModel):
+    """Hour-by-hour output for this site from its own weather, through a
+    published engineering model -- replacing the unit-less 0-100 "efficiency"
+    score that preceded it. `model` and `assumptions` name the formulas and the
+    generic equipment behind the numbers."""
+
+    carrier: str
+    capacityFactorPct: float
+    peakOutputPerUnit: float
+    producingHours: int
+    windowHours: int
+    model: str
+    assumptions: str
+    series: list[SiteYieldPoint]
+    marketCapture: SiteCaptureInMarket | None = None
+
+
 class ClimateAssetResponse(BaseModel):
     source: str
     latitude: float
@@ -74,6 +109,9 @@ class ClimateAssetResponse(BaseModel):
     assetTechnology: str
     current: ClimateCurrentConditions
     efficiency: ClimateEfficiencyEstimate
+    # The real yield model. Optional because the weather service may be
+    # unreachable, and absent for a technology this does not model.
+    yieldEstimate: SiteYieldEstimate | None = None
 
 
 class MarketFlowItem(BaseModel):

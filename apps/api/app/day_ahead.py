@@ -308,6 +308,73 @@ def capture_proxy(curve: DayAheadCurve, hour_of_day_shape: list[float]) -> dict 
     }
 
 
+def capture_for_hourly_series(
+    curve: DayAheadCurve,
+    timestamps: list[str],
+    output_per_unit: list[float],
+) -> dict | None:
+    """One site's own capture price in the real market.
+
+    Takes an hourly per-unit production series (from app/site_yield.py, modelled
+    on that site's actual weather) and the real day-ahead curve, matches them on
+    the UTC hour, and returns what that site would have earned per MWh. The
+    curve can be at finer resolution than an hour, so prices are averaged within
+    each hour first.
+
+    Returns None when the two do not overlap -- a weather window that reaches
+    further forward than the market has published is the normal case, not an
+    error, and the overlap size comes back so a caller can say how much of the
+    window the figure rests on."""
+    if len(timestamps) != len(output_per_unit):
+        return None
+
+    prices_by_hour: dict[str, list[float]] = {}
+    for point in curve.points:
+        key = _utc_hour_key(point.timestamp)
+        if key is not None:
+            prices_by_hour.setdefault(key, []).append(point.price_eur_per_mwh)
+
+    weighted_value = 0.0
+    weighted_volume = 0.0
+    matched_hours = 0
+    for timestamp, output in zip(timestamps, output_per_unit):
+        key = _utc_hour_key(timestamp)
+        if key is None or key not in prices_by_hour:
+            continue
+        matched_hours += 1
+        hour_prices = prices_by_hour[key]
+        price = sum(hour_prices) / len(hour_prices)
+        weighted_value += price * output
+        weighted_volume += output
+
+    if matched_hours == 0 or weighted_volume <= 0:
+        return None
+
+    matched_prices = [
+        sum(prices_by_hour[key]) / len(prices_by_hour[key])
+        for key in (_utc_hour_key(stamp) for stamp in timestamps)
+        if key is not None and key in prices_by_hour
+    ]
+    flat_mean = sum(matched_prices) / len(matched_prices)
+    capture = weighted_value / weighted_volume
+    return {
+        "capture_price_eur_per_mwh": round(capture, 2),
+        "flat_mean_eur_per_mwh": round(flat_mean, 2),
+        "capture_rate_pct": round(100.0 * capture / flat_mean, 1) if flat_mean else None,
+        "matched_hours": matched_hours,
+    }
+
+
+def _utc_hour_key(timestamp: str) -> str | None:
+    try:
+        moment = datetime.fromisoformat(timestamp)
+    except ValueError:
+        return None
+    if moment.tzinfo is None:
+        moment = moment.replace(tzinfo=timezone.utc)
+    return moment.astimezone(timezone.utc).strftime("%Y-%m-%dT%H")
+
+
 def _hour_of(timestamp: str) -> int | None:
     """Hour of day in Greek local time.
 
