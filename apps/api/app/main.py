@@ -38,6 +38,20 @@ from .generators import (
 )
 from .market import get_greece_market_signal
 from .overview import DEFAULT_OVERVIEW_CASE, build_overview
+from . import asset_simulation, demand_response, hourly_series, storage_physics
+from .simulation_api import (
+    ActivationEventOut,
+    AssetSimulationResponse,
+    DemandResponseRequest,
+    DemandResponseResponse,
+    GenerationSimulationRequest,
+    HOURS_PER_WEEK,
+    HourlyWindow,
+    PriceYearSummary,
+    SimulatedYearOut,
+    StorageSimulationRequest,
+    StorageYearOut,
+)
 from .network_topology import (
     corridor_provenance,
     get_candidate_region_ids,
@@ -508,6 +522,258 @@ def _cached_overview(case_name: str) -> dict:
     every candidate cell -- tens of seconds cold, milliseconds after. Cached
     per case, like the other derived layers in this module."""
     return build_overview(get_scenario_result(case_name), case_name=case_name)
+
+
+# ---------------------------------------------------------------------------
+# Hour-by-hour simulation (app/asset_simulation.py, storage_physics.py,
+# demand_response.py). These answer the question screening cannot: what does
+# THIS asset earn against the hours the market actually had?
+# ---------------------------------------------------------------------------
+
+
+def _price_summary(price_year: hourly_series.PriceYear) -> PriceYearSummary:
+    prices = price_year.prices_eur_per_mwh
+    return PriceYearSummary(
+        year=price_year.year,
+        source=price_year.source,
+        redistribution_allowed=price_year.redistribution_allowed,
+        hours=len(prices),
+        missing_hours=price_year.missing_hours,
+        mean_eur_per_mwh=round(price_year.mean_eur_per_mwh, 2),
+        min_eur_per_mwh=round(min(prices), 2) if prices else 0.0,
+        max_eur_per_mwh=round(max(prices), 2) if prices else 0.0,
+        negative_hours=price_year.negative_hours,
+        zero_or_negative_hours=price_year.zero_or_negative_hours,
+    )
+
+
+def _build_window(
+    year: int,
+    prices: list[float],
+    output_mw: list[float],
+    soc_mwh: list[float],
+    requested_start: int | None,
+) -> HourlyWindow:
+    """One week of hourly detail. Defaults to the week containing the year's
+    highest price -- where a battery makes its money and a flexible site earns
+    its contract -- because a full year of traces is unusable in a browser."""
+    if requested_start is None and prices:
+        peak = max(range(len(prices)), key=lambda hour: prices[hour])
+        start = max(0, min(peak - HOURS_PER_WEEK // 2, len(prices) - HOURS_PER_WEEK))
+        label = "the week of the year's highest price"
+    else:
+        start = requested_start or 0
+        label = f"hours {start} to {start + HOURS_PER_WEEK}"
+
+    stop = start + HOURS_PER_WEEK
+    timestamps = hourly_series.hour_timestamps(year)[start:stop]
+    return HourlyWindow(
+        start_hour=start,
+        label=label,
+        timestamps=timestamps,
+        price_eur_per_mwh=prices[start:stop],
+        output_mw=output_mw[start:stop],
+        state_of_charge_mwh=soc_mwh[start:stop],
+    )
+
+
+@app.get("/simulation/price-year/{year}", response_model=PriceYearSummary)
+def simulation_price_year(year: int) -> PriceYearSummary:
+    """What a calendar year of real Greek day-ahead prices looked like."""
+    price_year = hourly_series.get_price_year(year)
+    if price_year is None:
+        raise HTTPException(status_code=404, detail=f"No price series available for {year}.")
+    return _price_summary(price_year)
+
+
+@app.post("/simulation/generation", response_model=AssetSimulationResponse)
+def simulation_generation(request: GenerationSimulationRequest) -> AssetSimulationResponse:
+    """A solar or wind plant, hour by hour, for its whole life."""
+    price_year, weather = asset_simulation.load_inputs(
+        request.latitude, request.longitude, request.price_year
+    )
+    if price_year is None:
+        raise HTTPException(status_code=503, detail=f"No price series available for {request.price_year}.")
+    if weather is None:
+        raise HTTPException(status_code=503, detail="Could not reach the weather archive for this site.")
+
+    simulation = asset_simulation.simulate_generation_asset(
+        latitude=request.latitude,
+        longitude=request.longitude,
+        carrier=request.carrier,
+        capacity_mw=request.capacity_mw,
+        price_year=price_year,
+        weather=weather,
+        lifetime_years=request.lifetime_years,
+        capex_eur_per_kw=request.capex_eur_per_kw,
+        fixed_opex_pct_of_capex=request.fixed_opex_pct_of_capex,
+        discount_rate_pct=request.discount_rate_pct,
+        price_escalation_pct_per_year=request.price_escalation_pct_per_year,
+        curtail_at_negative_prices=request.curtail_at_negative_prices,
+    )
+    return _to_response(simulation, price_year, request.window_start_hour)
+
+
+@app.post("/simulation/storage", response_model=AssetSimulationResponse)
+def simulation_storage(request: StorageSimulationRequest) -> AssetSimulationResponse:
+    """A battery, hour by hour, with state of charge and degradation carried
+    across the whole of its life."""
+    price_year = hourly_series.get_price_year(request.price_year)
+    if price_year is None:
+        raise HTTPException(status_code=503, detail=f"No price series available for {request.price_year}.")
+
+    spec = storage_physics.BatterySpec(
+        power_mw=request.power_mw,
+        energy_capacity_mwh=request.energy_capacity_mwh,
+        round_trip_efficiency=request.round_trip_efficiency,
+        min_soc_fraction=request.min_soc_fraction,
+        max_soc_fraction=request.max_soc_fraction,
+        cycle_cost_eur_per_mwh=request.cycle_cost_eur_per_mwh,
+        grid_charge_eur_per_mwh=request.grid_charge_eur_per_mwh,
+        max_cycles_per_day=request.max_cycles_per_day,
+        calendar_fade_pct_per_year=request.calendar_fade_pct_per_year,
+        cycle_fade_pct_per_equivalent_cycle=request.cycle_fade_pct_per_equivalent_cycle,
+    )
+    if spec.max_soc_fraction <= spec.min_soc_fraction:
+        raise HTTPException(status_code=422, detail="max_soc_fraction must exceed min_soc_fraction.")
+
+    simulation = asset_simulation.simulate_storage_asset(
+        spec=spec,
+        price_year=price_year,
+        lifetime_years=request.lifetime_years,
+        capex_eur_per_kwh=request.capex_eur_per_kwh,
+        fixed_opex_pct_of_capex=request.fixed_opex_pct_of_capex,
+        discount_rate_pct=request.discount_rate_pct,
+        price_escalation_pct_per_year=request.price_escalation_pct_per_year,
+    )
+    return _to_response(simulation, price_year, request.window_start_hour)
+
+
+def _to_response(
+    simulation: asset_simulation.AssetSimulation,
+    price_year: hourly_series.PriceYear,
+    window_start: int | None,
+) -> AssetSimulationResponse:
+    return AssetSimulationResponse(
+        kind=simulation.kind,
+        carrier=simulation.carrier,
+        capacity_mw=simulation.capacity_mw,
+        price_year=simulation.price_year,
+        price_source=simulation.price_source,
+        lifetime_years=simulation.lifetime_years,
+        years=[SimulatedYearOut(**vars(year)) for year in simulation.years],
+        storage_years=[
+            StorageYearOut(
+                year_index=year.year_index,
+                capacity_retention_pct=year.capacity_retention_pct,
+                usable_energy_mwh=year.usable_energy_mwh,
+                energy_charged_mwh=year.energy_charged_mwh,
+                energy_discharged_mwh=year.energy_discharged_mwh,
+                charging_cost_eur=year.charging_cost_eur,
+                discharge_revenue_eur=year.discharge_revenue_eur,
+                cycle_cost_eur=year.cycle_cost_eur,
+                gross_margin_eur=round(year.gross_margin_eur, 2),
+                equivalent_full_cycles=year.equivalent_full_cycles,
+                hours_charging=year.hours_charging,
+                hours_discharging=year.hours_discharging,
+                negative_price_hours_charged=year.negative_price_hours_charged,
+                average_charge_price_eur_per_mwh=(
+                    round(year.average_charge_price_eur_per_mwh, 2)
+                    if year.average_charge_price_eur_per_mwh is not None
+                    else None
+                ),
+                average_discharge_price_eur_per_mwh=(
+                    round(year.average_discharge_price_eur_per_mwh, 2)
+                    if year.average_discharge_price_eur_per_mwh is not None
+                    else None
+                ),
+            )
+            for year in simulation.storage_years
+        ],
+        capex_eur=simulation.capex_eur,
+        npv_eur=simulation.npv_eur,
+        irr_pct=simulation.irr_pct,
+        payback_years=simulation.payback_years,
+        lifetime_revenue_eur=simulation.lifetime_revenue_eur,
+        price_summary=_price_summary(price_year),
+        window=_build_window(
+            simulation.price_year,
+            price_year.prices_eur_per_mwh,
+            simulation.first_year_output_mw,
+            simulation.first_year_soc_mwh,
+            window_start,
+        ),
+        notes=simulation.notes,
+    )
+
+
+@app.post("/simulation/demand-response", response_model=DemandResponseResponse)
+def simulation_demand_response(request: DemandResponseRequest) -> DemandResponseResponse:
+    """What an industrial site's flexibility is worth: the availability fee for
+    standing ready, the payment when the operator calls, and the saving from
+    simply not running the expensive hours -- less what stopping costs."""
+    price_year = hourly_series.get_price_year(request.price_year)
+    if price_year is None:
+        raise HTTPException(status_code=503, detail=f"No price series available for {request.price_year}.")
+
+    if request.profile == "custom":
+        if not request.custom_load_mw:
+            raise HTTPException(status_code=422, detail="A custom profile needs custom_load_mw.")
+        load = request.custom_load_mw
+    elif request.profile == "two_shift":
+        load = demand_response.two_shift_load(request.average_load_mw, request.base_load_mw)
+    else:
+        load = demand_response.continuous_process_load(request.average_load_mw)
+
+    site = demand_response.IndustrialSite(
+        name=request.name,
+        baseline_load_mw=load,
+        interruptible_fraction=request.interruptible_fraction,
+        production_loss_eur_per_mwh=request.production_loss_eur_per_mwh,
+        rebound_fraction=request.rebound_fraction,
+        shiftable_fraction=request.shiftable_fraction,
+    )
+    contracts = [
+        demand_response.InterruptibilityContract(
+            product=demand_response.InterruptibilityProduct(contract.product),
+            contracted_mw=contract.contracted_mw,
+            availability_price_eur_per_mw_year=contract.availability_price_eur_per_mw_year,
+            activation_price_eur_per_mwh=contract.activation_price_eur_per_mwh,
+            max_activation_hours_per_year=contract.max_activation_hours_per_year,
+            max_activations_per_year=contract.max_activations_per_year,
+            max_duration_hours=contract.max_duration_hours,
+            min_hours_between_activations=contract.min_hours_between_activations,
+        )
+        for contract in request.contracts
+    ]
+
+    result = demand_response.simulate_demand_response(
+        site, price_year.prices_eur_per_mwh, contracts, year=price_year.year
+    )
+    return DemandResponseResponse(
+        site_name=result.site_name,
+        year=result.year,
+        price_source=price_year.source,
+        annual_consumption_mwh=round(site.annual_consumption_mwh, 1),
+        baseline_energy_cost_eur=result.baseline_energy_cost_eur,
+        availability_revenue_eur=result.availability_revenue_eur,
+        activation_revenue_eur=result.activation_revenue_eur,
+        avoided_energy_cost_eur=result.avoided_energy_cost_eur,
+        load_shifting_saving_eur=result.load_shifting_saving_eur,
+        production_loss_eur=result.production_loss_eur,
+        rebound_cost_eur=result.rebound_cost_eur,
+        net_benefit_eur=round(result.net_benefit_eur, 2),
+        net_benefit_pct_of_energy_bill=(
+            round(result.net_benefit_pct_of_energy_bill, 2)
+            if result.net_benefit_pct_of_energy_bill is not None
+            else None
+        ),
+        activation_count=result.activation_count,
+        activation_hours=result.activation_hours,
+        energy_not_consumed_mwh=result.energy_not_consumed_mwh,
+        events=[ActivationEventOut(**vars(event)) for event in result.events[:50]],
+        notes=result.notes,
+    )
 
 
 @app.get("/overview")
