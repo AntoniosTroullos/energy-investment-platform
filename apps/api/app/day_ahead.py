@@ -48,7 +48,7 @@ import json
 import os
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
-from urllib import error, parse, request
+from urllib import parse, request
 from xml.etree import ElementTree
 
 ENV_ENTSOE_TOKEN = "ENTSOE_API_TOKEN"
@@ -173,7 +173,7 @@ def _fetch_entsoe_window(token: str, start: datetime, end: datetime) -> list[Pri
     try:
         with request.urlopen(f"{ENTSOE_API_URL}?{query}", timeout=REQUEST_TIMEOUT_SECONDS) as response:
             return _parse_entsoe_prices(response.read())
-    except (error.URLError, ElementTree.ParseError, ValueError, TimeoutError):
+    except (OSError, ElementTree.ParseError, ValueError):  # OSError covers URLError, TimeoutError and SSLError
         return []
 
 
@@ -260,7 +260,7 @@ def _fetch_from_energy_charts_between(start: str, end: str) -> DayAheadCurve | N
     try:
         with request.urlopen(f"{ENERGY_CHARTS_SERIES_URL}?{query}", timeout=REQUEST_TIMEOUT_SECONDS) as response:
             payload = json.loads(response.read().decode("utf-8"))
-    except (error.URLError, json.JSONDecodeError, TimeoutError):
+    except (OSError, json.JSONDecodeError):  # OSError covers URLError, TimeoutError and SSLError
         return None
 
     seconds = payload.get("unix_seconds") or []

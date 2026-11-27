@@ -3,7 +3,7 @@ import io
 import zipfile
 from datetime import date, timedelta
 from xml.etree import ElementTree
-from urllib import error, parse, request
+from urllib import parse, request
 
 from . import day_ahead
 from .hourly_market import get_hourly_market
@@ -170,7 +170,14 @@ def fetch_day_ahead_price() -> MarketPriceSignal | None:
             temporalGranularity="15_minutes",
             label="Day-ahead wholesale price",
         )
-    except (error.URLError, json.JSONDecodeError, KeyError, TypeError, ValueError):
+    # OSError, not URLError. urllib raises URLError for most transport
+    # failures but NOT for a socket read timeout, which surfaces as the
+    # builtin TimeoutError, nor for every reset. Guarding on URLError alone
+    # turned the commonest failure these endpoints have -- a slow upstream
+    # -- into a 500 for the whole market signal, including the IPTO data
+    # beside it that had loaded fine. URLError, TimeoutError and SSLError
+    # are all OSError subclasses, so one name covers them.
+    except (OSError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         return None
 
 
@@ -188,7 +195,7 @@ def find_latest_ipto_file(file_category: str, days_back: int) -> dict:
     try:
         with request.urlopen(url, timeout=30) as response:
             files = json.loads(response.read().decode("utf-8"))
-    except error.URLError as request_error:
+    except OSError as request_error:  # URLError, TimeoutError and SSLError all subclass it
         raise RuntimeError("Could not reach IPTO public market file API.") from request_error
     except json.JSONDecodeError as request_error:
         raise RuntimeError("IPTO file API returned invalid JSON.") from request_error
@@ -210,7 +217,7 @@ def fetch_ipto_interconnection_flows(file_url: str) -> list[MarketFlowItem]:
     try:
         with request.urlopen(file_url, timeout=30) as response:
             file_contents = response.read()
-    except error.URLError as request_error:
+    except OSError as request_error:
         raise RuntimeError("Could not download latest IPTO interconnection file.") from request_error
 
     workbook = xlrd.open_workbook(file_contents=file_contents)
@@ -247,7 +254,7 @@ def fetch_ipto_current_price(file_url: str) -> MarketPriceSignal:
     try:
         with request.urlopen(file_url, timeout=30) as response:
             file_contents = response.read()
-    except error.URLError as request_error:
+    except OSError as request_error:
         raise RuntimeError("Could not download latest IPTO ISP price file.") from request_error
 
     rows = read_xlsx_rows(file_contents, "xl/worksheets/sheet1.xml")
