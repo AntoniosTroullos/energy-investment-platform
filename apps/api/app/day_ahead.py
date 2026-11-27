@@ -92,6 +92,41 @@ def entsoe_token(environ: dict[str, str] | None = None) -> str | None:
     return token or None
 
 
+def fetch_day_ahead_curve_between(start: datetime, end: datetime) -> DayAheadCurve | None:
+    """The day-ahead curve over an explicit window -- a whole calendar year,
+    typically, for the hour-by-hour asset simulation.
+
+    ENTSO-E is asked in month-long chunks: its API rejects very wide windows,
+    and a year of quarter-hourly data in one response is large enough that a
+    single failure would cost the whole fetch. Energy-Charts takes the window
+    whole."""
+    token = entsoe_token()
+    if token:
+        points: list[PricePoint] = []
+        cursor = start
+        while cursor < end:
+            chunk_end = min(cursor + timedelta(days=31), end)
+            chunk = _fetch_entsoe_window(token, cursor, chunk_end)
+            if chunk:
+                points.extend(chunk)
+            cursor = chunk_end
+        if points:
+            points.sort(key=lambda point: point.timestamp)
+            return DayAheadCurve(
+                points=_deduplicate(points),
+                source=SOURCE_ENTSOE,
+                redistribution_allowed=True,
+            )
+
+    return _fetch_from_energy_charts_between(start.date().isoformat(), end.date().isoformat())
+
+
+def _deduplicate(points: list[PricePoint]) -> list[PricePoint]:
+    """Chunk boundaries can repeat an instant; the later value wins."""
+    by_timestamp = {point.timestamp: point for point in points}
+    return [by_timestamp[key] for key in sorted(by_timestamp)]
+
+
 def fetch_day_ahead_curve(lookback_days: int = DEFAULT_LOOKBACK_DAYS) -> DayAheadCurve | None:
     """The day-ahead curve from the best source available, or None if neither
     answers. Never raises: the market panel's IPTO-sourced flow data must not
@@ -113,25 +148,7 @@ def _fetch_from_entsoe(token: str, lookback_days: int) -> DayAheadCurve | None:
     now = datetime.now(timezone.utc)
     # Day-ahead results for tomorrow publish around midday, so the window
     # reaches forward as well as back.
-    period_start = (now - timedelta(days=lookback_days)).strftime("%Y%m%d%H00")
-    period_end = (now + timedelta(days=1)).strftime("%Y%m%d%H00")
-
-    query = parse.urlencode(
-        {
-            "documentType": "A44",
-            "in_Domain": ENTSOE_GREECE_DOMAIN,
-            "out_Domain": ENTSOE_GREECE_DOMAIN,
-            "periodStart": period_start,
-            "periodEnd": period_end,
-            "securityToken": token,
-        }
-    )
-    try:
-        with request.urlopen(f"{ENTSOE_API_URL}?{query}", timeout=REQUEST_TIMEOUT_SECONDS) as response:
-            points = _parse_entsoe_prices(response.read())
-    except (error.URLError, ElementTree.ParseError, ValueError, TimeoutError):
-        return None
-
+    points = _fetch_entsoe_window(token, now - timedelta(days=lookback_days), now + timedelta(days=1))
     if not points:
         return None
     return DayAheadCurve(
@@ -140,6 +157,24 @@ def _fetch_from_entsoe(token: str, lookback_days: int) -> DayAheadCurve | None:
         redistribution_allowed=True,
         licence_note=None,
     )
+
+
+def _fetch_entsoe_window(token: str, start: datetime, end: datetime) -> list[PricePoint]:
+    query = parse.urlencode(
+        {
+            "documentType": "A44",
+            "in_Domain": ENTSOE_GREECE_DOMAIN,
+            "out_Domain": ENTSOE_GREECE_DOMAIN,
+            "periodStart": start.astimezone(timezone.utc).strftime("%Y%m%d%H00"),
+            "periodEnd": end.astimezone(timezone.utc).strftime("%Y%m%d%H00"),
+            "securityToken": token,
+        }
+    )
+    try:
+        with request.urlopen(f"{ENTSOE_API_URL}?{query}", timeout=REQUEST_TIMEOUT_SECONDS) as response:
+            return _parse_entsoe_prices(response.read())
+    except (error.URLError, ElementTree.ParseError, ValueError, TimeoutError):
+        return []
 
 
 def _parse_entsoe_prices(payload: bytes) -> list[PricePoint]:
@@ -215,13 +250,13 @@ def _parse_resolution(text: str) -> timedelta | None:
 
 def _fetch_from_energy_charts(lookback_days: int) -> DayAheadCurve | None:
     today = datetime.now(timezone.utc).date()
-    query = parse.urlencode(
-        {
-            "bzn": ENERGY_CHARTS_ZONE,
-            "start": (today - timedelta(days=lookback_days)).isoformat(),
-            "end": today.isoformat(),
-        }
+    return _fetch_from_energy_charts_between(
+        (today - timedelta(days=lookback_days)).isoformat(), today.isoformat()
     )
+
+
+def _fetch_from_energy_charts_between(start: str, end: str) -> DayAheadCurve | None:
+    query = parse.urlencode({"bzn": ENERGY_CHARTS_ZONE, "start": start, "end": end})
     try:
         with request.urlopen(f"{ENERGY_CHARTS_SERIES_URL}?{query}", timeout=REQUEST_TIMEOUT_SECONDS) as response:
             payload = json.loads(response.read().decode("utf-8"))
