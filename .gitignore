@@ -34,3 +34,9 @@ data/interim/
 
 # Regenerable Overpass response cache (recreate with pipeline/calibrate_power_density.py)
 apps/api/data/raw/osm/
+
+# Per-site weather caches: one 184 KB file per location per year, and a
+# session can create dozens. Refetched from Open-Meteo's archive on demand.
+# The price cache beside them IS committed -- one file per year, and a
+# deployment with no outbound access still needs it.
+apps/api/data/generated/hourly_series/weather_*.json
