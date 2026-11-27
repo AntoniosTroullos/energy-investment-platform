@@ -1,6 +1,13 @@
 import unittest
 
-from app.asset_simulation import simulate_generation_asset, simulate_storage_asset
+from app.asset_simulation import (
+    SETTLEMENT_BALANCING,
+    SETTLEMENT_DAY_AHEAD,
+    balancing_price_series,
+    simulate_generation_asset,
+    simulate_storage_asset,
+)
+from app.balancing import BalancingYear
 from app.hourly_series import PriceYear, WeatherYear
 from app.storage_physics import BatterySpec
 
@@ -160,3 +167,86 @@ class StorageSimulationTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class BalancingSettlementTests(unittest.TestCase):
+    """A battery settled against balancing prices rather than day-ahead. The
+    engine is the same; only the series and its labelling change."""
+
+    def _balancing_year(self, prices):
+        return BalancingYear(
+            from_utc="2025-11-22T00:00:00+00:00",
+            to_utc="2026-11-22T00:00:00+00:00",
+            imbalance_price_eur_per_mwh=prices,
+            mfrr_up_eur_per_mwh=[price + 10 for price in prices],
+            mfrr_down_eur_per_mwh=[price - 10 for price in prices],
+            system_short_share=[0.5] * len(prices),
+            intra_hour_spread_eur_per_mwh=[40.0] * len(prices),
+            missing_hours=3,
+            files_used=54,
+        )
+
+    def test_series_carries_its_own_window_not_a_calendar_year(self):
+        series = balancing_price_series(self._balancing_year([50.0] * 48))
+        self.assertEqual(series.start_utc, "2025-11-22T00:00:00+00:00")
+        self.assertEqual(series.window_start.isoformat(), "2025-11-22T00:00:00+00:00")
+        self.assertIn("settled balancing", series.window_label)
+        self.assertIn("2025-11-22", series.window_label)
+        self.assertEqual(series.missing_hours, 3)
+
+    def test_source_names_the_settlement_file_and_how_many_were_read(self):
+        series = balancing_price_series(self._balancing_year([50.0] * 48))
+        self.assertIn("IMBABE", series.source)
+        self.assertIn("54", series.source)
+        self.assertTrue(series.redistribution_allowed)
+
+    def test_a_day_ahead_year_still_starts_on_1_january(self):
+        series = price_year([10.0] * 48)
+        self.assertEqual(series.window_start.isoformat(), "2025-01-01T00:00:00+00:00")
+        self.assertEqual(series.window_label, "day-ahead 2025")
+
+    def test_the_wider_balancing_spread_earns_more_on_identical_physics(self):
+        # Same daily shape, balancing swinging twice as wide around the same
+        # mean. The engine is indifferent to provenance, so the only thing that
+        # can move the margin is the spread.
+        shape = [20.0, 20.0, 20.0, 20.0, 180.0, 180.0, 180.0, 180.0] * 6
+        wide = [-80.0, -80.0, -80.0, -80.0, 280.0, 280.0, 280.0, 280.0] * 6
+        spec = BatterySpec(power_mw=10.0, energy_capacity_mwh=40.0)
+
+        narrow_result = simulate_storage_asset(
+            spec=spec, price_year=price_year(shape * 183), lifetime_years=1
+        )
+        wide_result = simulate_storage_asset(
+            spec=spec,
+            price_year=balancing_price_series(self._balancing_year(wide * 183)),
+            lifetime_years=1,
+            settlement=SETTLEMENT_BALANCING,
+        )
+        self.assertGreater(
+            wide_result.storage_years[0].gross_margin_eur,
+            narrow_result.storage_years[0].gross_margin_eur,
+        )
+
+    def test_the_settlement_basis_is_recorded_on_the_result(self):
+        spec = BatterySpec(power_mw=10.0, energy_capacity_mwh=40.0)
+        prices = [20.0, 200.0] * 24 * 183
+        result = simulate_storage_asset(
+            spec=spec,
+            price_year=balancing_price_series(self._balancing_year(prices)),
+            lifetime_years=1,
+            settlement=SETTLEMENT_BALANCING,
+        )
+        self.assertEqual(result.settlement, SETTLEMENT_BALANCING)
+        self.assertIn("settled balancing", result.price_window)
+        # The three qualifications that belong beside a balancing number.
+        joined = " ".join(result.notes)
+        self.assertIn("price taker", joined.lower())
+        self.assertIn("qualified balancing service unit", joined)
+
+    def test_day_ahead_results_do_not_carry_balancing_caveats(self):
+        spec = BatterySpec(power_mw=10.0, energy_capacity_mwh=40.0)
+        result = simulate_storage_asset(
+            spec=spec, price_year=price_year([20.0, 200.0] * 24 * 183), lifetime_years=1
+        )
+        self.assertEqual(result.settlement, SETTLEMENT_DAY_AHEAD)
+        self.assertNotIn("qualified balancing service unit", " ".join(result.notes))

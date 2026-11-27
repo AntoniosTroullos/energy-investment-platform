@@ -38,7 +38,7 @@ import json
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from urllib import error, parse, request
+from urllib import parse, request
 
 from . import day_ahead
 
@@ -55,13 +55,35 @@ DEFAULT_AZIMUTH_DEGREES = 0
 
 @dataclass(frozen=True)
 class PriceYear:
-    """One calendar year of Greek day-ahead prices, hour by hour."""
+    """A year of Greek wholesale prices, hour by hour.
+
+    Day-ahead for a calendar year is the usual case, and the two optional
+    fields exist for the other one: a trailing twelve months of settled
+    balancing prices, which is the series a battery is really settled against
+    (app/balancing.py). Such a window does not begin on 1 January, so it
+    carries its own start instant and its own label rather than being
+    described by a calendar year it does not fill."""
 
     year: int
     source: str
     redistribution_allowed: bool
     prices_eur_per_mwh: list[float]
     missing_hours: int
+    start_utc: str | None = None
+    label: str | None = None
+
+    @property
+    def window_start(self) -> datetime:
+        if self.start_utc:
+            try:
+                return datetime.fromisoformat(self.start_utc)
+            except ValueError:
+                pass
+        return datetime(self.year, 1, 1, tzinfo=timezone.utc)
+
+    @property
+    def window_label(self) -> str:
+        return self.label or f"day-ahead {self.year}"
 
     @property
     def mean_eur_per_mwh(self) -> float:
@@ -289,7 +311,7 @@ def _fetch_weather_year(latitude: float, longitude: float, year: int) -> Weather
     try:
         with request.urlopen(http_request, timeout=REQUEST_TIMEOUT_SECONDS) as response:
             payload = json.loads(response.read().decode("utf-8"))
-    except (error.URLError, json.JSONDecodeError, TimeoutError):
+    except (OSError, json.JSONDecodeError):  # OSError covers URLError, TimeoutError and SSLError
         return None
 
     hourly = payload.get("hourly") or {}
@@ -321,5 +343,10 @@ def _fetch_weather_year(latitude: float, longitude: float, year: int) -> Weather
 
 def hour_timestamps(year: int) -> list[str]:
     """ISO timestamps for the year's hours, for charting a simulated series."""
-    start = datetime(year, 1, 1, tzinfo=timezone.utc)
-    return [(start + timedelta(hours=hour)).isoformat() for hour in range(HOURS_PER_YEAR)]
+    return hour_timestamps_from(datetime(year, 1, 1, tzinfo=timezone.utc), HOURS_PER_YEAR)
+
+
+def hour_timestamps_from(start: datetime, count: int) -> list[str]:
+    """ISO timestamps from an arbitrary instant -- for a trailing window, which
+    does not begin on 1 January."""
+    return [(start + timedelta(hours=hour)).isoformat() for hour in range(count)]

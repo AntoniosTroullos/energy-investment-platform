@@ -43,7 +43,9 @@ and it keeps the hour-by-hour structure that the whole model turns on.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from datetime import datetime
 
+from .balancing import BalancingYear
 from .hourly_series import PriceYear, WeatherYear, get_price_year, get_weather_year
 from .investment_analysis import irr, payback_period_years
 from .site_yield import solar_output_per_unit, wind_output_per_unit
@@ -54,6 +56,48 @@ HOURS_PER_YEAR = 8760
 # Output degradation, same rates the screening model uses (NREL / LBNL /
 # Staffell & Green, via pypsa-greece's investment module).
 DEGRADATION_PCT_PER_YEAR = {"solar": 0.5, "wind": 1.0}
+
+# Which market an asset is settled against. Day-ahead is the right basis for a
+# merchant generator and the wrong one for a battery: see
+# `balancing_price_series` below.
+SETTLEMENT_DAY_AHEAD = "day_ahead"
+SETTLEMENT_BALANCING = "balancing"
+
+
+def balancing_price_series(year: BalancingYear) -> PriceYear:
+    """A trailing year of settled balancing prices, as a series the simulation
+    can be run against directly.
+
+    Why a battery needs this
+    ------------------------
+    In Greece the balancing market, not day-ahead, does the physical dispatch,
+    and it is where a battery's energy is actually priced. The two series are
+    not close: over the trailing year measured here, day-ahead had 115 hours
+    below zero and settled balancing had over 1,400, and the balancing spread
+    runs at roughly twice the day-ahead spread. Valuing storage on day-ahead
+    alone is not conservative, it is wrong -- it prices the asset in a market
+    it does not operate in.
+
+    Returning a `PriceYear` rather than a new type is deliberate: the whole
+    hour-by-hour engine -- state of charge, the cycle cap, wear, degradation --
+    is indifferent to where the prices came from, and should stay that way.
+    What changes is only the series and how it is labelled.
+
+    Averaging the settled quarter-hours into hours is conservative for storage:
+    it discards the within-hour spread, which a real battery can trade. The
+    size of what is discarded travels with the series
+    (`mean_intra_hour_spread_eur_per_mwh`) rather than going unmentioned."""
+    end = datetime.fromisoformat(year.to_utc)
+    window = f"{year.from_utc[:10]} to {year.to_utc[:10]}"
+    return PriceYear(
+        year=end.year,
+        source=f"{year.source} -- settled imbalance price (IMBABE), {year.files_used} weekly files",
+        redistribution_allowed=True,
+        prices_eur_per_mwh=year.imbalance_price_eur_per_mwh,
+        missing_hours=year.missing_hours,
+        start_utc=year.from_utc,
+        label=f"settled balancing, {window}",
+    )
 
 
 @dataclass
@@ -79,6 +123,12 @@ class AssetSimulation:
     price_year: int
     price_source: str
     lifetime_years: int
+
+    # Which market the asset was settled against, and over what window -- the
+    # same battery is worth very different amounts in day-ahead and balancing,
+    # so a result that does not say which is not interpretable.
+    settlement: str = SETTLEMENT_DAY_AHEAD
+    price_window: str = ""
 
     years: list[SimulatedYear] = field(default_factory=list)
     storage_years: list[StorageYearResult] = field(default_factory=list)
@@ -240,9 +290,15 @@ def simulate_storage_asset(
     fixed_opex_pct_of_capex: float = 2.0,
     discount_rate_pct: float = 8.0,
     price_escalation_pct_per_year: float = 0.0,
+    settlement: str = SETTLEMENT_DAY_AHEAD,
     keep_traces: bool = True,
 ) -> AssetSimulation:
-    """Hour by hour for a battery, year by year, with degradation carried."""
+    """Hour by hour for a battery, year by year, with degradation carried.
+
+    `settlement` only labels which market `price_year` came from; pass the
+    matching series (see `balancing_price_series`). The physics does not care,
+    and the result has to say, because the answer differs by more than any
+    parameter in the spec."""
     years = simulate_storage_lifetime(
         price_year.prices_eur_per_mwh,
         spec,
@@ -258,6 +314,8 @@ def simulate_storage_asset(
         price_year=price_year.year,
         price_source=price_year.source,
         lifetime_years=lifetime_years,
+        settlement=settlement,
+        price_window=price_year.window_label,
         storage_years=years,
     )
 
@@ -290,6 +348,22 @@ def simulate_storage_asset(
                 f"Charged in {first.negative_price_hours_charged} hours of negative prices in year 1 -- "
                 "paid to take energy off the system."
             )
+
+    if settlement == SETTLEMENT_BALANCING:
+        # These three qualifications belong next to the number, not in a
+        # methodology appendix: the balancing result is roughly twice the
+        # day-ahead one, and each of them bears on whether it is reachable.
+        simulation.notes.extend(
+            [
+                "Settled against IPTO's balancing prices, which is the market that physically "
+                "dispatches storage in Greece -- not day-ahead.",
+                "A price taker: the spread is taken as given. It is the spread the FIRST battery of "
+                "this size sees. Greek storage capacity is growing quickly, and a fleet bidding the "
+                "same hours compresses the spread it is bidding for.",
+                "Reaching these prices requires a qualified balancing service unit dispatched by the "
+                "operator. Day-ahead can simply be traded; this cannot.",
+            ]
+        )
     return simulation
 
 

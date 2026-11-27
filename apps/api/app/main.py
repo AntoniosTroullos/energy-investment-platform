@@ -1,3 +1,4 @@
+from datetime import timedelta
 from functools import lru_cache
 
 from fastapi import FastAPI, HTTPException
@@ -36,7 +37,10 @@ from .generators import (
     is_line_feature_in_greece,
     is_point_feature_in_greece,
 )
+from . import market_feeds
+from .live_market import build_live_market
 from .market import get_greece_market_signal
+from .market_api import FeedStateOut, LiveMarketResponse
 from .overview import DEFAULT_OVERVIEW_CASE, build_overview
 from . import asset_simulation, demand_response, hourly_series, storage_physics
 from .simulation_api import (
@@ -49,6 +53,7 @@ from .simulation_api import (
     HourlyWindow,
     PriceYearSummary,
     SimulatedYearOut,
+    SettlementComparison,
     StorageSimulationRequest,
     StorageYearOut,
 )
@@ -428,6 +433,26 @@ def market_greece() -> GreeceMarketSignalResponse:
     return get_greece_market_signal()
 
 
+@app.get("/market/live", response_model=LiveMarketResponse)
+def market_live() -> LiveMarketResponse:
+    """The Greek market as it stands: settled imbalance prices, the operator's
+    own schedule for today, the reserve requirements a battery would bid into,
+    and how each of those compares with day-ahead.
+
+    Each feed refreshes on its own cadence (app/market_feeds.py), so repeated
+    calls are cheap and every number carries the age of the data behind it."""
+    return build_live_market()
+
+
+@app.get("/market/feeds", response_model=list[FeedStateOut])
+def market_feed_states(refresh: bool = False) -> list[FeedStateOut]:
+    """Just the freshness of each source -- for a status strip, or to check
+    whether a cold number is a bug or a publication lag."""
+    if refresh:
+        market_feeds.reset()
+    return [FeedStateOut(**vars(state)) for state in market_feeds.all_states()]
+
+
 @app.get("/market/greece-boundary")
 def market_greece_boundary():
     return get_source_layer_feature_collection("greece_boundary.geojson")
@@ -548,7 +573,7 @@ def _price_summary(price_year: hourly_series.PriceYear) -> PriceYearSummary:
 
 
 def _build_window(
-    year: int,
+    price_year: hourly_series.PriceYear,
     prices: list[float],
     output_mw: list[float],
     soc_mwh: list[float],
@@ -566,7 +591,11 @@ def _build_window(
         label = f"hours {start} to {start + HOURS_PER_WEEK}"
 
     stop = start + HOURS_PER_WEEK
-    timestamps = hourly_series.hour_timestamps(year)[start:stop]
+    # A balancing window is a trailing twelve months, so hour 0 is not
+    # 1 January and the timestamps have to come from the series' own start.
+    timestamps = hourly_series.hour_timestamps_from(
+        price_year.window_start + timedelta(hours=start), min(HOURS_PER_WEEK, max(0, len(prices) - start))
+    )
     return HourlyWindow(
         start_hour=start,
         label=label,
@@ -618,10 +647,7 @@ def simulation_generation(request: GenerationSimulationRequest) -> AssetSimulati
 def simulation_storage(request: StorageSimulationRequest) -> AssetSimulationResponse:
     """A battery, hour by hour, with state of charge and degradation carried
     across the whole of its life."""
-    price_year = hourly_series.get_price_year(request.price_year)
-    if price_year is None:
-        raise HTTPException(status_code=503, detail=f"No price series available for {request.price_year}.")
-
+    price_year = _storage_price_series(request)
     spec = storage_physics.BatterySpec(
         power_mw=request.power_mw,
         energy_capacity_mwh=request.energy_capacity_mwh,
@@ -645,8 +671,79 @@ def simulation_storage(request: StorageSimulationRequest) -> AssetSimulationResp
         fixed_opex_pct_of_capex=request.fixed_opex_pct_of_capex,
         discount_rate_pct=request.discount_rate_pct,
         price_escalation_pct_per_year=request.price_escalation_pct_per_year,
+        settlement=request.settlement,
     )
-    return _to_response(simulation, price_year, request.window_start_hour)
+    response = _to_response(simulation, price_year, request.window_start_hour)
+    if request.compare_settlements:
+        response.comparison = _settlement_comparison(request, spec)
+    return response
+
+
+def _storage_price_series(request: StorageSimulationRequest) -> hourly_series.PriceYear:
+    """The hourly series to settle the battery against.
+
+    Balancing is offered because it is the market that physically dispatches
+    storage in Greece; day-ahead remains available because a merchant battery
+    trading only the day-ahead spread is a real strategy, just a different
+    one."""
+    if request.settlement == asset_simulation.SETTLEMENT_BALANCING:
+        year = market_feeds.payload("balancing_year")
+        if year is None:
+            raise HTTPException(
+                status_code=503,
+                detail=(
+                    "No settled balancing prices are available. IPTO's settlement files could not be "
+                    "reached and nothing is cached."
+                ),
+            )
+        return asset_simulation.balancing_price_series(year)
+
+    price_year = hourly_series.get_price_year(request.price_year)
+    if price_year is None:
+        raise HTTPException(status_code=503, detail=f"No price series available for {request.price_year}.")
+    return price_year
+
+
+def _settlement_comparison(
+    request: StorageSimulationRequest, spec: storage_physics.BatterySpec
+) -> SettlementComparison | None:
+    """The same battery, same physics, in the other market.
+
+    Run with traces off and economics only, because this is a sanity check
+    beside the headline result, not a second full result."""
+    other = (
+        asset_simulation.SETTLEMENT_DAY_AHEAD
+        if request.settlement == asset_simulation.SETTLEMENT_BALANCING
+        else asset_simulation.SETTLEMENT_BALANCING
+    )
+    try:
+        series = _storage_price_series(request.model_copy(update={"settlement": other}))
+    except HTTPException:
+        return None  # The other basis is unavailable; the headline result stands alone.
+
+    simulation = asset_simulation.simulate_storage_asset(
+        spec=spec,
+        price_year=series,
+        lifetime_years=request.lifetime_years,
+        capex_eur_per_kwh=request.capex_eur_per_kwh,
+        fixed_opex_pct_of_capex=request.fixed_opex_pct_of_capex,
+        discount_rate_pct=request.discount_rate_pct,
+        price_escalation_pct_per_year=request.price_escalation_pct_per_year,
+        settlement=other,
+        keep_traces=False,
+    )
+    first = simulation.storage_years[0] if simulation.storage_years else None
+    return SettlementComparison(
+        settlement=other,
+        price_window=series.window_label,
+        mean_price_eur_per_mwh=round(series.mean_eur_per_mwh, 2),
+        negative_hours=series.negative_hours,
+        lifetime_revenue_eur=simulation.lifetime_revenue_eur,
+        npv_eur=simulation.npv_eur,
+        irr_pct=simulation.irr_pct,
+        first_year_margin_eur=round(first.gross_margin_eur, 2) if first else None,
+        first_year_cycles=first.equivalent_full_cycles if first else None,
+    )
 
 
 def _to_response(
@@ -661,6 +758,8 @@ def _to_response(
         price_year=simulation.price_year,
         price_source=simulation.price_source,
         lifetime_years=simulation.lifetime_years,
+        settlement=simulation.settlement,
+        price_window=simulation.price_window or price_year.window_label,
         years=[SimulatedYearOut(**vars(year)) for year in simulation.years],
         storage_years=[
             StorageYearOut(
@@ -697,7 +796,7 @@ def _to_response(
         lifetime_revenue_eur=simulation.lifetime_revenue_eur,
         price_summary=_price_summary(price_year),
         window=_build_window(
-            simulation.price_year,
+            price_year,
             price_year.prices_eur_per_mwh,
             simulation.first_year_output_mw,
             simulation.first_year_soc_mwh,

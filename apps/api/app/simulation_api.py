@@ -69,6 +69,23 @@ class PriceYearSummary(BaseModel):
     zero_or_negative_hours: int
 
 
+class SettlementComparison(BaseModel):
+    """The same asset, same physics, valued in the other market.
+
+    Shown because the gap IS the finding: a battery priced on day-ahead alone
+    is being valued in a market it does not physically operate in."""
+
+    settlement: str
+    price_window: str
+    mean_price_eur_per_mwh: float
+    negative_hours: int
+    lifetime_revenue_eur: float
+    npv_eur: float | None = None
+    irr_pct: float | None = None
+    first_year_margin_eur: float | None = None
+    first_year_cycles: float | None = None
+
+
 class AssetSimulationResponse(BaseModel):
     model_config = ConfigDict(extra="allow")
 
@@ -88,8 +105,16 @@ class AssetSimulationResponse(BaseModel):
     payback_years: float | None = None
     lifetime_revenue_eur: float = 0.0
 
+    # Which market the asset was settled against ("day_ahead" or
+    # "balancing") and the window those prices cover. A storage result is not
+    # interpretable without them: the same battery is worth very different
+    # amounts in the two markets.
+    settlement: str = "day_ahead"
+    price_window: str = ""
+
     price_summary: PriceYearSummary | None = None
     window: HourlyWindow | None = None
+    comparison: SettlementComparison | None = None
     notes: list[str] = Field(default_factory=list)
 
 
@@ -132,6 +157,14 @@ class StorageSimulationRequest(BaseModel):
     discount_rate_pct: float = Field(default=8.0, ge=0, le=30)
     price_escalation_pct_per_year: float = Field(default=0.0, ge=-10, le=10)
     window_start_hour: int | None = Field(default=None, ge=0, lt=8760)
+
+    # Which market to settle against. "balancing" runs the battery against a
+    # trailing year of IPTO's settled imbalance prices -- the market that
+    # actually dispatches storage in Greece -- and "day_ahead" against the
+    # calendar year of day-ahead prices named in `price_year`.
+    settlement: str = Field(default="day_ahead", pattern="^(day_ahead|balancing)$")
+    # Run the other basis too and return it alongside, so the gap is visible.
+    compare_settlements: bool = True
 
 
 class InterruptibilityContractIn(BaseModel):

@@ -40,3 +40,9 @@ apps/api/data/raw/osm/
 # The price cache beside them IS committed -- one file per year, and a
 # deployment with no outbound access still needs it.
 apps/api/data/generated/hourly_series/weather_*.json
+
+# Raw IPTO/ADMIE market spreadsheets, cached by file name because a published
+# file never changes. ~14 MB and growing, and every one is a few hundred
+# milliseconds to refetch, so this is a pure intermediate: the assembled
+# balancing year beside it is the artefact worth keeping.
+apps/api/data/generated/ipto/
