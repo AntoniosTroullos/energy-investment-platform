@@ -1,10 +1,14 @@
 import json
 from urllib import error, parse, request
 
+from . import day_ahead, site_yield
 from .models import (
     ClimateAssetResponse,
     ClimateCurrentConditions,
     ClimateEfficiencyEstimate,
+    SiteCaptureInMarket,
+    SiteYieldEstimate,
+    SiteYieldPoint,
 )
 
 
@@ -34,6 +38,61 @@ def get_asset_climate(latitude: float, longitude: float, technology: str) -> Cli
         assetTechnology=technology or "Unknown",
         current=current_conditions,
         efficiency=estimate_renewable_efficiency(technology, current_conditions),
+        yieldEstimate=build_site_yield_estimate(latitude, longitude, technology),
+    )
+
+
+def build_site_yield_estimate(
+    latitude: float,
+    longitude: float,
+    technology: str,
+) -> SiteYieldEstimate | None:
+    """The site's modelled hourly output, and -- when the live day-ahead curve
+    overlaps that weather window -- what it would have earned per MWh in the
+    real market. Best-effort: either service being unreachable leaves the rest
+    of the climate response intact."""
+    carrier = {"solar": "solar", "wind": "wind", "offshore_wind": "wind"}.get(
+        normalize_modeled_technology(technology)
+    )
+    if carrier is None:
+        return None
+
+    estimate = site_yield.get_site_yield(latitude, longitude, carrier)
+    if estimate is None:
+        return None
+
+    capture = None
+    curve = day_ahead.fetch_day_ahead_curve()
+    if curve is not None:
+        matched = day_ahead.capture_for_hourly_series(
+            curve, estimate.timestamps, estimate.output_per_unit
+        )
+        if matched is not None:
+            capture = SiteCaptureInMarket(
+                capturePriceEurMwh=matched["capture_price_eur_per_mwh"],
+                flatMeanEurMwh=matched["flat_mean_eur_per_mwh"],
+                captureRatePct=matched["capture_rate_pct"],
+                matchedHours=matched["matched_hours"],
+                priceSource=curve.source,
+                redistributionAllowed=curve.redistribution_allowed,
+            )
+
+    return SiteYieldEstimate(
+        carrier=estimate.carrier,
+        capacityFactorPct=estimate.capacity_factor_pct,
+        peakOutputPerUnit=estimate.peak_output_per_unit,
+        producingHours=estimate.producing_hours,
+        windowHours=estimate.window_hours,
+        dcAcRatio=estimate.dc_ac_ratio,
+        clippedPctOfDc=estimate.clipped_pct_of_dc,
+        hoursClipped=estimate.hours_clipped,
+        model=estimate.model,
+        assumptions=estimate.assumptions,
+        series=[
+            SiteYieldPoint(timestamp=timestamp, outputPerUnit=output)
+            for timestamp, output in zip(estimate.timestamps, estimate.output_per_unit)
+        ],
+        marketCapture=capture,
     )
 
 

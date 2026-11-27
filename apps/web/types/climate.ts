@@ -20,4 +20,34 @@ export type ClimateAssetResponse = {
     band: string;
     summary: string;
   };
+  // The real yield model (apps/api/app/site_yield.py): hourly output for this
+  // location through a published engineering model, and what it would have
+  // earned against the live day-ahead curve. Optional -- absent for a
+  // technology this does not model, or when the weather service is down.
+  yieldEstimate: SiteYieldEstimate | null;
+};
+
+export type SiteYieldEstimate = {
+  carrier: string;
+  capacityFactorPct: number;
+  peakOutputPerUnit: number;
+  producingHours: number;
+  windowHours: number;
+  // Solar only: DC array over inverter rating, and what the inverter clipped
+  // off over the window. Capacity factor here is per unit of AC capacity,
+  // which is what a plant is connected and settled on.
+  dcAcRatio?: number | null;
+  clippedPctOfDc?: number | null;
+  hoursClipped?: number | null;
+  model: string;
+  assumptions: string;
+  series: { timestamp: string; outputPerUnit: number }[];
+  marketCapture: {
+    capturePriceEurMwh: number;
+    flatMeanEurMwh: number;
+    captureRatePct: number | null;
+    matchedHours: number;
+    priceSource: string;
+    redistributionAllowed: boolean;
+  } | null;
 };

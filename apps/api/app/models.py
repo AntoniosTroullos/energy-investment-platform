@@ -67,6 +67,47 @@ class ClimateEfficiencyEstimate(BaseModel):
     summary: str
 
 
+class SiteYieldPoint(BaseModel):
+    timestamp: str
+    outputPerUnit: float
+
+
+class SiteCaptureInMarket(BaseModel):
+    """This site's own capture price in the real Greek day-ahead market: its
+    modelled hourly output weighted against real prices over the hours the two
+    series overlap."""
+
+    capturePriceEurMwh: float
+    flatMeanEurMwh: float
+    captureRatePct: float | None = None
+    matchedHours: int
+    priceSource: str
+    redistributionAllowed: bool
+
+
+class SiteYieldEstimate(BaseModel):
+    """Hour-by-hour output for this site from its own weather, through a
+    published engineering model -- replacing the unit-less 0-100 "efficiency"
+    score that preceded it. `model` and `assumptions` name the formulas and the
+    generic equipment behind the numbers."""
+
+    carrier: str
+    capacityFactorPct: float
+    peakOutputPerUnit: float
+    producingHours: int
+    windowHours: int
+    # Solar only: DC array over inverter rating, and what the inverter clipped
+    # off over the window. A plant is settled on its AC rating, so per-unit
+    # output here is per unit of AC.
+    dcAcRatio: float | None = None
+    clippedPctOfDc: float | None = None
+    hoursClipped: int | None = None
+    model: str
+    assumptions: str
+    series: list[SiteYieldPoint]
+    marketCapture: SiteCaptureInMarket | None = None
+
+
 class ClimateAssetResponse(BaseModel):
     source: str
     latitude: float
@@ -74,6 +115,9 @@ class ClimateAssetResponse(BaseModel):
     assetTechnology: str
     current: ClimateCurrentConditions
     efficiency: ClimateEfficiencyEstimate
+    # The real yield model. Optional because the weather service may be
+    # unreachable, and absent for a technology this does not model.
+    yieldEstimate: SiteYieldEstimate | None = None
 
 
 class MarketFlowItem(BaseModel):
@@ -89,6 +133,46 @@ class MarketPriceSignal(BaseModel):
     label: str = "Current operational price"
 
 
+class DayAheadPricePoint(BaseModel):
+    timestamp: str
+    priceEurMwh: float
+
+
+class DayAheadCaptureProxy(BaseModel):
+    """What a price-taking plant of one technology would have earned over the
+    fetched curve, from the model's hour-of-day production shape applied to
+    real prices. A proxy on two counts, both stated in `basis`: the shape is a
+    modelled annual average by hour rather than today's weather, and it is
+    national rather than site-specific."""
+
+    carrier: str
+    capturePriceEurMwh: float
+    flatMeanEurMwh: float
+    captureRatePct: float | None = None
+    basis: str
+
+
+class DayAheadCurveSummary(BaseModel):
+    source: str
+    # False for a source whose own terms forbid passing the data on (the
+    # Energy-Charts fallback). The licence text is returned verbatim, not
+    # paraphrased, so a caller can act on it.
+    redistributionAllowed: bool
+    licenseNote: str | None = None
+    unit: str = "EUR/MWh"
+    pointCount: int
+    fromUtc: str
+    toUtc: str
+    meanEurMwh: float
+    minEurMwh: float
+    maxEurMwh: float
+    medianEurMwh: float
+    spreadEurMwh: float
+    negativePricePoints: int
+    points: list[DayAheadPricePoint]
+    capture: list[DayAheadCaptureProxy] = Field(default_factory=list)
+
+
 class GreeceMarketSignalResponse(BaseModel):
     source: str
     zone: str
@@ -97,6 +181,9 @@ class GreeceMarketSignalResponse(BaseModel):
     dayAheadPrice: MarketPriceSignal | None = None
     dayAheadPriceSource: str | None = None
     dayAheadPriceLicenseNote: str | None = None
+    # The whole curve, not just its latest point: what a technology earns
+    # depends on when it produces, which a single reading cannot express.
+    dayAheadCurve: DayAheadCurveSummary | None = None
     totalImportMw: float
     totalExportMw: float
     netImportMw: float
@@ -164,6 +251,18 @@ class CandidateInvestmentAnalysis(BaseModel):
     capex_eur: float | None = None
     annual_generation_year0_mwh: float | None = None
     captured_price_eur_per_mwh: float | None = None
+    # The region's flat average price across all hours and technologies, kept
+    # beside the capture price so the gap between them -- the cannibalisation
+    # this technology suffers at this location -- is visible, not implied.
+    reference_price_eur_per_mwh: float | None = None
+    capture_rate_pct: float | None = None
+    capacity_factor_pct: float | None = None
+    # "hourly_capture" (the technology's own capture price at this region) or
+    # "regional_average" (the older flat-average fallback, for a scenario with
+    # no extracted hourly layer).
+    price_basis: str | None = None
+    # "regional_hourly" or "national_average".
+    capacity_factor_basis: str | None = None
     lcoe_eur_per_mwh: float | None = None
     npv_eur: float | None = None
     irr_pct: float | None = None

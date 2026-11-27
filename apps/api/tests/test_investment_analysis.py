@@ -20,6 +20,7 @@ from app.investment_analysis import (
     payback_period_years,
 )
 from app.models import CandidateCell, CandidateInvestmentAnalysis
+from app.power_density import BASIS_LITERATURE, PowerDensity
 from app.scenario_models import ScenarioMetrics
 
 
@@ -120,9 +121,14 @@ class CandidateCarrierTests(unittest.TestCase):
 class AssumedCapacityMwTests(unittest.TestCase):
     def test_multiplies_area_by_buildable_fraction_and_power_density(self):
         cell = _make_cell(buildable_fraction=0.5)
-        with patch.object(investment_analysis, "cell_area_km2", return_value=2.0):
+        # Pinned to a known density rather than whatever the latest Greek-fleet
+        # calibration measured, so this stays a test of the arithmetic.
+        density = PowerDensity(carrier="solar", mw_per_km2=40.0, basis=BASIS_LITERATURE)
+        with patch.object(investment_analysis, "cell_area_km2", return_value=2.0), patch.object(
+            investment_analysis, "get_power_density", return_value=density
+        ):
             capacity = assumed_capacity_mw(cell, "solar")
-        # 2.0 km^2 * 0.5 buildable * 40 MW/km^2 (POWER_DENSITY_MW_PER_KM2["solar"])
+        # 2.0 km^2 * 0.5 buildable * 40 MW/km^2
         self.assertAlmostEqual(capacity, 40.0, places=6)
 
     def test_missing_buildable_fraction_yields_none(self):
@@ -206,7 +212,10 @@ class EvaluateCandidateInvestmentTests(unittest.TestCase):
 
     def test_full_pipeline_produces_all_real_metrics_for_a_supported_case(self):
         cell = _make_cell(buildable_fraction=0.8)
-        with patch.object(investment_analysis, "cell_area_km2", return_value=1.0):
+        density = PowerDensity(carrier="solar", mw_per_km2=40.0, basis=BASIS_LITERATURE)
+        with patch.object(investment_analysis, "cell_area_km2", return_value=1.0), patch.object(
+            investment_analysis, "get_power_density", return_value=density
+        ):
             result = evaluate_candidate_investment(cell, "Attica", self._metrics(), self._costs())
 
         self.assertIsNone(result.message)
@@ -245,7 +254,10 @@ class CandidateCashFlowsTests(unittest.TestCase):
             result = evaluate_candidate_investment(cell, "Attica", self._metrics(), self._costs())
 
         self.assertIsNotNone(flows)
-        self.assertEqual(flows[0], -result.capex_eur)
+        # Almost-equal, not equal: the analysis rounds capex to whole euros
+        # while the cash flows carry the unrounded value, so exact equality
+        # only held by luck of the old power-density constant.
+        self.assertAlmostEqual(flows[0], -result.capex_eur, places=2)
         self.assertAlmostEqual(irr(flows) * 100, result.irr_pct, places=1)
 
     def test_unsupported_technology_yields_none(self):

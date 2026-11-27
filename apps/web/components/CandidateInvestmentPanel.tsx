@@ -320,12 +320,36 @@ export default function CandidateInvestmentPanel({ scenario }: CandidateInvestme
                     Payback: {candidate.payback_years !== null ? `${candidate.payback_years.toFixed(1)} yr` : "—"}
                   </p>
                   <p>
-                    Captured price:{" "}
+                    Capture price:{" "}
                     {candidate.captured_price_eur_per_mwh !== null
                       ? `€${candidate.captured_price_eur_per_mwh.toFixed(1)}/MWh`
                       : "—"}
                   </p>
+                  <p>
+                    Capacity factor:{" "}
+                    {candidate.capacity_factor_pct !== null
+                      ? `${candidate.capacity_factor_pct.toFixed(1)}%`
+                      : "—"}
+                  </p>
                 </div>
+                {candidate.capture_rate_pct !== null && candidate.reference_price_eur_per_mwh !== null ? (
+                  <div className="mt-2 rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2">
+                    <div className="flex items-baseline justify-between gap-2 text-[11px]">
+                      <span className="text-zinc-400">
+                        Paid {candidate.capture_rate_pct.toFixed(0)}% of the average hour
+                      </span>
+                      <span className="font-mono text-zinc-500">
+                        €{candidate.reference_price_eur_per_mwh.toFixed(0)} regional average
+                      </span>
+                    </div>
+                    <div className="relative mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/5">
+                      <div
+                        className="h-full rounded-full bg-emerald-500/70"
+                        style={{ width: `${Math.min(100, candidate.capture_rate_pct)}%` }}
+                      />
+                    </div>
+                  </div>
+                ) : null}
                 <div className="mt-3 flex gap-2">
                   <button
                     type="button"

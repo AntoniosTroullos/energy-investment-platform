@@ -4,7 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const NAV_LINKS = [
-  { href: "/", label: "Map" },
+  { href: "/overview", label: "Overview" },
+  { href: "/market", label: "Market" },
+  { href: "/map", label: "Map" },
+  { href: "/simulate", label: "Simulator" },
   { href: "/scenarios", label: "Scenario Studio" },
 ] as const;
 
@@ -13,7 +16,7 @@ export default function AppNav() {
 
   return (
     <header className="sticky top-0 z-40 flex h-16 w-full shrink-0 items-center justify-between border-b border-white/10 bg-zinc-950/80 px-6 backdrop-blur-md print:hidden">
-      <div className="flex items-center gap-3">
+      <Link href="/" className="flex items-center gap-3">
         <svg
           viewBox="0 0 24 24"
           aria-hidden="true"
@@ -28,10 +31,10 @@ export default function AppNav() {
         <p className="font-display text-sm tracking-tight text-zinc-100">
           Energy Investment Platform
         </p>
-      </div>
+      </Link>
       <nav className="flex items-center gap-1">
         {NAV_LINKS.map((link) => {
-          const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+          const isActive = pathname.startsWith(link.href);
 
           return (
             <Link

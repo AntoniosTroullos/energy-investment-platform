@@ -1,1090 +1,138 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import AnalysisFiltersPanel from "../components/AnalysisFiltersPanel";
-import AssetDetailsDrawer from "../components/AssetDetailsDrawer";
-import ClimatePanel from "../components/ClimatePanel";
-import ComparePanel from "../components/ComparePanel";
-import InfrastructureFiltersPanel from "../components/InfrastructureFiltersPanel";
-import LayerControlPanel from "../components/LayerControlPanel";
-import MarketPanel from "../components/MarketPanel";
-import ModeToggle, { type ViewMode } from "../components/ModeToggle";
-import ScenarioResultsSourcePanel from "../components/ScenarioResultsSourcePanel";
-import {
-  getGeneratorClustersGeoJson,
-  getScenarioRegionsGeoJson,
-} from "../lib/pypsaScenario/pypsaScenario.api";
-import SearchPanel from "../components/SearchPanel";
-import TopOpportunitiesPanel from "../components/TopOpportunitiesPanel";
-import type { RegionMetricId } from "../lib/spatial/colorScale";
-import { useScenarioConfig } from "../lib/scenario/ScenarioConfigContext";
-import {
-  getEligibleCandidateCells,
-  matchesCandidateScenario,
-  sortCandidatesByInvestmentScore,
-} from "../lib/scenario/candidate-screening";
-import MapView from "../components/MapView";
-import { buildSelections } from "../data/assets";
-import { apiUrl } from "../lib/config";
-import { assetSelectionsToFeatureCollection, emptyFeatureCollection } from "../lib/geojson";
-import { alignGasPipelineRoutes } from "../lib/infrastructure-alignment";
-import { isCandidateExcludedByNatura } from "../lib/natura-exclusion";
-import {
-  PLANT_STATUS_CATEGORIES,
-  PLANT_TECHNOLOGY_CATEGORIES,
-  addPlantExplorerProperties,
-  filterPlantAssets,
-  isDisplayablePlantAsset,
-  matchesPlantStatus,
-  matchesPlantTechnology,
-  type PlantStatusCategory,
-  type PlantTechnologyCategory,
-} from "../lib/plant-categories";
-import {
-  filterAssetsByVoltage,
-  getVoltageOptions,
-  matchesVoltageFilter,
-} from "../lib/voltage";
-import { getAssetsInViewCount, isAssetInViewport } from "../lib/viewport-geometry";
-import type {
-  AssetSelection,
-  FocusRequest,
-  ViewportBounds,
-} from "../types/asset";
-import type {
-  ClimateAssetResponse,
-  ClimateRequestState,
-} from "../types/climate";
-import type {
-  GreeceMarketSignalResponse,
-  MarketFlowDirection,
-  MarketRequestState,
-} from "../types/market";
-import type { Scenario } from "../lib/scenario/scenario.types";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { ArrowRight, Lock, Mail } from "lucide-react";
+import { motion } from "motion/react";
 
-const CANDIDATES_API_URL = apiUrl("/candidates");
-const PLANTS_API_URL = apiUrl("/plants");
-const SUBSTATIONS_API_URL = apiUrl("/substations");
-const TRANSMISSION_LINES_API_URL = apiUrl("/transmission-lines");
-const GAS_PIPELINES_API_URL = apiUrl("/gas-pipelines");
-const GAS_IMPORT_POINTS_API_URL = apiUrl("/gas-import-points");
-const HYDROGEN_PIPELINES_API_URL = apiUrl("/hydrogen-pipelines");
-const HYDROGEN_PROJECTS_API_URL = apiUrl("/hydrogen-projects");
-const NATURA_2000_API_URL = apiUrl("/natura-2000");
-const CLIMATE_ASSET_API_URL = apiUrl("/climate/asset");
-const MARKET_GREECE_API_URL = apiUrl("/market/greece");
-const MARKET_GREECE_BOUNDARY_API_URL = apiUrl("/market/greece-boundary");
+import NetworkTeaser from "../components/landing/NetworkTeaser";
+import StatChips from "../components/landing/StatChips";
 
-type CandidateLoadState = "idle" | "loading" | "success" | "error";
-type InfrastructureLoadState = "idle" | "loading" | "success" | "error";
-
-export default function Home() {
-  const { scenario, pendingMapFocusCandidateId, setPendingMapFocusCandidateId } =
-    useScenarioConfig();
-  const [viewMode, setViewMode] = useState<ViewMode>("explorer");
-  const [showPlants, setShowPlants] = useState(true);
-  const [showSubstations, setShowSubstations] = useState(true);
-  const [showLines, setShowLines] = useState(true);
-  const [showGasPipelines, setShowGasPipelines] = useState(true);
-  const [showGasImports, setShowGasImports] = useState(true);
-  const [showHydrogenPipelines, setShowHydrogenPipelines] = useState(true);
-  const [showHydrogenProjects, setShowHydrogenProjects] = useState(true);
-  const [showNatura2000, setShowNatura2000] = useState(false);
-  const [showCells, setShowCells] = useState(false);
-  const [selectedAsset, setSelectedAsset] = useState<AssetSelection | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [focusRequest, setFocusRequest] = useState<FocusRequest | null>(null);
-  const [comparedAssets, setComparedAssets] = useState<AssetSelection[]>([]);
-  const [candidateCellAssets, setCandidateCellAssets] = useState<AssetSelection[]>([]);
-  const [candidateLoadState, setCandidateLoadState] =
-    useState<CandidateLoadState>("idle");
-  const [candidateLoadErrorMessage, setCandidateLoadErrorMessage] = useState("");
-  const [allPlantAssets, setAllPlantAssets] = useState<AssetSelection[]>([]);
-  const [substationAssets, setSubstationAssets] = useState<AssetSelection[]>([]);
-  const [lineAssets, setLineAssets] = useState<AssetSelection[]>([]);
-  const [gasPipelineAssets, setGasPipelineAssets] = useState<AssetSelection[]>([]);
-  const [gasImportPointAssets, setGasImportPointAssets] = useState<AssetSelection[]>([]);
-  const [hydrogenPipelineAssets, setHydrogenPipelineAssets] = useState<AssetSelection[]>([]);
-  const [hydrogenProjectAssets, setHydrogenProjectAssets] = useState<AssetSelection[]>([]);
-  const [natura2000Data, setNatura2000Data] =
-    useState<GeoJSON.FeatureCollection>(emptyFeatureCollection);
-  const [excludeNatura2000, setExcludeNatura2000] = useState(false);
-  const [enabledPlantTechnologies, setEnabledPlantTechnologies] = useState<
-    PlantTechnologyCategory[]
-  >(PLANT_TECHNOLOGY_CATEGORIES);
-  const [enabledPlantStatuses, setEnabledPlantStatuses] = useState<
-    PlantStatusCategory[]
-  >(PLANT_STATUS_CATEGORIES);
-  const [voltageFilter, setVoltageFilter] = useState("all");
-  const [limitResultsToViewport, setLimitResultsToViewport] = useState(false);
-  const [viewportBounds, setViewportBounds] = useState<ViewportBounds | null>(null);
-  const [infrastructureLoadState, setInfrastructureLoadState] =
-    useState<InfrastructureLoadState>("idle");
-  const [infrastructureLoadErrorMessage, setInfrastructureLoadErrorMessage] =
-    useState("");
-  const [assetClimate, setAssetClimate] = useState<ClimateAssetResponse | null>(null);
-  const [climateRequestState, setClimateRequestState] =
-    useState<ClimateRequestState>("idle");
-  const [climateErrorMessage, setClimateErrorMessage] = useState("");
-  const [marketHighlightEnabled, setMarketHighlightEnabled] = useState(false);
-  const [marketSignal, setMarketSignal] =
-    useState<GreeceMarketSignalResponse | null>(null);
-  const [marketRequestState, setMarketRequestState] =
-    useState<MarketRequestState>("idle");
-  const [marketErrorMessage, setMarketErrorMessage] = useState("");
-  const [marketZoneData, setMarketZoneData] =
-    useState<GeoJSON.FeatureCollection>(emptyFeatureCollection);
-  const [selectedScenarioCaseName, setSelectedScenarioCaseName] = useState<string | null>(null);
-  const [showGeneratorClusters, setShowGeneratorClusters] = useState(false);
-  const [generatorClustersData, setGeneratorClustersData] =
-    useState<GeoJSON.FeatureCollection>(emptyFeatureCollection);
-  const [showScenarioRegions, setShowScenarioRegions] = useState(false);
-  const [scenarioRegionsData, setScenarioRegionsData] =
-    useState<GeoJSON.FeatureCollection>(emptyFeatureCollection);
-  const [scenarioRegionMetricId, setScenarioRegionMetricId] =
-    useState<RegionMetricId>("net_position_mwh");
-
-  useEffect(() => {
-    void loadCandidateCells();
-  }, []);
-
-  useEffect(() => {
-    void loadPilotInfrastructure();
-  }, []);
-
-  useEffect(() => {
-    void loadMarketZoneBoundary();
-  }, []);
-
-  useEffect(() => {
-    void loadGeneratorClusters();
-  }, []);
-
-  // Consumes the one-shot focus request left by Scenario Studio's Evaluate
-  // Scenario results. Waits until the candidate cells have loaded (a fresh
-  // navigation to "/" may arrive before they have), then focuses the matching
-  // cell -- which also switches to Analysis mode so the cell layer is visible
-  // -- and clears the request so it never fires twice.
-  useEffect(() => {
-    if (!pendingMapFocusCandidateId || candidateCellAssets.length === 0) {
-      return;
-    }
-
-    const match = candidateCellAssets.find((asset) => asset.id === pendingMapFocusCandidateId);
-
-    if (match) {
-      handleAssetFocus(match);
-    }
-
-    setPendingMapFocusCandidateId(null);
-    // handleAssetFocus is a per-render function declaration, so listing it (or
-    // the stable setter) would re-run this every render -- harmless, since it
-    // returns immediately once the request is cleared, but pointless. The
-    // effect is meant to fire only when a request arrives or the candidate
-    // cells finish loading.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pendingMapFocusCandidateId, candidateCellAssets]);
-
-  useEffect(() => {
-    if (!selectedScenarioCaseName) {
-      setScenarioRegionsData(emptyFeatureCollection);
-      return;
-    }
-
-    void loadScenarioRegions(selectedScenarioCaseName);
-  }, [selectedScenarioCaseName]);
-
-  useEffect(() => {
-    const pointCoordinates = getPointCoordinates(selectedAsset);
-
-    if (!selectedAsset || selectedAsset.assetType !== "plant" || !pointCoordinates) {
-      setAssetClimate(null);
-      setClimateRequestState("idle");
-      setClimateErrorMessage("");
-      return;
-    }
-
-    const controller = new AbortController();
-    void loadAssetClimate(selectedAsset, pointCoordinates, controller.signal);
-
-    return () => controller.abort();
-  }, [selectedAsset]);
-
-  useEffect(() => {
-    if (!marketHighlightEnabled) {
-      return;
-    }
-
-    void loadMarketSignal();
-    const intervalId = window.setInterval(() => {
-      void loadMarketSignal();
-    }, 15 * 60 * 1000);
-
-    return () => window.clearInterval(intervalId);
-  }, [marketHighlightEnabled]);
-
-  const visibilityState = {
-    plants: [showPlants, setShowPlants],
-    substations: [showSubstations, setShowSubstations],
-    lines: [showLines, setShowLines],
-    gasPipelines: [showGasPipelines, setShowGasPipelines],
-    gasImports: [showGasImports, setShowGasImports],
-    hydrogenPipelines: [showHydrogenPipelines, setShowHydrogenPipelines],
-    hydrogenProjects: [showHydrogenProjects, setShowHydrogenProjects],
-    natura2000: [showNatura2000, setShowNatura2000],
-    cells: [showCells, setShowCells],
-    generatorClusters: [showGeneratorClusters, setShowGeneratorClusters],
-    scenarioRegions: [showScenarioRegions, setShowScenarioRegions],
-  } as const;
-
-  const isExplorerMode = viewMode === "explorer";
-
-  // Memoized because these derive from potentially large datasets (15k+ plants,
-  // 3k+ substations in production data) and must not re-run on every render —
-  // e.g. every search-box keystroke or scenario slider drag.
-  const normalizedPlantAssets = useMemo(
-    () => allPlantAssets.map(addPlantExplorerProperties),
-    [allPlantAssets],
-  );
-  const plantAssets = useMemo(
-    () =>
-      filterPlantAssets(
-        normalizedPlantAssets,
-        enabledPlantTechnologies,
-        enabledPlantStatuses,
-      ),
-    [normalizedPlantAssets, enabledPlantTechnologies, enabledPlantStatuses],
-  );
-  const voltageOptions = useMemo(
-    () => getVoltageOptions([...substationAssets, ...lineAssets]),
-    [substationAssets, lineAssets],
-  );
-  const filteredSubstationAssets = useMemo(
-    () => filterAssetsByVoltage(substationAssets, voltageFilter),
-    [substationAssets, voltageFilter],
-  );
-  const filteredLineAssets = useMemo(
-    () => filterAssetsByVoltage(lineAssets, voltageFilter),
-    [lineAssets, voltageFilter],
-  );
-  const plantsData = useMemo(
-    () => assetSelectionsToFeatureCollection(plantAssets),
-    [plantAssets],
-  );
-  const filteredSubstationsData = useMemo(
-    () => assetSelectionsToFeatureCollection(filteredSubstationAssets),
-    [filteredSubstationAssets],
-  );
-  const filteredLinesData = useMemo(
-    () => assetSelectionsToFeatureCollection(filteredLineAssets),
-    [filteredLineAssets],
-  );
-  const gasPipelinesData = useMemo(
-    () => assetSelectionsToFeatureCollection(gasPipelineAssets),
-    [gasPipelineAssets],
-  );
-  const gasImportPointsData = useMemo(
-    () => assetSelectionsToFeatureCollection(gasImportPointAssets),
-    [gasImportPointAssets],
-  );
-  const hydrogenPipelinesData = useMemo(
-    () => assetSelectionsToFeatureCollection(hydrogenPipelineAssets),
-    [hydrogenPipelineAssets],
-  );
-  const hydrogenProjectsData = useMemo(
-    () => assetSelectionsToFeatureCollection(hydrogenProjectAssets),
-    [hydrogenProjectAssets],
-  );
-
-  const visibleSelectedAsset = getVisibleSelectedAsset(selectedAsset, {
-    viewMode,
-    showPlants,
-    showSubstations,
-    showLines,
-    showGasPipelines,
-    showGasImports,
-    showHydrogenPipelines,
-    showHydrogenProjects,
-    showNatura2000,
-    showCells,
-    enabledPlantTechnologies,
-    enabledPlantStatuses,
-    voltageFilter,
-    scenario,
-    excludeNatura2000,
-    natura2000Data,
-  });
-
-  const infrastructureAssets = useMemo(
-    () => [
-      ...plantAssets,
-      ...filteredSubstationAssets,
-      ...filteredLineAssets,
-      ...gasPipelineAssets,
-      ...gasImportPointAssets,
-      ...hydrogenPipelineAssets,
-      ...hydrogenProjectAssets,
-    ],
-    [
-      plantAssets,
-      filteredSubstationAssets,
-      filteredLineAssets,
-      gasPipelineAssets,
-      gasImportPointAssets,
-      hydrogenPipelineAssets,
-      hydrogenProjectAssets,
-    ],
-  );
-  const plantsInViewCount = useMemo(
-    () => getAssetsInViewCount(plantAssets, viewportBounds),
-    [plantAssets, viewportBounds],
-  );
-  const substationsInViewCount = useMemo(
-    () => getAssetsInViewCount(filteredSubstationAssets, viewportBounds),
-    [filteredSubstationAssets, viewportBounds],
-  );
-  const linesInViewCount = useMemo(
-    () => getAssetsInViewCount(filteredLineAssets, viewportBounds),
-    [filteredLineAssets, viewportBounds],
-  );
-  const gasPipelinesInViewCount = useMemo(
-    () => getAssetsInViewCount(gasPipelineAssets, viewportBounds),
-    [gasPipelineAssets, viewportBounds],
-  );
-  const gasImportsInViewCount = useMemo(
-    () => getAssetsInViewCount(gasImportPointAssets, viewportBounds),
-    [gasImportPointAssets, viewportBounds],
-  );
-  const hydrogenPipelinesInViewCount = useMemo(
-    () => getAssetsInViewCount(hydrogenPipelineAssets, viewportBounds),
-    [hydrogenPipelineAssets, viewportBounds],
-  );
-  const hydrogenProjectsInViewCount = useMemo(
-    () => getAssetsInViewCount(hydrogenProjectAssets, viewportBounds),
-    [hydrogenProjectAssets, viewportBounds],
-  );
-  const filteredCellAssets = useMemo(
-    () =>
-      getEligibleCandidateCells(candidateCellAssets, scenario).filter(
-        (asset) => !isCandidateExcludedByNatura(asset, natura2000Data, excludeNatura2000),
-      ),
-    [candidateCellAssets, scenario, natura2000Data, excludeNatura2000],
-  );
-  const filteredCellsData = useMemo(
-    () => ({
-      type: "FeatureCollection" as const,
-      features: filteredCellAssets.map((asset) => asset.feature),
-    }),
-    [filteredCellAssets],
-  );
-
-  const topOpportunities = useMemo(
-    () => getTopOpportunities(filteredCellAssets),
-    [filteredCellAssets],
-  );
-  const marketFlowDirection = getMarketFlowDirection(marketSignal);
-
-  const query = searchQuery.trim().toLowerCase();
-  const searchableInfrastructureAssets = useMemo(
-    () =>
-      limitResultsToViewport
-        ? infrastructureAssets.filter((asset) => isAssetInViewport(asset, viewportBounds))
-        : infrastructureAssets,
-    [infrastructureAssets, limitResultsToViewport, viewportBounds],
-  );
-  const searchResults = useMemo(() => {
-    if (!query) {
-      return [];
-    }
-
-    return searchableInfrastructureAssets.filter((asset) => {
-      const searchableValues = [
-        asset.name,
-        asset.id,
-        asset.properties.technology,
-        asset.properties.technology_category,
-        asset.properties.technology_label,
-        asset.properties.status,
-        asset.properties.nominal_capacity_mw,
-        asset.properties.voltage_kv,
-        asset.properties.operator,
-        asset.properties.primary_source,
-        asset.properties.region,
-        asset.properties.regional_unit,
-        asset.properties.municipality,
-        asset.properties.pipeline_role,
-        asset.properties.pipeline_code,
-        asset.properties.pipeline_category,
-        asset.properties.development_stage,
-        asset.properties.capacity_gwh_per_day,
-        asset.properties.length_km,
-        asset.properties.estimated_cost_eur,
-        asset.properties.import_type,
-        asset.properties.project_type,
-        asset.properties.hydrogen_role,
-        asset.properties.hydrogen_type,
-        asset.properties.electrolyzer_capacity_mw,
-        asset.properties.annual_output_tpa,
-        asset.properties.connected_system,
-      ];
-
-      return searchableValues.some((value) =>
-        value !== undefined && value !== null
-          ? String(value).toLowerCase().includes(query)
-          : false,
-      );
-    });
-  }, [searchableInfrastructureAssets, query]);
+// This "sign in" is decorative by design -- it's a public demo, so anything
+// typed here (or nothing at all) leads straight into the app. No backend
+// auth exists for it, intentionally.
+export default function LandingPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   return (
-    <main className="flex h-[calc(100vh-4rem)] w-full overflow-hidden bg-zinc-950 text-zinc-100">
-      <aside className="flex h-full w-80 shrink-0 flex-col overflow-y-auto border-r border-white/10 bg-zinc-900 px-6 py-8">
-        {(candidateLoadState === "error" || infrastructureLoadState === "error") && (
-          <div className="mb-4 rounded-lg border border-rose-500/20 bg-rose-500/10 px-3 py-3 text-xs text-rose-300">
-            {infrastructureLoadState === "error"
-              ? infrastructureLoadErrorMessage
-              : candidateLoadErrorMessage}
+    <main className="relative flex min-h-screen flex-col overflow-hidden text-zinc-100">
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(circle at 15% 10%, rgba(34,184,145,0.12), transparent 45%), radial-gradient(circle at 85% 85%, rgba(34,184,145,0.08), transparent 50%)",
+        }}
+      />
+
+      <header className="relative z-10 flex items-center gap-3 px-6 py-6 sm:px-10">
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="h-6 w-6 text-emerald-400">
+          <path
+            d="M13 2 4 13.2h6.2L10.6 22 20 9.6h-6.4L13 2Z"
+            fill="currentColor"
+            fillOpacity="0.9"
+          />
+        </svg>
+        <p className="font-display text-sm tracking-tight text-zinc-100">Energy Investment Platform</p>
+      </header>
+
+      <div className="relative z-10 flex flex-1 flex-col items-center justify-center gap-14 px-6 py-10 sm:px-10 lg:flex-row lg:items-center lg:gap-20">
+        <motion.div
+          initial={{ opacity: 0, x: -16 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+          className="order-2 flex w-full max-w-md flex-col items-center gap-8 lg:order-1 lg:items-start"
+        >
+          <NetworkTeaser />
+          <div className="w-full max-w-sm">
+            <StatChips />
           </div>
-        )}
+        </motion.div>
 
-        <ModeToggle mode={viewMode} onChange={handleViewModeChange} />
+        <motion.div
+          initial={{ opacity: 0, x: 16 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+          className="order-1 w-full max-w-md lg:order-2"
+        >
+          <div className="rounded-2xl border border-white/10 bg-zinc-950/60 p-8 shadow-[0_0_0_1px_rgba(255,255,255,0.02),0_24px_60px_-20px_rgba(0,0,0,0.6)] backdrop-blur-xl">
+            <p className="font-display text-2xl font-semibold tracking-tight text-zinc-50">
+              Screen Greece&rsquo;s grid for your next site
+            </p>
+            <p className="mt-2 text-sm text-zinc-400">
+              Scenario-based investment screening and PyPSA energy modelling, built on real
+              infrastructure data.
+            </p>
 
-        <LayerControlPanel mode={viewMode} visibilityState={visibilityState} />
+            <form
+              className="mt-8 flex flex-col gap-4"
+              onSubmit={(event) => {
+                event.preventDefault();
+                router.push("/overview");
+              }}
+            >
+              <label className="flex flex-col gap-1.5">
+                <span className="text-xs font-medium uppercase tracking-wide text-zinc-500">Email</span>
+                <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 transition focus-within:border-emerald-500/40 focus-within:ring-1 focus-within:ring-emerald-500/30">
+                  <Mail className="h-4 w-4 text-zinc-500" />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    placeholder="you@example.com"
+                    autoComplete="off"
+                    className="w-full bg-transparent text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none"
+                  />
+                </div>
+              </label>
 
-        <ScenarioResultsSourcePanel
-          selectedCaseName={selectedScenarioCaseName}
-          onSelectCaseName={setSelectedScenarioCaseName}
-          metricId={scenarioRegionMetricId}
-          onSelectMetric={setScenarioRegionMetricId}
-        />
+              <label className="flex flex-col gap-1.5">
+                <span className="text-xs font-medium uppercase tracking-wide text-zinc-500">Password</span>
+                <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 transition focus-within:border-emerald-500/40 focus-within:ring-1 focus-within:ring-emerald-500/30">
+                  <Lock className="h-4 w-4 text-zinc-500" />
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    placeholder="••••••••"
+                    autoComplete="off"
+                    className="w-full bg-transparent text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none"
+                  />
+                </div>
+              </label>
 
-        <InfrastructureFiltersPanel
-          enabledPlantTechnologies={enabledPlantTechnologies}
-          onTogglePlantTechnology={togglePlantTechnology}
-          enabledPlantStatuses={enabledPlantStatuses}
-          onTogglePlantStatus={togglePlantStatus}
-          voltageFilter={voltageFilter}
-          onVoltageFilterChange={setVoltageFilter}
-          voltageOptions={voltageOptions}
-          limitResultsToViewport={limitResultsToViewport}
-          onLimitResultsToViewportChange={setLimitResultsToViewport}
-          plantsInViewCount={plantsInViewCount}
-          substationsInViewCount={substationsInViewCount}
-          linesInViewCount={linesInViewCount}
-          gasPipelinesInViewCount={gasPipelinesInViewCount}
-          gasImportsInViewCount={gasImportsInViewCount}
-          hydrogenPipelinesInViewCount={hydrogenPipelinesInViewCount}
-          hydrogenProjectsInViewCount={hydrogenProjectsInViewCount}
-        />
+              <motion.button
+                type="submit"
+                whileTap={{ scale: 0.98 }}
+                className="mt-2 flex items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-zinc-950 transition hover:bg-emerald-400"
+              >
+                Sign In
+                <ArrowRight className="h-4 w-4" />
+              </motion.button>
+            </form>
 
-        <ClimatePanel
-          asset={selectedAsset}
-          climate={assetClimate}
-          requestState={climateRequestState}
-          errorMessage={climateErrorMessage}
-        />
+            <div className="mt-6 flex items-center gap-3 text-xs text-zinc-600">
+              <div className="h-px flex-1 bg-white/10" />
+              or
+              <div className="h-px flex-1 bg-white/10" />
+            </div>
 
-        <MarketPanel
-          enabled={marketHighlightEnabled}
-          marketSignal={marketSignal}
-          requestState={marketRequestState}
-          errorMessage={marketErrorMessage}
-          onToggle={setMarketHighlightEnabled}
-          onRefresh={loadMarketSignal}
-        />
+            <button
+              type="button"
+              onClick={() => router.push("/overview")}
+              className="mt-4 w-full rounded-lg border border-white/10 px-4 py-2.5 text-sm font-medium text-zinc-300 transition hover:border-emerald-500/30 hover:bg-white/5 hover:text-zinc-100"
+            >
+              Continue as Guest
+            </button>
 
-        <SearchPanel
-          searchQuery={searchQuery}
-          onSearchQueryChange={setSearchQuery}
-          limitResultsToViewport={limitResultsToViewport}
-          searchResults={searchResults}
-          onAssetFocus={handleAssetFocus}
-        />
-
-        {!isExplorerMode ? (
-          <AnalysisFiltersPanel
-            excludeNatura2000={excludeNatura2000}
-            onExcludeNatura2000Change={handleExcludeNatura2000Change}
-          />
-        ) : null}
-
-        {!isExplorerMode ? (
-          <TopOpportunitiesPanel
-            topOpportunities={topOpportunities}
-            onAssetFocus={handleAssetFocus}
-          />
-        ) : null}
-
-        {!isExplorerMode ? (
-        <ComparePanel
-          comparedAssets={comparedAssets}
-          scenario={scenario}
-          onFocusAsset={handleAssetFocus}
-          onRemoveAsset={handleRemoveComparedAsset}
-          onClearAll={() => setComparedAssets([])}
-        />
-        ) : null}
-      </aside>
-
-      <section className="flex flex-1 bg-zinc-950">
-        <MapView
-          showPlants={showPlants}
-          showSubstations={showSubstations}
-          showLines={showLines}
-          showGasPipelines={showGasPipelines}
-          showGasImportPoints={showGasImports}
-          showHydrogenPipelines={showHydrogenPipelines}
-          showHydrogenProjects={showHydrogenProjects}
-          showNatura2000={showNatura2000}
-          showCells={showCells}
-          plantsData={plantsData}
-          substationsData={filteredSubstationsData}
-          linesData={filteredLinesData}
-          gasPipelinesData={gasPipelinesData}
-          gasImportPointsData={gasImportPointsData}
-          hydrogenPipelinesData={hydrogenPipelinesData}
-          hydrogenProjectsData={hydrogenProjectsData}
-          natura2000Data={natura2000Data}
-          filteredCellsData={filteredCellsData}
-          selectedAsset={visibleSelectedAsset}
-          focusRequest={focusRequest}
-          highlightMarketSignal={marketHighlightEnabled}
-          marketFlowDirection={marketFlowDirection}
-          marketSummary={marketSignal?.summary ?? null}
-          marketPriceEurMwh={marketSignal?.currentPrice.valueEurMwh ?? null}
-          marketZoneData={marketZoneData}
-          showGeneratorClusters={showGeneratorClusters}
-          generatorClustersData={generatorClustersData}
-          showScenarioRegions={showScenarioRegions}
-          scenarioRegionsData={scenarioRegionsData}
-          scenarioRegionMetricId={scenarioRegionMetricId}
-          onViewportChange={setViewportBounds}
-          onSelectAsset={setSelectedAsset}
-          onClearSelection={() => setSelectedAsset(null)}
-        />
-
-        {visibleSelectedAsset ? (
-          <AssetDetailsDrawer
-            asset={visibleSelectedAsset}
-            onClose={() => setSelectedAsset(null)}
-            isCompared={comparedAssets.some(
-              (asset) => asset.id === visibleSelectedAsset.id,
-            )}
-            compareLimitReached={comparedAssets.length >= 3}
-            onAddToCompare={handleAddComparedAsset}
-            onRemoveFromCompare={handleRemoveComparedAsset}
-          />
-        ) : null}
-      </section>
+            <p className="mt-6 text-center text-xs text-zinc-600">
+              This is a public live demo — no account is required or stored. Any input, or none at
+              all, takes you straight in.
+            </p>
+          </div>
+        </motion.div>
+      </div>
     </main>
   );
-
-  function handleAssetFocus(asset: AssetSelection) {
-    if (asset.assetType === "cell" && viewMode === "explorer") {
-      handleViewModeChange("analysis");
-    }
-
-    setSelectedAsset(asset);
-    setFocusRequest({
-      asset,
-      timestamp: Date.now(),
-    });
-    setSearchQuery("");
-  }
-
-  function handleViewModeChange(nextMode: ViewMode) {
-    setViewMode(nextMode);
-
-    if (nextMode === "explorer") {
-      setShowCells(false);
-
-      if (selectedAsset?.assetType === "cell") {
-        setSelectedAsset(null);
-      }
-
-      return;
-    }
-
-    setShowCells(true);
-  }
-
-  function togglePlantTechnology(category: PlantTechnologyCategory) {
-    setEnabledPlantTechnologies((current) => {
-      if (current.includes(category)) {
-        const nextSelection = current.filter((item) => item !== category);
-        return nextSelection.length > 0 ? nextSelection : current;
-      }
-
-      return [...current, category];
-    });
-  }
-
-  function togglePlantStatus(status: PlantStatusCategory) {
-    setEnabledPlantStatuses((current) => {
-      if (current.includes(status)) {
-        const nextSelection = current.filter((item) => item !== status);
-        return nextSelection.length > 0 ? nextSelection : current;
-      }
-
-      return [...current, status];
-    });
-  }
-
-  function handleExcludeNatura2000Change(checked: boolean) {
-    setExcludeNatura2000(checked);
-
-    if (checked) {
-      setShowNatura2000(true);
-    }
-  }
-
-  function handleAddComparedAsset(asset: AssetSelection) {
-    if (asset.assetType !== "cell") {
-      return;
-    }
-
-    setComparedAssets((current) => {
-      if (current.some((item) => item.id === asset.id)) {
-        return current;
-      }
-
-      if (current.length >= 3) {
-        return current;
-      }
-
-      return [...current, asset];
-    });
-  }
-
-  function handleRemoveComparedAsset(assetId: string) {
-    setComparedAssets((current) =>
-      current.filter((asset) => asset.id !== assetId),
-    );
-  }
-
-  async function loadCandidateCells() {
-    setCandidateLoadState("loading");
-    setCandidateLoadErrorMessage("");
-
-    try {
-      const response = await fetch(CANDIDATES_API_URL);
-
-      if (!response.ok) {
-        setCandidateLoadState("error");
-        setCandidateLoadErrorMessage(
-          "Could not load candidate cells from backend.",
-        );
-        return;
-      }
-
-      const featureCollection =
-        (await response.json()) as GeoJSON.FeatureCollection;
-
-      setCandidateCellAssets(buildSelections(featureCollection, "cell"));
-      setCandidateLoadState("success");
-    } catch {
-      setCandidateLoadState("error");
-      setCandidateLoadErrorMessage(
-        "Backend unavailable for candidate cell loading.",
-      );
-    }
-  }
-
-  async function loadPilotInfrastructure() {
-    setInfrastructureLoadState("loading");
-    setInfrastructureLoadErrorMessage("");
-
-    try {
-      // Natura 2000 is excluded from this batch and fetched separately,
-      // below: it's off by default (showNatura2000 starts false) and isn't
-      // needed for the initial map paint, but it's also the single slowest
-      // layer (~11s, 17.7MB decompressed) -- bundling it in made every load
-      // wait on it even though nothing visible depended on it yet.
-      //
-      // A plain Promise.all over all requests overwhelmed the deployed
-      // backend (each request individually succeeds; the burst of
-      // concurrent requests does not), and fully sequential loading fixed
-      // that but made the page noticeably slow. This loads with bounded
-      // concurrency instead -- a few requests in flight at once -- as a
-      // middle ground between the two.
-      const layerResults = await loadWithConcurrency(
-        [
-          { key: "plants", url: PLANTS_API_URL, label: "Power plants" },
-          { key: "substations", url: SUBSTATIONS_API_URL, label: "Substations" },
-          { key: "lines", url: TRANSMISSION_LINES_API_URL, label: "Transmission lines" },
-          { key: "gasPipelines", url: GAS_PIPELINES_API_URL, label: "Gas pipelines" },
-          { key: "gasImportPoints", url: GAS_IMPORT_POINTS_API_URL, label: "Gas import points" },
-          { key: "hydrogenPipelines", url: HYDROGEN_PIPELINES_API_URL, label: "Hydrogen pipelines" },
-          { key: "hydrogenProjects", url: HYDROGEN_PROJECTS_API_URL, label: "Hydrogen projects" },
-        ],
-        3,
-      );
-
-      const plantsFeatureCollection = layerResults.plants;
-      const substationsFeatureCollection = layerResults.substations;
-      const linesFeatureCollection = layerResults.lines;
-      const gasPipelinesFeatureCollection = layerResults.gasPipelines;
-      const gasImportPointsFeatureCollection = layerResults.gasImportPoints;
-      const hydrogenPipelinesFeatureCollection = layerResults.hydrogenPipelines;
-      const hydrogenProjectsFeatureCollection = layerResults.hydrogenProjects;
-
-      // Fire-and-forget: updates natura2000Data whenever it lands, without
-      // delaying the infrastructure load or failing it if this one layer
-      // errors out.
-      void loadGeoJsonLayerWithRetry(NATURA_2000_API_URL, "Natura 2000")
-        .then(setNatura2000Data)
-        .catch(() => {});
-
-      setAllPlantAssets(
-        buildSelections(plantsFeatureCollection, "plant").filter(
-          (asset) => isDisplayablePlantAsset(asset),
-        ),
-      );
-      setSubstationAssets(buildSelections(substationsFeatureCollection, "substation"));
-      setLineAssets(buildSelections(linesFeatureCollection, "line"));
-      setGasPipelineAssets(
-        buildSelections(
-          alignGasPipelineRoutes(
-            gasPipelinesFeatureCollection,
-            hydrogenPipelinesFeatureCollection,
-          ),
-          "gasPipeline",
-        ),
-      );
-      setGasImportPointAssets(
-        buildSelections(gasImportPointsFeatureCollection, "gasImportPoint"),
-      );
-      setHydrogenPipelineAssets(
-        buildSelections(hydrogenPipelinesFeatureCollection, "hydrogenPipeline"),
-      );
-      setHydrogenProjectAssets(
-        buildSelections(hydrogenProjectsFeatureCollection, "hydrogenProject"),
-      );
-      setInfrastructureLoadState("success");
-    } catch (error) {
-      setInfrastructureLoadState("error");
-      setInfrastructureLoadErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "Could not load Greece-wide infrastructure from backend.",
-      );
-    }
-  }
-
-  async function loadAssetClimate(
-    asset: AssetSelection,
-    coordinates: [number, number],
-    signal: AbortSignal,
-  ) {
-    setClimateRequestState("loading");
-    setClimateErrorMessage("");
-
-    const [longitude, latitude] = coordinates;
-    const query = new URLSearchParams({
-      latitude: String(latitude),
-      longitude: String(longitude),
-      technology: String(asset.properties.technology ?? "Unknown"),
-    });
-
-    try {
-      const response = await fetch(`${CLIMATE_ASSET_API_URL}?${query.toString()}`, {
-        signal,
-      });
-
-      if (!response.ok) {
-        setClimateRequestState("error");
-        setClimateErrorMessage(
-          "Climate data request failed. Backend unavailable or returned an error.",
-        );
-        return;
-      }
-
-      const payload = (await response.json()) as ClimateAssetResponse;
-      setAssetClimate(payload);
-      setClimateRequestState("success");
-    } catch (error) {
-      if (error instanceof DOMException && error.name === "AbortError") {
-        return;
-      }
-
-      setClimateRequestState("error");
-      setClimateErrorMessage("Could not reach climate data service.");
-    }
-  }
-
-  async function loadMarketSignal() {
-    setMarketRequestState("loading");
-    setMarketErrorMessage("");
-
-    try {
-      const response = await fetch(MARKET_GREECE_API_URL);
-
-      if (!response.ok) {
-        setMarketRequestState("error");
-        setMarketErrorMessage(
-          "Market signal request failed. Backend unavailable or returned an error.",
-        );
-        return;
-      }
-
-      const payload = (await response.json()) as GreeceMarketSignalResponse;
-      setMarketSignal(payload);
-
-      if (payload.status === "error") {
-        setMarketRequestState("error");
-        setMarketErrorMessage(payload.summary);
-        return;
-      }
-
-      setMarketRequestState("success");
-    } catch {
-      setMarketRequestState("error");
-      setMarketErrorMessage("Could not reach market signal service.");
-    }
-  }
-
-  async function loadMarketZoneBoundary() {
-    try {
-      const featureCollection = await loadGeoJsonLayer(
-        MARKET_GREECE_BOUNDARY_API_URL,
-        "Greece market boundary",
-      );
-      setMarketZoneData(featureCollection);
-    } catch {
-      setMarketZoneData(emptyFeatureCollection);
-    }
-  }
-
-  async function loadGeneratorClusters() {
-    try {
-      const featureCollection = await getGeneratorClustersGeoJson();
-      setGeneratorClustersData(featureCollection);
-    } catch {
-      // Real asset clusters are a "nice to have" reference layer, not core
-      // to any other panel -- fail silently (empty layer) rather than
-      // surfacing a load error for a layer the user may never enable.
-      setGeneratorClustersData(emptyFeatureCollection);
-    }
-  }
-
-  async function loadScenarioRegions(caseName: string) {
-    try {
-      const featureCollection = await getScenarioRegionsGeoJson(caseName);
-      setScenarioRegionsData(featureCollection);
-    } catch {
-      setScenarioRegionsData(emptyFeatureCollection);
-    }
-  }
-}
-
-async function loadWithConcurrency<K extends string>(
-  tasks: { key: K; url: string; label: string }[],
-  limit: number,
-): Promise<Record<K, GeoJSON.FeatureCollection>> {
-  const results = {} as Record<K, GeoJSON.FeatureCollection>;
-  let firstError: unknown = null;
-  let nextIndex = 0;
-
-  async function worker() {
-    while (true) {
-      const i = nextIndex;
-      nextIndex += 1;
-      if (i >= tasks.length) return;
-      const task = tasks[i];
-      try {
-        results[task.key] = await loadGeoJsonLayerWithRetry(task.url, task.label);
-      } catch (error) {
-        if (firstError === null) firstError = error;
-      }
-    }
-  }
-
-  await Promise.all(
-    Array.from({ length: Math.min(limit, tasks.length) }, () => worker()),
-  );
-
-  if (firstError !== null) throw firstError;
-  return results;
-}
-
-async function loadGeoJsonLayerWithRetry(
-  url: string,
-  layerName: string,
-): Promise<GeoJSON.FeatureCollection> {
-  try {
-    return await loadGeoJsonLayer(url, layerName);
-  } catch {
-    // A short retry helps when the backend is still starting up locally.
-    await wait(500);
-    return loadGeoJsonLayer(url, layerName);
-  }
-}
-
-async function loadGeoJsonLayer(
-  url: string,
-  layerName: string,
-): Promise<GeoJSON.FeatureCollection> {
-  let response: Response;
-
-  try {
-    response = await fetch(url);
-  } catch {
-    throw new Error(`${layerName} backend unavailable.`);
-  }
-
-  if (!response.ok) {
-    throw new Error(
-      `${layerName} endpoint failed (${response.status} ${response.statusText}).`,
-    );
-  }
-
-  const payload = (await response.json()) as Partial<GeoJSON.FeatureCollection>;
-
-  if (payload.type !== "FeatureCollection" || !Array.isArray(payload.features)) {
-    throw new Error(`${layerName} endpoint returned invalid GeoJSON.`);
-  }
-
-  return payload as GeoJSON.FeatureCollection;
-}
-
-function wait(milliseconds: number) {
-  return new Promise((resolve) => {
-    window.setTimeout(resolve, milliseconds);
-  });
-}
-
-function getPointCoordinates(asset: AssetSelection | null) {
-  if (!asset || asset.feature.geometry.type !== "Point") {
-    return null;
-  }
-
-  return asset.feature.geometry.coordinates as [number, number];
-}
-
-function getVisibleSelectedAsset(
-  selectedAsset: AssetSelection | null,
-  visibility: {
-    viewMode: ViewMode;
-    showPlants: boolean;
-    showSubstations: boolean;
-    showLines: boolean;
-    showGasPipelines: boolean;
-    showGasImports: boolean;
-    showHydrogenPipelines: boolean;
-    showHydrogenProjects: boolean;
-    showNatura2000: boolean;
-    showCells: boolean;
-    enabledPlantTechnologies: PlantTechnologyCategory[];
-    enabledPlantStatuses: PlantStatusCategory[];
-    voltageFilter: string;
-    scenario: Scenario;
-    excludeNatura2000: boolean;
-    natura2000Data: GeoJSON.FeatureCollection;
-  },
-) {
-  if (!selectedAsset) {
-    return null;
-  }
-
-  if (selectedAsset.assetType === "plant" && !visibility.showPlants) {
-    return null;
-  }
-
-  if (
-    selectedAsset.assetType === "plant" &&
-    !matchesPlantTechnology(selectedAsset, visibility.enabledPlantTechnologies)
-  ) {
-    return null;
-  }
-
-  if (
-    selectedAsset.assetType === "plant" &&
-    !matchesPlantStatus(selectedAsset, visibility.enabledPlantStatuses)
-  ) {
-    return null;
-  }
-
-  if (selectedAsset.assetType === "substation" && !visibility.showSubstations) {
-    return null;
-  }
-
-  if (
-    selectedAsset.assetType === "substation" &&
-    !matchesVoltageFilter(selectedAsset, visibility.voltageFilter)
-  ) {
-    return null;
-  }
-
-  if (selectedAsset.assetType === "line" && !visibility.showLines) {
-    return null;
-  }
-
-  if (
-    selectedAsset.assetType === "line" &&
-    !matchesVoltageFilter(selectedAsset, visibility.voltageFilter)
-  ) {
-    return null;
-  }
-
-  if (selectedAsset.assetType === "gasPipeline" && !visibility.showGasPipelines) {
-    return null;
-  }
-
-  if (
-    selectedAsset.assetType === "gasImportPoint" &&
-    !visibility.showGasImports
-  ) {
-    return null;
-  }
-
-  if (
-    selectedAsset.assetType === "hydrogenPipeline" &&
-    !visibility.showHydrogenPipelines
-  ) {
-    return null;
-  }
-
-  if (
-    selectedAsset.assetType === "hydrogenProject" &&
-    !visibility.showHydrogenProjects
-  ) {
-    return null;
-  }
-
-  if (
-    selectedAsset.assetType === "cell" &&
-    (!visibility.showCells ||
-      !matchesCandidateScenario(selectedAsset, visibility.scenario) ||
-      isCandidateExcludedByNatura(
-        selectedAsset,
-        visibility.natura2000Data,
-        visibility.excludeNatura2000,
-      ))
-  ) {
-    return null;
-  }
-
-  return selectedAsset;
-}
-
-function getTopOpportunities(assets: AssetSelection[]) {
-  return sortCandidatesByInvestmentScore(assets).slice(0, 5);
-}
-
-function getMarketFlowDirection(
-  marketSignal: GreeceMarketSignalResponse | null,
-): MarketFlowDirection {
-  if (!marketSignal || marketSignal.status !== "success") {
-    return "unavailable";
-  }
-
-  if (marketSignal.netImportMw > 0) {
-    return "import";
-  }
-
-  if (marketSignal.netImportMw < 0) {
-    return "export";
-  }
-
-  return "balanced";
 }

@@ -14,17 +14,22 @@ requirements.txt -- from that same file, built there for EXISTING generator
 clusters in a solved network. A candidate cell has no matching PyPSA
 generator, so three more real-but-approximate steps close that gap:
 
-  * captured price -- the candidate's assigned region's own solved
-    average_marginal_price_by_bus (real, but a system-wide regional average,
-    not a technology-specific captured price).
-  * annual generation -- the solved scenario's own NATIONAL capacity factor
-    for the carrier (generation_by_carrier_mwh / (installed_capacity_by_carrier_mw
-    * 8760), both already in ScenarioMetrics) applied to an assumed capacity.
+  * captured price -- the region's own hourly capture price for THIS carrier,
+    from app/hourly_market.py: sum(w * price * availability) / sum(w * availability)
+    over the solve's own snapshots. This is what a new price-taking plant of
+    that technology would be paid at that location, and it is materially below
+    the regional average price wherever the technology is already abundant
+    (solar in Greece captures roughly half the average price). When a case has
+    no extracted hourly layer, this falls back to the old regional average and
+    says so, per candidate, in `price_basis`.
+  * annual generation -- the region's own availability capacity factor for the
+    carrier, from the same hourly layer; falling back to the scenario's
+    NATIONAL capacity factor (generation_by_carrier_mwh /
+    (installed_capacity_by_carrier_mw * 8760)) when it is unavailable.
   * assumed capacity -- cell_area_km2 * buildable_fraction * a power-density
-    constant below. This last one is a plain external literature range, NOT
-    Greece-specific or independently re-verified this pass -- flag it in any
-    response the same way technology_costs.csv's own weaker rows (oil,
-    biomass) flag themselves, not as settled fact.
+    figure below, calibrated against Greece's own operating fleet (see
+    pipeline/calibrate_power_density.py) with the external literature range
+    kept as the fallback.
 """
 
 from __future__ import annotations
@@ -37,6 +42,8 @@ import pyproj
 from shapely.geometry import shape
 from shapely.ops import transform
 
+from .hourly_market import HourlyMarket
+from .power_density import get_power_density
 from .models import (
     CandidateCell,
     CandidateInvestmentAnalysis,
@@ -48,14 +55,12 @@ from .settings import settings as default_settings
 
 TECHNOLOGY_COSTS_RELATIVE_PATH = Path("data") / "static" / "technology_costs.csv"
 
-# Utility-scale power density, MW of nameplate capacity per km^2 of buildable
-# land. External literature range (solar: commonly-cited utility-PV figures
-# in the ~30-45 MW/km^2 range; onshore wind: commonly-cited array-density
-# figures in the ~5-8 MW/km^2 range, driven by turbine spacing, not raw
-# footprint) -- NOT Greece-specific, NOT independently re-verified in this
-# pass. Treat with at least as much caution as technology_costs.csv's own
-# self-flagged weaker rows (oil, biomass).
-POWER_DENSITY_MW_PER_KM2 = {"solar": 40.0, "wind": 6.0}
+# Utility-scale power density now comes from app/power_density.py, which
+# prefers a measurement of Greece's own built fleet (plant footprints from
+# OpenStreetMap divided into their tagged capacities, see
+# pipeline/calibrate_power_density.py) and falls back to the external
+# literature range below when too few plants carry both. The fallback values
+# are kept there, not here, so there is exactly one place that decides.
 
 # A candidate cell's grid square (~0.1deg, ~11km x ~9km -- see
 # pipeline/generate_candidates.py) is a screening area, not a real single
@@ -85,31 +90,50 @@ _TO_EGSA87 = pyproj.Transformer.from_crs("EPSG:4326", "EPSG:2100", always_xy=Tru
 
 HOURS_PER_YEAR = 8760.0
 
-ASSUMPTIONS_NOTE = {
-    "power_density": (
-        "Assumed capacity = buildable land area x buildable_fraction x an external "
-        f"literature power-density figure ({POWER_DENSITY_MW_PER_KM2['solar']:.0f} MW/km^2 solar, "
-        f"{POWER_DENSITY_MW_PER_KM2['wind']:.0f} MW/km^2 onshore wind) -- not Greece-specific, "
-        "not independently re-verified -- capped at a typical single utility-scale project size "
-        f"({MAX_SINGLE_PROJECT_CAPACITY_MW['solar']:.0f} MW solar, {MAX_SINGLE_PROJECT_CAPACITY_MW['wind']:.0f} MW "
-        "onshore wind) since a candidate cell is a screening area, not a real project footprint. "
-        "IRR/LCOE/payback are unaffected by this cap; capex/NPV describe that capped single project, "
-        "not the cell's full buildable potential."
-    ),
+def _power_density_note() -> str:
+    parts = []
+    for carrier in ("solar", "wind"):
+        density = get_power_density(carrier)
+        if density is not None:
+            parts.append(f"{carrier}: {density.describe()}")
+    return (
+        "Assumed capacity = buildable land area x buildable_fraction x power density -- "
+        + "; ".join(parts)
+        + ". Capped at a typical single utility-scale project size "
+        f"({MAX_SINGLE_PROJECT_CAPACITY_MW['solar']:.0f} MW solar, "
+        f"{MAX_SINGLE_PROJECT_CAPACITY_MW['wind']:.0f} MW onshore wind) since a candidate cell is a "
+        "screening area, not a real project footprint. IRR/LCOE/payback are unaffected by this cap; "
+        "capex/NPV describe that capped single project, not the cell's full buildable potential."
+    )
+
+
+_STATIC_ASSUMPTIONS = {
     "capacity_factor": (
-        "Annual generation uses the solved scenario's own NATIONAL capacity factor for the "
-        "technology (real solved generation / installed capacity), not a region- or site-specific figure."
+        "Annual generation uses the candidate's own region's availability capacity factor for "
+        "the technology, measured hour by hour on the solved network. A region with none of that "
+        "technology yet falls back to the national figure, and a scenario with no extracted hourly "
+        "layer falls back to the national capacity factor -- each candidate's `capacity_factor_basis` "
+        "says which applies to it."
     ),
     "captured_price": (
-        "Captured price is the candidate's region's solved average marginal price across ALL "
-        "technologies, not a technology-specific captured price (no per-carrier regional price "
-        "series exists in this model)."
+        "Captured price is the technology's own hourly capture price at the candidate's region: "
+        "the region's solved price weighted by what that technology can produce in each hour, not "
+        "the flat average across all hours and all technologies. Below the regional average means "
+        "cannibalisation -- the technology produces when its own kind is abundant and prices are "
+        "low. Each candidate's `price_basis` says whether this real capture price or the older "
+        "regional-average fallback was used."
     ),
     "cost_source": (
         "Capital cost, fixed O&M, lifetime, discount rate and marginal cost are read directly "
         "from pypsa-greece's technology_costs.csv (real, cited)."
     ),
 }
+
+
+def assumptions_note() -> dict[str, str]:
+    """Built per call rather than at import, because the power-density wording
+    reports what the latest calibration actually measured."""
+    return {"power_density": _power_density_note(), **_STATIC_ASSUMPTIONS}
 
 
 @dataclass(frozen=True)
@@ -180,11 +204,11 @@ def cell_area_km2(cell: CandidateCell) -> float:
 
 
 def assumed_capacity_mw(cell: CandidateCell, carrier: str) -> float | None:
-    power_density = POWER_DENSITY_MW_PER_KM2.get(carrier)
+    density = get_power_density(carrier)
     max_capacity = MAX_SINGLE_PROJECT_CAPACITY_MW.get(carrier)
-    if power_density is None or max_capacity is None or cell.buildable_fraction is None:
+    if density is None or max_capacity is None or cell.buildable_fraction is None:
         return None
-    full_buildout = cell_area_km2(cell) * cell.buildable_fraction * power_density
+    full_buildout = cell_area_km2(cell) * cell.buildable_fraction * density.mw_per_km2
     return min(full_buildout, max_capacity)
 
 
@@ -362,6 +386,25 @@ class CandidateFinancialInputs:
     lifetime_years: float
     discount_rate_pct: float
     fom_pct_of_capex: float
+    # Which method produced the two inputs above -- carried per candidate, not
+    # just in the response-level assumptions block, because within one response
+    # some candidates can be priced from the hourly layer and others from the
+    # fallback (a region with no generators of that carrier, say).
+    price_basis: str = "regional_average"
+    capacity_factor_basis: str = "national_average"
+    capacity_factor_pct: float | None = None
+    capture_rate_pct: float | None = None
+    reference_price_eur_per_mwh: float | None = None
+
+
+# The two bases a candidate's price can rest on, strongest first.
+PRICE_BASIS_HOURLY = "hourly_capture"
+# The region has no plant of this carrier, so the national capture rate was
+# applied to the region's own price level -- real, but one step removed.
+PRICE_BASIS_HOURLY_NATIONAL_SHAPE = "hourly_capture_national_shape"
+PRICE_BASIS_REGIONAL_AVERAGE = "regional_average"
+CAPACITY_FACTOR_BASIS_REGIONAL = "regional_hourly"
+CAPACITY_FACTOR_BASIS_NATIONAL = "national_average"
 
 
 def _derive_financial_inputs(
@@ -369,6 +412,7 @@ def _derive_financial_inputs(
     region_id: str | None,
     metrics: ScenarioMetrics,
     costs: dict[str, TechnologyCostRow],
+    hourly: HourlyMarket | None = None,
 ) -> tuple[CandidateFinancialInputs | None, str | None, str | None, float | None]:
     """Every place evaluate_candidate_investment used to return early with a
     `message` before this was extracted -- shared by evaluate_candidate_investment
@@ -393,10 +437,45 @@ def _derive_financial_inputs(
     if not capacity_mw:
         return None, "Could not derive an assumed installed capacity for this candidate.", carrier, None
 
-    capacity_factor = national_capacity_factor(
-        carrier, metrics.generation_by_carrier_mwh, metrics.installed_capacity_by_carrier_mw
-    )
-    captured_price = metrics.average_marginal_price_by_bus.get(region_id)
+    # Capacity factor: the region's own hour-by-hour availability for this
+    # technology when the hourly layer exists, the scenario's national average
+    # otherwise. The regional figure is the physically meaningful one -- a wind
+    # site in Western Macedonia and one in the South Aegean do not share a
+    # capacity factor, and a national average flattens exactly the difference
+    # that decides where to build.
+    capacity_factor_basis = CAPACITY_FACTOR_BASIS_NATIONAL
+    capacity_factor = None
+    if hourly is not None:
+        regional_pct = hourly.capacity_factor_pct(region_id, carrier)
+        if regional_pct is not None:
+            capacity_factor = regional_pct / 100.0
+            capacity_factor_basis = CAPACITY_FACTOR_BASIS_REGIONAL
+    if capacity_factor is None:
+        capacity_factor = national_capacity_factor(
+            carrier, metrics.generation_by_carrier_mwh, metrics.installed_capacity_by_carrier_mw
+        )
+
+    # Captured price: the technology's own capture price at this region, which
+    # is what the project is paid. The regional average price is kept only as a
+    # fallback for a scenario with no extracted hourly layer.
+    price_basis = PRICE_BASIS_REGIONAL_AVERAGE
+    captured_price = None
+    capture_rate_pct = None
+    reference_price = metrics.average_marginal_price_by_bus.get(region_id)
+    if hourly is not None:
+        hourly_capture = hourly.capture_price(region_id, carrier)
+        if hourly_capture is not None:
+            captured_price = hourly_capture
+            price_basis = (
+                PRICE_BASIS_HOURLY
+                if hourly.capture_basis(region_id, carrier) == "region"
+                else PRICE_BASIS_HOURLY_NATIONAL_SHAPE
+            )
+            capture_rate_pct = hourly.capture_rate_pct(region_id, carrier)
+            reference_price = hourly.region_price(region_id) or reference_price
+    if captured_price is None:
+        captured_price = reference_price
+
     if capacity_factor is None or captured_price is None:
         return (
             None,
@@ -418,6 +497,11 @@ def _derive_financial_inputs(
         lifetime_years=cost_row.lifetime_years or 0.0,
         discount_rate_pct=cost_row.discount_rate_pct or 0.0,
         fom_pct_of_capex=cost_row.fom_pct_of_capex or 0.0,
+        price_basis=price_basis,
+        capacity_factor_basis=capacity_factor_basis,
+        capacity_factor_pct=capacity_factor * 100.0,
+        capture_rate_pct=capture_rate_pct,
+        reference_price_eur_per_mwh=reference_price,
     )
     return inputs, None, carrier, capacity_mw
 
@@ -427,13 +511,14 @@ def evaluate_candidate_with_cash_flows(
     region_id: str | None,
     metrics: ScenarioMetrics,
     costs: dict[str, TechnologyCostRow],
+    hourly: HourlyMarket | None = None,
 ) -> tuple[CandidateInvestmentAnalysis, list[float] | None]:
     """One derivation pass producing both the per-candidate analysis and its
     annual cash flows -- evaluate_candidate_investment and
     candidate_cash_flows are thin wrappers around this, so a caller needing
     both (the portfolio endpoint) never derives the same financial inputs
     for the same candidate twice."""
-    inputs, message, carrier, capacity_mw = _derive_financial_inputs(cell, region_id, metrics, costs)
+    inputs, message, carrier, capacity_mw = _derive_financial_inputs(cell, region_id, metrics, costs, hourly)
 
     if inputs is None:
         return (
@@ -488,6 +573,15 @@ def evaluate_candidate_with_cash_flows(
         capex_eur=round(inputs.capex_eur, 0),
         annual_generation_year0_mwh=round(inputs.generation_year0_mwh, 1),
         captured_price_eur_per_mwh=round(inputs.captured_price_eur_per_mwh, 2),
+        capture_rate_pct=round(inputs.capture_rate_pct, 1) if inputs.capture_rate_pct is not None else None,
+        reference_price_eur_per_mwh=(
+            round(inputs.reference_price_eur_per_mwh, 2)
+            if inputs.reference_price_eur_per_mwh is not None
+            else None
+        ),
+        capacity_factor_pct=round(inputs.capacity_factor_pct, 2) if inputs.capacity_factor_pct is not None else None,
+        price_basis=inputs.price_basis,
+        capacity_factor_basis=inputs.capacity_factor_basis,
         lcoe_eur_per_mwh=round(lcoe_value, 2) if lcoe_value is not None else None,
         npv_eur=round(npv_value, 0),
         irr_pct=round(irr_value * 100, 2) if irr_value is not None else None,
@@ -501,8 +595,9 @@ def evaluate_candidate_investment(
     region_id: str | None,
     metrics: ScenarioMetrics,
     costs: dict[str, TechnologyCostRow],
+    hourly: HourlyMarket | None = None,
 ) -> CandidateInvestmentAnalysis:
-    analysis, _ = evaluate_candidate_with_cash_flows(cell, region_id, metrics, costs)
+    analysis, _ = evaluate_candidate_with_cash_flows(cell, region_id, metrics, costs, hourly)
     return analysis
 
 
@@ -511,13 +606,14 @@ def candidate_cash_flows(
     region_id: str | None,
     metrics: ScenarioMetrics,
     costs: dict[str, TechnologyCostRow],
+    hourly: HourlyMarket | None = None,
 ) -> list[float] | None:
     """The same undiscounted annual cash flows evaluate_candidate_investment
     derives internally for its own IRR/payback -- exposed standalone for any
     caller that only needs the flows (e.g. combine_cash_flows for a
     portfolio-level cash-flow stream, rather than averaging each candidate's
     own IRR, which is not how IRR combines across investments)."""
-    _, flows = evaluate_candidate_with_cash_flows(cell, region_id, metrics, costs)
+    _, flows = evaluate_candidate_with_cash_flows(cell, region_id, metrics, costs, hourly)
     return flows
 
 
