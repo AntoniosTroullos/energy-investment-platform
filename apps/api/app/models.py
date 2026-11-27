@@ -96,6 +96,12 @@ class SiteYieldEstimate(BaseModel):
     peakOutputPerUnit: float
     producingHours: int
     windowHours: int
+    # Solar only: DC array over inverter rating, and what the inverter clipped
+    # off over the window. A plant is settled on its AC rating, so per-unit
+    # output here is per unit of AC.
+    dcAcRatio: float | None = None
+    clippedPctOfDc: float | None = None
+    hoursClipped: int | None = None
     model: str
     assumptions: str
     series: list[SiteYieldPoint]

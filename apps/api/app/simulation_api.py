@@ -36,6 +36,8 @@ class SimulatedYearOut(BaseModel):
     hours_producing: int
     hours_curtailed: int
     output_retention_pct: float
+    clipped_mwh: float = 0.0
+    hours_clipped: int = 0
 
 
 class StorageYearOut(BaseModel):
@@ -135,6 +137,10 @@ class GenerationSimulationRequest(BaseModel):
     # A merchant plant stops when the price goes below zero. One on a contract
     # for difference does not, and the difference is worth seeing.
     curtail_at_negative_prices: bool = True
+    # Solar only: DC array capacity over inverter (AC) capacity. capacity_mw is
+    # the AC rating, which is what a plant is permitted and settled on. Greek
+    # utility-scale plants are routinely 1.2-1.3.
+    dc_ac_ratio: float = Field(default=1.25, ge=1.0, le=2.0)
     window_start_hour: int | None = Field(default=None, ge=0, lt=8760)
 
 

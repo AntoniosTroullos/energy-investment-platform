@@ -639,6 +639,7 @@ def simulation_generation(request: GenerationSimulationRequest) -> AssetSimulati
         discount_rate_pct=request.discount_rate_pct,
         price_escalation_pct_per_year=request.price_escalation_pct_per_year,
         curtail_at_negative_prices=request.curtail_at_negative_prices,
+        dc_ac_ratio=request.dc_ac_ratio,
     )
     return _to_response(simulation, price_year, request.window_start_hour)
 

@@ -113,6 +113,22 @@ export default function ClimatePanel({
                     </div>
                   ) : null}
                 </dl>
+                {climate.yieldEstimate.dcAcRatio ? (
+                  <p className="mt-3 text-[11px] text-zinc-400">
+                    DC/AC {climate.yieldEstimate.dcAcRatio.toFixed(2)} —{" "}
+                    {(climate.yieldEstimate.clippedPctOfDc ?? 0) > 0 ? (
+                      <>
+                        the inverter clipped{" "}
+                        <span className="text-amber-300">
+                          {climate.yieldEstimate.clippedPctOfDc?.toFixed(1)}%
+                        </span>{" "}
+                        of what the array made, over {climate.yieldEstimate.hoursClipped} hours.
+                      </>
+                    ) : (
+                      <>nothing clipped: cell heat held DC output under the inverter limit.</>
+                    )}
+                  </p>
+                ) : null}
                 <div className="mt-3 h-10">
                   <YieldSparkline series={climate.yieldEstimate.series} />
                 </div>

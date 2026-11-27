@@ -71,6 +71,26 @@ STANDARD_IRRADIANCE_W_M2 = 1000.0
 # Soiling, wiring, mismatch, inverter and availability losses combined.
 SOLAR_SYSTEM_LOSS_FRACTION = 0.14
 
+# DC array capacity divided by inverter (AC) capacity. A plant is permitted,
+# connected and settled on its AC rating, so that is the capacity this module
+# reports output "per unit" of; the array behind it is deliberately larger.
+#
+# 1.0 means no oversizing and is the library default, because it is the one
+# value that asserts nothing about how a project was designed. Greek
+# utility-scale plants are routinely built at 1.2-1.3: modules are the
+# cheapest part of the system, and an oversized array fills the shoulders of
+# the day at the cost of clipping a few midday hours.
+NO_OVERSIZING = 1.0
+DEFAULT_DC_AC_RATIO = 1.25
+
+# Share of solar capex that scales with the DC array rather than the AC side.
+# Modules are the bulk of it; inverters, grid connection, land, civil works and
+# development scale with AC capacity or are fixed. Roughly 40% is the usual
+# benchmark range for utility-scale PV, and it is approximate -- its only job
+# is to stop oversizing from looking free, which it is not. A user with a real
+# quote should set capex directly instead of relying on it.
+MODULE_SHARE_OF_SOLAR_CAPEX = 0.40
+
 # --- Wind model constants (generic IEC Class II onshore turbine) -----------
 CUT_IN_MS = 3.0
 RATED_MS = 11.5
@@ -94,6 +114,10 @@ class SiteYield:
     window_hours: int
     model: str
     assumptions: str
+    # Solar only: the array's oversizing and what the inverter clipped off.
+    dc_ac_ratio: float | None = None
+    clipped_pct_of_dc: float | None = None
+    hours_clipped: int | None = None
 
 
 def get_site_yield(
@@ -103,6 +127,7 @@ def get_site_yield(
     *,
     past_days: int = DEFAULT_PAST_DAYS,
     forecast_days: int = DEFAULT_FORECAST_DAYS,
+    dc_ac_ratio: float = DEFAULT_DC_AC_RATIO,
 ) -> SiteYield | None:
     """Per-hour output for one site, or None for a carrier this does not model
     or when the weather service cannot be reached."""
@@ -119,19 +144,31 @@ def get_site_yield(
     if not timestamps:
         return None
 
+    clipped_pct: float | None = None
+    clipped_hours: int | None = None
+    ratio: float | None = None
+
     if carrier == "solar":
-        output = solar_output_per_unit(
+        ratio = dc_ac_ratio
+        unclipped = solar_dc_per_unit_of_ac(
             _floats(hourly.get("global_tilted_irradiance"), len(timestamps)),
             _floats(hourly.get("temperature_2m"), len(timestamps)),
+            dc_ac_ratio,
         )
+        output = [min(value, 1.0) for value in unclipped]
+        lost, clipped_hours = clipping_losses(unclipped)
+        available = sum(unclipped)
+        clipped_pct = round(100.0 * lost / available, 2) if available > 0 else 0.0
         model = (
             f"PVWatts-style fixed-tilt array at {DEFAULT_TILT_DEGREES} degrees facing south, "
-            "on Open-Meteo plane-of-array irradiance"
+            f"DC/AC {dc_ac_ratio:.2f} clipped at the inverter, on Open-Meteo plane-of-array irradiance"
         )
         assumptions = (
             f"Temperature coefficient {TEMPERATURE_COEFFICIENT_PER_C * 100:.2f} %/C with an NOCT cell model "
             f"({NOCT_CELSIUS:.0f} C), {SOLAR_SYSTEM_LOSS_FRACTION * 100:.0f}% system losses (soiling, wiring, "
-            "mismatch, inverter, availability). Generic crystalline-silicon defaults, not a specific module."
+            f"mismatch, inverter, availability), and a DC array {dc_ac_ratio:.2f} times the AC rating with "
+            "output clipped at it. Per-unit values are per unit of AC capacity, which is what a plant is "
+            "connected and settled on. Generic crystalline-silicon defaults, not a specific module."
         )
     else:
         output = wind_output_per_unit(
@@ -158,6 +195,9 @@ def get_site_yield(
         window_hours=len(output),
         model=model,
         assumptions=assumptions,
+        dc_ac_ratio=ratio,
+        clipped_pct_of_dc=clipped_pct,
+        hours_clipped=clipped_hours,
     )
 
 
@@ -166,7 +206,23 @@ def get_site_yield(
 # ---------------------------------------------------------------------------
 
 
-def solar_output_per_unit(poa_w_m2: list[float], air_temperature_c: list[float]) -> list[float]:
+def solar_dc_per_unit_of_ac(
+    poa_w_m2: list[float],
+    air_temperature_c: list[float],
+    dc_ac_ratio: float = NO_OVERSIZING,
+) -> list[float]:
+    """What the array produces each hour, per unit of the plant's AC rating,
+    BEFORE the inverter clips it.
+
+    Returned unclipped on purpose. Degradation acts on the DC array, so a
+    lifetime simulation has to fade this series and clip afterwards -- clipping
+    first and fading the result would understate later years, because a
+    degraded oversized array still reaches the inverter limit at midday. That
+    ordering is the reason oversizing slows a plant's apparent AC degradation,
+    and it only shows up if the two steps happen in the right order.
+
+    Values above 1.0 are the hours that will be clipped."""
+    ratio = max(dc_ac_ratio, 0.0)
     output: list[float] = []
     for poa, air_temperature in zip(poa_w_m2, air_temperature_c):
         if poa <= 0:
@@ -176,8 +232,42 @@ def solar_output_per_unit(poa_w_m2: list[float], air_temperature_c: list[float])
         dc = (poa / STANDARD_IRRADIANCE_W_M2) * (
             1 + TEMPERATURE_COEFFICIENT_PER_C * (cell_temperature - STANDARD_TEST_TEMPERATURE_C)
         )
-        output.append(max(0.0, min(dc * (1 - SOLAR_SYSTEM_LOSS_FRACTION), 1.0)))
+        output.append(max(0.0, dc * (1 - SOLAR_SYSTEM_LOSS_FRACTION) * ratio))
     return output
+
+
+def solar_output_per_unit(
+    poa_w_m2: list[float],
+    air_temperature_c: list[float],
+    dc_ac_ratio: float = NO_OVERSIZING,
+) -> list[float]:
+    """Hourly AC output per unit of the plant's AC rating, clipped at the
+    inverter. At a ratio of 1.0 this is the plain PVWatts result."""
+    return [min(value, 1.0) for value in solar_dc_per_unit_of_ac(poa_w_m2, air_temperature_c, dc_ac_ratio)]
+
+
+def clipping_losses(dc_per_unit_of_ac: list[float]) -> tuple[float, int]:
+    """Energy lost to the inverter limit, in per-unit hours, and how many hours
+    were clipped. Worth reporting rather than absorbing: clipping is the cost
+    side of oversizing, and a plant whose design is right loses a few percent
+    of a much larger harvest."""
+    lost = 0.0
+    hours = 0
+    for value in dc_per_unit_of_ac:
+        if value > 1.0:
+            lost += value - 1.0
+            hours += 1
+    return lost, hours
+
+
+def solar_capex_multiplier(dc_ac_ratio: float) -> float:
+    """How much a given DC/AC ratio raises cost per kW of AC capacity.
+
+    Without this, sliding the ratio up would raise output and IRR at no cost,
+    which is a free lunch the real world does not offer. Only the module-side
+    share of capex scales with the array; the rest follows the AC rating."""
+    ratio = max(dc_ac_ratio, 0.0)
+    return (1 - MODULE_SHARE_OF_SOLAR_CAPEX) + MODULE_SHARE_OF_SOLAR_CAPEX * ratio
 
 
 def air_density(temperature_c: float, pressure_hpa: float) -> float:

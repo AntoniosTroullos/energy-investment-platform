@@ -48,7 +48,12 @@ from datetime import datetime
 from .balancing import BalancingYear
 from .hourly_series import PriceYear, WeatherYear, get_price_year, get_weather_year
 from .investment_analysis import irr, payback_period_years
-from .site_yield import solar_output_per_unit, wind_output_per_unit
+from .site_yield import (
+    NO_OVERSIZING,
+    solar_capex_multiplier,
+    solar_dc_per_unit_of_ac,
+    wind_output_per_unit,
+)
 from .storage_physics import BatterySpec, StorageYearResult, simulate_storage_lifetime
 
 HOURS_PER_YEAR = 8760
@@ -111,6 +116,10 @@ class SimulatedYear:
     hours_producing: int
     hours_curtailed: int
     output_retention_pct: float
+    # Solar with an oversized array: energy the inverter could not pass. Zero
+    # for wind and for a plant built at DC/AC 1.0.
+    clipped_mwh: float = 0.0
+    hours_clipped: int = 0
 
 
 @dataclass
@@ -181,11 +190,28 @@ def simulate_generation_asset(
     marginal_cost_eur_per_mwh: float = 0.0,
     price_escalation_pct_per_year: float = 0.0,
     curtail_at_negative_prices: bool = True,
+    dc_ac_ratio: float = NO_OVERSIZING,
     keep_traces: bool = True,
 ) -> AssetSimulation:
-    """Hour by hour for a solar or wind plant, year by year to end of life."""
+    """Hour by hour for a solar or wind plant, year by year to end of life.
+
+    `capacity_mw` is the AC rating throughout -- what the plant is permitted,
+    connected and settled on. For solar, `dc_ac_ratio` sets how much larger
+    the DC array behind it is."""
+    # Held unclipped so degradation can act on the DC side, which is where it
+    # physically happens, with the inverter limit applied after. Clipping first
+    # and fading the result would understate later years: a degraded oversized
+    # array still reaches the limit at midday, so part of the fade is absorbed
+    # by clipping that no longer happens.
+    # Every solar plant has an inverter limit, oversized or not: a 1:1 inverter
+    # still cannot pass more than its rating, and cold bright hours push DC
+    # above nameplate on their own. Gating this on dc_ac_ratio > 1.0 would have
+    # quietly removed the clip that the previous model always applied.
+    clips_at_inverter = carrier == "solar"
     if carrier == "solar":
-        per_unit = solar_output_per_unit(weather.plane_of_array_w_m2, weather.temperature_c)
+        per_unit = solar_dc_per_unit_of_ac(
+            weather.plane_of_array_w_m2, weather.temperature_c, dc_ac_ratio
+        )
     elif carrier == "wind":
         per_unit = wind_output_per_unit(
             weather.wind_speed_100m_kmh, weather.temperature_c, weather.surface_pressure_hpa
@@ -213,12 +239,19 @@ def simulate_generation_asset(
 
         generation = 0.0
         curtailed = 0.0
+        clipped = 0.0
         revenue = 0.0
         producing = 0
         curtailed_hours = 0
+        clipped_hours = 0
 
         for hour in range(hours):
-            available_mw = capacity_mw * per_unit[hour] * retention
+            faded = per_unit[hour] * retention
+            if clips_at_inverter and faded > 1.0:
+                clipped += capacity_mw * (faded - 1.0)
+                clipped_hours += 1
+                faded = 1.0
+            available_mw = capacity_mw * faded
             if available_mw <= 0:
                 continue
             price = prices[hour] * escalation
@@ -247,13 +280,18 @@ def simulate_generation_asset(
                 hours_producing=producing,
                 hours_curtailed=curtailed_hours,
                 output_retention_pct=round(100.0 * retention, 2),
+                clipped_mwh=round(clipped, 1),
+                hours_clipped=clipped_hours,
             )
         )
         net_revenues.append(revenue)
 
         if keep_traces and year_index == 0:
+            # Clipped, like the energy figures above it. `per_unit` is the
+            # unclipped DC series, so charting it raw would draw a 100 MW plant
+            # exporting 150 MW.
             simulation.first_year_output_mw = [
-                round(capacity_mw * per_unit[hour], 3) for hour in range(hours)
+                round(capacity_mw * min(per_unit[hour] * retention, 1.0), 3) for hour in range(hours)
             ]
             simulation.first_year_price_eur_per_mwh = [round(prices[hour], 2) for hour in range(hours)]
 
@@ -261,18 +299,56 @@ def simulate_generation_asset(
     _attach_economics(
         simulation,
         net_revenues,
-        capex_eur=capacity_mw * 1000.0 * capex_eur_per_kw if capex_eur_per_kw else None,
+        # Per kW of AC capacity, scaled for the larger DC array where there is
+        # one. Without that scaling, raising the DC/AC ratio would lift output
+        # and IRR at no cost -- a free lunch the real world does not offer.
+        capex_eur=(
+            capacity_mw * 1000.0 * capex_eur_per_kw * solar_capex_multiplier(dc_ac_ratio)
+            if capex_eur_per_kw and carrier == "solar"
+            else capacity_mw * 1000.0 * capex_eur_per_kw
+            if capex_eur_per_kw
+            else None
+        ),
         fixed_opex_pct_of_capex=fixed_opex_pct_of_capex,
         discount_rate_pct=discount_rate_pct,
     )
 
     first = simulation.years[0] if simulation.years else None
+    last = simulation.years[-1] if simulation.years else None
     if first and first.hours_curtailed:
         simulation.notes.append(
             f"{first.hours_curtailed} hours curtailed in year 1 because the price was below zero "
             f"({round(first.curtailed_mwh):,} MWh of available output not produced). An annual-average "
             "model values those hours at the average price instead."
         )
+
+    if carrier == "solar" and dc_ac_ratio != NO_OVERSIZING:
+        simulation.notes.append(
+            f"DC array {dc_ac_ratio:.2f}x the {capacity_mw:g} MW AC rating, at "
+            f"{solar_capex_multiplier(dc_ac_ratio):.2f}x the capex per kW AC."
+        )
+        if first and first.hours_clipped:
+            lost_pct = 100.0 * first.clipped_mwh / (first.generation_mwh + first.clipped_mwh)
+            simulation.notes.append(
+                f"The inverter clipped {round(first.clipped_mwh):,} MWh in year 1 over "
+                f"{first.hours_clipped} hours -- {lost_pct:.1f}% of what the array could have made. "
+                "That is the cost of oversizing, against a larger harvest in every other hour."
+            )
+        elif first:
+            simulation.notes.append(
+                "Nothing clipped: Greek midday cell temperatures hold DC output below the inverter "
+                "limit even oversized, so at this ratio the extra array is close to free."
+            )
+        if first and last and first.hours_clipped:
+            # Fade hits the DC side, so early clipping absorbs part of it and
+            # the plant holds its AC output better than the module warranty
+            # alone suggests. Only worth saying when it actually happened.
+            ac_retention = 100.0 * last.generation_mwh / first.generation_mwh if first.generation_mwh else 0.0
+            simulation.notes.append(
+                f"AC output holds at {ac_retention:.1f}% of year 1 by year {lifetime_years}, against "
+                f"{last.output_retention_pct:.1f}% of DC nameplate -- early clipping absorbs part of the "
+                "fade, so an oversized plant degrades more slowly in the terms that get paid."
+            )
     return simulation
 
 

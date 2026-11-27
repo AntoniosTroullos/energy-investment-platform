@@ -33,6 +33,12 @@ export type SiteYieldEstimate = {
   peakOutputPerUnit: number;
   producingHours: number;
   windowHours: number;
+  // Solar only: DC array over inverter rating, and what the inverter clipped
+  // off over the window. Capacity factor here is per unit of AC capacity,
+  // which is what a plant is connected and settled on.
+  dcAcRatio?: number | null;
+  clippedPctOfDc?: number | null;
+  hoursClipped?: number | null;
   model: string;
   assumptions: string;
   series: { timestamp: string; outputPerUnit: number }[];

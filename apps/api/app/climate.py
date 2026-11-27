@@ -83,6 +83,9 @@ def build_site_yield_estimate(
         peakOutputPerUnit=estimate.peak_output_per_unit,
         producingHours=estimate.producing_hours,
         windowHours=estimate.window_hours,
+        dcAcRatio=estimate.dc_ac_ratio,
+        clippedPctOfDc=estimate.clipped_pct_of_dc,
+        hoursClipped=estimate.hours_clipped,
         model=estimate.model,
         assumptions=estimate.assumptions,
         series=[

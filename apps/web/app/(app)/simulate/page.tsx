@@ -163,6 +163,7 @@ function GenerationPanel() {
   const [capex, setCapex] = useState(600);
   const [lifetime, setLifetime] = useState(25);
   const [curtail, setCurtail] = useState(true);
+  const [dcAcRatio, setDcAcRatio] = useState(1.25);
 
   const { result, error, busy, execute } = useSimulation<AssetSimulation>(
     () =>
@@ -174,8 +175,9 @@ function GenerationPanel() {
         capex_eur_per_kw: capex || null,
         lifetime_years: lifetime,
         curtail_at_negative_prices: curtail,
+        dc_ac_ratio: dcAcRatio,
       }),
-    [carrier, capacity, latitude, longitude, capex, lifetime, curtail],
+    [carrier, capacity, latitude, longitude, capex, lifetime, curtail, dcAcRatio],
   );
 
   const first = result?.years[0];
@@ -195,12 +197,43 @@ function GenerationPanel() {
               ]}
             />
           </Field>
-          <Field label="Capacity"><NumberInput value={capacity} onChange={setCapacity} min={1} suffix="MW" /></Field>
+          <Field
+            label="Capacity"
+            hint={
+              carrier === "solar"
+                ? "The AC rating — what the plant is permitted, connected and settled on."
+                : undefined
+            }
+          >
+            <NumberInput value={capacity} onChange={setCapacity} min={1} suffix="MW" />
+          </Field>
+          {carrier === "solar" ? (
+            <Field
+              label="DC/AC ratio"
+              hint={`A ${(capacity * dcAcRatio).toFixed(0)} MW array on a ${capacity} MW connection. Greek plants are routinely 1.2–1.3: modules are cheap, and the extra array fills the shoulders of the day at the cost of clipping a few midday hours.`}
+            >
+              <NumberInput
+                value={dcAcRatio}
+                onChange={setDcAcRatio}
+                min={1}
+                max={2}
+                step={0.05}
+                suffix="×"
+              />
+            </Field>
+          ) : null}
           <div className="grid grid-cols-2 gap-2">
             <Field label="Latitude"><NumberInput value={latitude} onChange={setLatitude} step={0.1} /></Field>
             <Field label="Longitude"><NumberInput value={longitude} onChange={setLongitude} step={0.1} /></Field>
           </div>
-          <Field label="Capex" hint="Overnight cost per kW installed">
+          <Field
+            label="Capex"
+            hint={
+              carrier === "solar"
+                ? "Overnight cost per kW of AC capacity at DC/AC 1.0. Oversizing scales the module share of it, so a larger array is not free."
+                : "Overnight cost per kW installed"
+            }
+          >
             <NumberInput value={capex} onChange={setCapex} min={0} step={25} suffix="€/kW" />
           </Field>
           <Field label="Lifetime"><NumberInput value={lifetime} onChange={setLifetime} min={1} max={40} suffix="yr" /></Field>
@@ -262,6 +295,18 @@ function GenerationPanel() {
                 hint={`${Math.round(first?.curtailed_mwh ?? 0).toLocaleString()} MWh not produced`}
                 tone={(first?.hours_curtailed ?? 0) > 0 ? "negative" : "default"}
               />
+              {carrier === "solar" ? (
+                <Metric
+                  label="Clipped"
+                  value={`${first?.hours_clipped ?? 0} h`}
+                  hint={
+                    (first?.clipped_mwh ?? 0) > 0
+                      ? `${Math.round(first?.clipped_mwh ?? 0).toLocaleString()} MWh over the inverter limit`
+                      : "Cell heat holds DC under the limit — the extra array is near free"
+                  }
+                  tone={(first?.clipped_mwh ?? 0) > 0 ? "negative" : "positive"}
+                />
+              ) : null}
             </div>
           </DashboardCard>
 
@@ -271,7 +316,11 @@ function GenerationPanel() {
               <Metric
                 label={`Year ${result.lifetime_years} output`}
                 value={`${((last?.generation_mwh ?? 0) / 1000).toFixed(1)} GWh`}
-                hint={`${formatPct(last?.output_retention_pct)} retained`}
+                hint={
+                  first && last && first.generation_mwh > 0
+                    ? `${formatPct((100 * last.generation_mwh) / first.generation_mwh)} of year 1 in AC terms, ${formatPct(last.output_retention_pct)} of DC nameplate`
+                    : `${formatPct(last?.output_retention_pct)} retained`
+                }
               />
               <Metric label="Lifetime revenue" value={formatEur(result.lifetime_revenue_eur)} />
               <Metric

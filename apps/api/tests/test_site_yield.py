@@ -11,6 +11,9 @@ from app.site_yield import (
     WIND_LOSS_FRACTION,
     air_density,
     power_curve,
+    clipping_losses,
+    solar_capex_multiplier,
+    solar_dc_per_unit_of_ac,
     solar_output_per_unit,
     wind_output_per_unit,
 )
@@ -136,3 +139,71 @@ class SiteCaptureTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class DcAcRatioAndClippingTests(unittest.TestCase):
+    """An array larger than its inverter. capacity is the AC rating -- what a
+    plant is permitted, connected and settled on -- and the DC array behind it
+    is `dc_ac_ratio` times that."""
+
+    BRIGHT = [1000.0]
+    COOL = [0.0]  # cold cells, so the temperature derate does not mask clipping
+
+    def test_a_ratio_of_one_is_the_plain_pvwatts_result(self):
+        self.assertEqual(
+            solar_output_per_unit([800.0, 1000.0], [10.0, 25.0], 1.0),
+            solar_output_per_unit([800.0, 1000.0], [10.0, 25.0]),
+        )
+
+    def test_oversizing_raises_output_in_hours_that_do_not_clip(self):
+        modest = solar_output_per_unit([400.0], [15.0], 1.0)[0]
+        oversized = solar_output_per_unit([400.0], [15.0], 1.3)[0]
+        self.assertAlmostEqual(oversized, modest * 1.3, places=6)
+
+    def test_output_is_clipped_at_the_inverter(self):
+        self.assertLessEqual(solar_output_per_unit(self.BRIGHT, self.COOL, 1.6)[0], 1.0)
+        self.assertLessEqual(solar_output_per_unit([1400.0], [0.0], 2.0)[0], 1.0)
+
+    def test_the_unclipped_series_keeps_what_the_array_could_have_made(self):
+        unclipped = solar_dc_per_unit_of_ac(self.BRIGHT, self.COOL, 1.6)[0]
+        clipped = solar_output_per_unit(self.BRIGHT, self.COOL, 1.6)[0]
+        self.assertGreater(unclipped, 1.0)
+        self.assertEqual(clipped, 1.0)
+
+    def test_clipping_losses_count_only_the_excess(self):
+        lost, hours = clipping_losses([0.5, 1.0, 1.2, 1.5])
+        self.assertAlmostEqual(lost, 0.7, places=6)
+        self.assertEqual(hours, 2)
+
+    def test_nothing_clips_at_a_ratio_of_one(self):
+        series = solar_dc_per_unit_of_ac([1000.0, 1200.0], [0.0, 5.0], 1.0)
+        self.assertEqual(clipping_losses(series), (0.0, 0))
+
+    def test_night_stays_dark_however_large_the_array(self):
+        self.assertEqual(solar_output_per_unit([0.0, 0.0], [12.0, 11.0], 1.8), [0.0, 0.0])
+
+    def test_greek_midday_heat_absorbs_much_of_the_oversizing(self):
+        # The reason Greek plants oversize cheaply: at 1000 W/m2 and 32 C air
+        # the cell runs near 63 C and derates ~13%, so a 1.25 array is still
+        # under the inverter limit.
+        hot = solar_output_per_unit([1000.0], [32.0], 1.25)[0]
+        self.assertLess(hot, 1.0)
+        cold = solar_dc_per_unit_of_ac([1000.0], [0.0], 1.25)[0]
+        self.assertGreater(cold, hot)
+
+
+class SolarCapexMultiplierTests(unittest.TestCase):
+    """Oversizing must not be free: without a cost that moves with the array,
+    raising the ratio would lift IRR for nothing."""
+
+    def test_no_oversizing_costs_nothing_extra(self):
+        self.assertEqual(solar_capex_multiplier(1.0), 1.0)
+
+    def test_only_the_module_share_scales(self):
+        # 40% module share: a 1.5x array is 1 + 0.4 * 0.5 = 1.20x the cost.
+        self.assertAlmostEqual(solar_capex_multiplier(1.5), 1.20, places=6)
+
+    def test_cost_rises_monotonically_with_the_ratio(self):
+        multipliers = [solar_capex_multiplier(ratio) for ratio in (1.0, 1.1, 1.3, 1.6, 2.0)]
+        self.assertEqual(multipliers, sorted(multipliers))
+        self.assertTrue(all(value > 1.0 for value in multipliers[1:]))

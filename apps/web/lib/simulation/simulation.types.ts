@@ -34,6 +34,9 @@ export type SimulatedYear = {
   hours_producing: number;
   hours_curtailed: number;
   output_retention_pct: number;
+  /** Solar with an oversized array: energy the inverter could not pass. */
+  clipped_mwh: number;
+  hours_clipped: number;
 };
 
 export type StorageYear = {
@@ -104,6 +107,10 @@ export type GenerationRequest = {
   capex_eur_per_kw?: number | null;
   discount_rate_pct?: number;
   curtail_at_negative_prices?: boolean;
+  /** Solar only. capacity_mw is the AC rating -- what a plant is permitted and
+   *  settled on -- and the DC array behind it is this many times larger.
+   *  Greek utility-scale plants are routinely 1.2-1.3. */
+  dc_ac_ratio?: number;
 };
 
 export type StorageRequest = {
