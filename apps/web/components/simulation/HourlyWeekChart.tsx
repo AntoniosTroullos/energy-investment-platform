@@ -23,6 +23,10 @@ type HourlyWeekChartProps = {
   window: HourlyWindow;
   mode: "generation" | "storage";
   capacityMw: number;
+  // Which market these prices came from. A storage run can be settled against
+  // balancing rather than day-ahead, and a legend naming the wrong market is
+  // worse than one naming none.
+  priceLabel?: string;
 };
 
 function hourLabel(timestamp: string): string {
@@ -32,7 +36,12 @@ function hourLabel(timestamp: string): string {
     : moment.toLocaleString([], { weekday: "short", hour: "2-digit" });
 }
 
-export default function HourlyWeekChart({ window: hourly, mode, capacityMw }: HourlyWeekChartProps) {
+export default function HourlyWeekChart({
+  window: hourly,
+  mode,
+  capacityMw,
+  priceLabel = "Day-ahead price",
+}: HourlyWeekChartProps) {
   const data = hourly.timestamps.map((timestamp, index) => ({
     t: hourLabel(timestamp),
     price: hourly.price_eur_per_mwh[index] ?? 0,
@@ -78,7 +87,7 @@ export default function HourlyWeekChart({ window: hourly, mode, capacityMw }: Ho
               labelStyle={{ color: "#aab1ba" }}
               formatter={(value, name) => {
                 const numeric = Number(value);
-                if (name === "price") return [`€${numeric.toFixed(2)}/MWh`, "Price"];
+                if (name === "price") return [`€${numeric.toFixed(2)}/MWh`, priceLabel];
                 if (name === "soc") return [`${numeric.toFixed(1)} MWh`, "State of charge"];
                 return [`${numeric.toFixed(1)} MW`, mode === "storage" ? "Net to grid" : "Output"];
               }}
@@ -112,7 +121,7 @@ export default function HourlyWeekChart({ window: hourly, mode, capacityMw }: Ho
 
       <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-zinc-500">
         <span className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-emerald-400" /> Day-ahead price
+          <span className="h-2 w-2 rounded-full bg-emerald-400" /> {priceLabel}
         </span>
         <span className="flex items-center gap-1.5">
           <span

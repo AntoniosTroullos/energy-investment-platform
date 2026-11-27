@@ -54,6 +54,23 @@ export type StorageYear = {
   average_discharge_price_eur_per_mwh: number | null;
 };
 
+export type SettlementBasis = "day_ahead" | "balancing";
+
+/** The same asset, same physics, valued in the other market. The gap is the
+ *  finding: a battery priced on day-ahead alone is valued in a market it does
+ *  not physically operate in. */
+export type SettlementComparison = {
+  settlement: SettlementBasis;
+  price_window: string;
+  mean_price_eur_per_mwh: number;
+  negative_hours: number;
+  lifetime_revenue_eur: number;
+  npv_eur: number | null;
+  irr_pct: number | null;
+  first_year_margin_eur: number | null;
+  first_year_cycles: number | null;
+};
+
 export type AssetSimulation = {
   kind: "generation" | "storage";
   carrier: string;
@@ -61,6 +78,9 @@ export type AssetSimulation = {
   price_year: number;
   price_source: string;
   lifetime_years: number;
+  settlement: SettlementBasis;
+  /** The window the prices cover, e.g. "settled balancing, 2025-11-22 to 2026-11-22". */
+  price_window: string;
   years: SimulatedYear[];
   storage_years: StorageYear[];
   capex_eur: number | null;
@@ -70,6 +90,7 @@ export type AssetSimulation = {
   lifetime_revenue_eur: number;
   price_summary: PriceYearSummary | null;
   window: HourlyWindow | null;
+  comparison: SettlementComparison | null;
   notes: string[];
 };
 
@@ -96,6 +117,10 @@ export type StorageRequest = {
   lifetime_years?: number;
   capex_eur_per_kwh?: number | null;
   discount_rate_pct?: number;
+  /** "balancing" settles against a trailing year of IPTO's settled imbalance
+   *  prices -- the market that actually dispatches storage in Greece. */
+  settlement?: SettlementBasis;
+  compare_settlements?: boolean;
 };
 
 export type InterruptibilityContract = {

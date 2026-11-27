@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { BatteryCharging, Factory, Sun } from "lucide-react";
 
 import DashboardCard from "../../../components/overview/DashboardCard";
 import HourlyWeekChart from "../../../components/simulation/HourlyWeekChart";
+import SettlementComparisonCard from "../../../components/simulation/SettlementComparisonCard";
 import {
   Choice,
   Field,
@@ -22,6 +23,7 @@ import {
 import type {
   AssetSimulation,
   DemandResponseResult,
+  SettlementBasis,
 } from "../../../lib/simulation/simulation.types";
 
 // Hour by hour, for one asset, against the hours the market actually had.
@@ -138,10 +140,13 @@ function PriceContext({ simulation }: { simulation: AssetSimulation }) {
   const summary = simulation.price_summary;
   if (!summary) return null;
   return (
+    // The window, not the calendar year: a balancing series is a trailing
+    // twelve months and straddles two years, so naming one of them would
+    // misdescribe it.
     <p className="mt-3 text-[10px] leading-4 text-zinc-600">
-      {summary.year}: {summary.hours.toLocaleString()} hours, mean €{summary.mean_eur_per_mwh}/MWh, range €
-      {summary.min_eur_per_mwh} to €{summary.max_eur_per_mwh}, {summary.negative_hours} below zero.{" "}
-      {summary.source}.
+      {simulation.price_window || summary.year}: {summary.hours.toLocaleString()} hours, mean €
+      {summary.mean_eur_per_mwh}/MWh, range €{summary.min_eur_per_mwh} to €{summary.max_eur_per_mwh},{" "}
+      {summary.negative_hours} below zero. {summary.source}.
     </p>
   );
 }
@@ -294,6 +299,10 @@ function StoragePanel() {
   const [gridCharge, setGridCharge] = useState(0);
   const [capex, setCapex] = useState(250);
   const [lifetime, setLifetime] = useState(15);
+  // Balancing is the default because it is the market that physically
+  // dispatches storage in Greece. Day-ahead remains available for a purely
+  // financial arbitrage strategy, which is a real but different business.
+  const [settlement, setSettlement] = useState<SettlementBasis>("balancing");
 
   const { result, error, busy, execute } = useSimulation<AssetSimulation>(
     () =>
@@ -305,9 +314,23 @@ function StoragePanel() {
         grid_charge_eur_per_mwh: gridCharge,
         capex_eur_per_kwh: capex || null,
         lifetime_years: lifetime,
+        settlement,
+        compare_settlements: true,
       }),
-    [power, energy, efficiency, cycleCost, gridCharge, capex, lifetime],
+    [power, energy, efficiency, cycleCost, gridCharge, capex, lifetime, settlement],
   );
+
+  // Numeric fields wait for the Run button -- refiring on every keystroke
+  // would be absurd. The settlement toggle does not: it is one click with
+  // unambiguous intent, and it changes the answer more than anything else on
+  // the form, so leaving the previous market's result beside a flipped toggle
+  // would state something false.
+  const lastSettlement = useRef(settlement);
+  useEffect(() => {
+    if (lastSettlement.current === settlement) return;
+    lastSettlement.current = settlement;
+    execute();
+  }, [settlement, execute]);
 
   const first = result?.storage_years[0];
   const last = result?.storage_years[result.storage_years.length - 1];
@@ -316,6 +339,19 @@ function StoragePanel() {
     <div className="grid grid-cols-1 gap-3 lg:grid-cols-12">
       <DashboardCard title="The battery" subtitle="Physics and cost" className="lg:col-span-3">
         <div className="flex flex-col gap-3">
+          <Field
+            label="Settled against"
+            hint="Balancing is where Greek storage is actually dispatched and priced. Day-ahead values a purely financial arbitrage strategy."
+          >
+            <Choice
+              options={[
+                { id: "balancing", label: "Balancing" },
+                { id: "day_ahead", label: "Day-ahead" },
+              ]}
+              value={settlement}
+              onChange={setSettlement}
+            />
+          </Field>
           <div className="grid grid-cols-2 gap-2">
             <Field label="Power"><NumberInput value={power} onChange={setPower} min={1} suffix="MW" /></Field>
             <Field label="Energy"><NumberInput value={energy} onChange={setEnergy} min={1} suffix="MWh" /></Field>
@@ -342,7 +378,14 @@ function StoragePanel() {
         className="lg:col-span-9"
       >
         {result?.window ? (
-          <HourlyWeekChart window={result.window} mode="storage" capacityMw={result.capacity_mw} />
+          <HourlyWeekChart
+            window={result.window}
+            mode="storage"
+            capacityMw={result.capacity_mw}
+            priceLabel={
+              result.settlement === "balancing" ? "Settled balancing price" : "Day-ahead price"
+            }
+          />
         ) : (
           <p className="py-10 text-center text-xs text-zinc-500">Run a simulation to see the hours.</p>
         )}
@@ -359,6 +402,14 @@ function StoragePanel() {
             </div>
             <Notes notes={result.notes} />
             <PriceContext simulation={result} />
+          </DashboardCard>
+
+          <DashboardCard
+            title="Which market"
+            subtitle="Same battery, both settlement bases"
+            className="lg:col-span-4"
+          >
+            <SettlementComparisonCard result={result} />
           </DashboardCard>
 
           <DashboardCard title="Year one trading" className="lg:col-span-4">
